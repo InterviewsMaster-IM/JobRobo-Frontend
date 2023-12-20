@@ -33,7 +33,7 @@ const SignInLinkedinCard = ({ handleLogin }) => {
                 <Button variant="outlined" sx={{
                     width: '60%',
                     borderRadius: '6px',
-                    border: '1px solid var(--Border-container-stroke, rgba(0, 20, 5, 0.10))',
+                    border: '1px solid rgba(0, 20, 5, 0.10)',
                     boxShadow: '0px 2px 1px 0px rgba(255, 255, 255, 0.10) inset, 0px 1px 3px 0px rgba(11, 19, 36, 0.10), 0px -1px 0px 0px rgba(0, 0, 0, 0.10) inset',
                     padding: '8px 12px',
                     gap: '10px'
