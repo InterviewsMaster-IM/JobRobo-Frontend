@@ -1,12 +1,15 @@
 import React from 'react';
 import ResumeUpload from '../components/resume/UploadResume';
+import Header from '../components/Onboarding/Header';
+import OnboardingLayout from '../components/Layouts/OnboardingLayout';
 
 const DashboardPage = () => {
     return (
-        <div>
-            <h1>Dashboard</h1>
-            <ResumeUpload />
-        </div>
+        <>
+            <OnboardingLayout>
+                <ResumeUpload />
+            </OnboardingLayout>
+        </>
     );
 };
 
