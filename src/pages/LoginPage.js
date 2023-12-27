@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -14,6 +14,7 @@ import TimerIcon from '@mui/icons-material/Timer';
 import GroupIcon from '@mui/icons-material/Group';
 import FastForwardIcon from '@mui/icons-material/FastForward';
 import SignInLinkedinCard from '../components/common/SignInLinkedinCard';
+import Promocode from '../components/Onboarding/Promocode';
 
 const CardContentNoPadding = styled(CardContent)(`
   padding: 0;
@@ -24,6 +25,21 @@ const CardContentNoPadding = styled(CardContent)(`
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const [referralCode, setReferralCode] = useState('');
+    const urlParams = new URLSearchParams(window.location.search);
+    const promocode = urlParams?.get('promocode');
+
+    useEffect(() => {
+        console.log(promocode);
+        const timeoutId = setTimeout(() => {
+            if (promocode) {
+                setReferralCode(promocode);
+            }
+        }, 3000);
+        return () => {
+            clearTimeout(timeoutId);
+        };
+    }, [promocode])
 
     const handleLogin = () => {
         // Redirect to Google on button click
@@ -40,7 +56,7 @@ const LoginPage = () => {
                 backgroundSize: `cover`,
                 backgroundPosition: `center`,
             }}>
-            <Container maxWidth={{ sm: '300px' }}>
+            <Container maxWidth={false}>
                 <Grid container marginTop={{ xs: '6rem', md: '0' }} marginBottom={{ xs: '2rem', md: '0' }} display={'flex'} rowGap={10} justifyContent={'center'} alignItems={'stretch'} columnGap={6}>
                     <Grid container rowGap={5} item xs={11} sm={8} md={6} lg={5} xl={4} order={{ md: 0, xs: 1 }}>
                         <Grid item xs={10} position={{ xs: 'absolute', md: 'relative' }} top={{ xs: '2rem', md: '0' }} left={{ xs: '2rem', md: '0' }}>
@@ -122,7 +138,13 @@ const LoginPage = () => {
                         </Grid>
                     </Grid>
                     <Grid item xs={11} sm={8} md={4} lg={4} display={'flex'} justifyContent={'center'} alignItems={'center'}>
-                        <SignInLinkedinCard handleLogin={handleLogin} />
+                        {
+                            promocode
+                            ?
+                            <Promocode referralCode={referralCode}/>
+                            :
+                            <SignInLinkedinCard handleLogin={handleLogin} />
+                        }
                     </Grid>
                 </Grid>
             </Container>
