@@ -2,7 +2,6 @@ import { styled } from '@mui/system';
 import Button from '@mui/material/Button';
 
 export const PrimaryGreenButton = styled(Button)({
-    width: '100%',
     textTransform: 'none',
     color: '#fff',
     fontSize: '14px',
@@ -20,7 +19,6 @@ export const PrimaryGreenButton = styled(Button)({
     '&:hover': {
         background: '#55B982',
     },
-
     '&.Mui-disabled': {
         color: '#fff',
         opacity: 0.5
@@ -29,7 +27,7 @@ export const PrimaryGreenButton = styled(Button)({
 
 export const PrimaryWhiteButton = styled(Button)({
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     gap: '8px',
     padding: '8px 12px',
