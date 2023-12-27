@@ -13,7 +13,7 @@ const OnboardingLayout = ({ children }) => {
                 backgroundPosition: `center`,
             }}>
             <Header />
-            <Box paddingTop={'8rem'}>
+            <Box paddingY={'4.6rem'}>
                 {children}
             </Box>
         </Box>
