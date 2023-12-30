@@ -8,13 +8,13 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
     // console.log(isAuthenticated);
 
     return (
-        <div>
+        <>
             {isAuthenticated ? (
                 <Component />
             ) : (
                 <Navigate to="/" replace />
             )}
-        </div>
+        </>
     );
 };
 
