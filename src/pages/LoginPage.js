@@ -30,7 +30,6 @@ const LoginPage = () => {
     const promocode = urlParams?.get('promocode');
 
     useEffect(() => {
-        console.log(promocode);
         const timeoutId = setTimeout(() => {
             if (promocode) {
                 setReferralCode(promocode);
