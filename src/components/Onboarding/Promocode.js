@@ -14,13 +14,9 @@ const Promocode = ({ referralCode }) => {
 
     useEffect(() => {
         if (referralCode) {
-            document.getElementById('Promocode-Card-Continue-Button').click();
+            navigate('/onboarding');
         }
     }, [referralCode]);
-
-    const handleNext = () => {
-        navigate('/onboarding');
-    }
 
     return (
         <Box width={'100%'} display={'flex'} justifyContent={'center'}>
@@ -48,7 +44,7 @@ const Promocode = ({ referralCode }) => {
                     Congratulations! You've been referred by someone
                 </Typography>
                 <Box width={'100%'} marginTop={'1.5rem'} display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                    <PrimaryGreenButton id='Promocode-Card-Continue-Button' sx={{ width: '80%', gap: '4px' }} onClick={handleNext} >
+                    <PrimaryGreenButton id='Promocode-Card-Continue-Button' sx={{ width: '80%', gap: '4px' }} >
                         Continue
                     </PrimaryGreenButton>
                 </Box>
