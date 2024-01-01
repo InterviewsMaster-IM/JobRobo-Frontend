@@ -9,6 +9,7 @@ const TokenHandler = () => {
         const urlParams = new URLSearchParams(window.location.search);
         const access_token = urlParams.get('access'); // Assuming the token is passed as a query param
         const refresh_token = urlParams.get('refresh')
+        const promocode = urlParams.get('promocode');
 
         if (access_token && refresh_token) {
             // Store the token - localStorage can be used for simplicity
@@ -16,7 +17,11 @@ const TokenHandler = () => {
             localStorage.setItem('refresh_token', refresh_token);
             // Redirect to another page after successful token handling
             // console.log("navigating to dashboard");
-            navigate('/dashboard');
+            if (promocode) {
+                navigate('/');
+            } else {
+                navigate('/onboarding');
+            }
         }
     }, []);
 
