@@ -14,6 +14,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
 import Dots from "react-activity/dist/Dots";
 import "react-activity/dist/Dots.css";
+import { useNavigate } from 'react-router-dom';
 
 // Function to upload a file
 const uploadResume = (file) => {
@@ -37,13 +38,24 @@ const checkParseResumeTaskStatus = (taskId) => {
     return apiService.get(`resumes/check-task/${taskId}/`);
 };
 
-const ResumeUpload = () => {
-    const [file, setFile] = useState(null);
+const ResumeUpload = ({ handleNext }) => {
+    const navigate = useNavigate();
+
+    const [resume, setResume] = useState(null);
+    const [coverLetter, setCoverLetter] = useState(null);
     const [status, setStatus] = useState(null);
+    const [inputKeys, setInputKeys] = useState({ resume: 0, coverLetter: 0 });
 
     const handleFileChange = (event) => {
-        // setFile(event.target.files[0]);
-        handleUpload(event.target.files[0]);
+        if (event.target.files[0]) {
+            if (event.target.name === 'resume') {
+                setResume(event.target.files[0]);
+            }
+            else {
+                setCoverLetter(event.target.files[0]);
+            }
+        }
+        // handleUpload(event.target.files[0]);
     };
 
     const handleUpload = async (file) => {
@@ -51,29 +63,48 @@ const ResumeUpload = () => {
             setStatus("Uploading");
             const uploadResponse = await uploadResume(file);
             console.log(uploadResponse);
-            setStatus("Parsing Resume");
+            setStatus(null);
+            setResume(file);
 
-            const resumeId = uploadResponse.data.id;
-            const startParseResponse = await startParseResumeTask(resumeId);
-            console.log(startParseResponse);
 
-            const intervalId = setInterval(async () => {
-                const statusResponse = await checkParseResumeTaskStatus(resumeId);
-                console.log(statusResponse.data);
-                if (statusResponse.data.status === 'SUCCESS') {
-                    clearInterval(intervalId);
-                    setStatus("Done!!");
-                    setFile(file);
-                    // Handle success (e.g., notify user, update UI)
-                }
-            }, 1000);
+            // const resumeId = uploadResponse.data.id;
+            // const startParseResponse = await startParseResumeTask(resumeId);
+            // console.log(startParseResponse);
+
+            // const intervalId = setInterval(async () => {
+            //     const statusResponse = await checkParseResumeTaskStatus(resumeId);
+            //     console.log(statusResponse.data);
+            //     if (statusResponse.data.status === 'SUCCESS') {
+            //         clearInterval(intervalId);
+            //         setStatus("Done!!");
+            //         setResume(file);
+            //         // Handle success (e.g., notify user, update UI)
+            //     }
+            // }, 1000);
         } catch (error) {
             // Handle error (e.g., notify user, update UI)
         }
     };
 
     const handleResumeDelete = () => {
-        setFile(null);
+        handleFileRemove('resume');
+        setResume(null);
+    }
+
+    const handleCoverLetterDelete = () => {
+        handleFileRemove('coverLetter');
+        setCoverLetter(null);
+    }
+
+    const handleFileRemove = (inputKey) => {
+        setInputKeys((prevKeys) => ({
+            ...prevKeys,
+            [inputKey]: prevKeys[inputKey] + 1,
+        }));
+    };
+
+    const handleNextPage = () => {
+        navigate('/extension');
     }
 
     return (
@@ -116,10 +147,15 @@ const ResumeUpload = () => {
                         }}>
                             <Grid container display={'flex'} flexDirection={'column'} rowGap={'1rem'}>
                                 <Grid container item display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'} columnGap={'1rem'} rowGap={'1rem'}>
-                                    <Grid item>
-                                        <Typography variant='h6' fontSize={'18px'} fontWeight={'600'}>
-                                            Resume
-                                        </Typography>
+                                    <Grid item >
+                                        <Box display={'flex'} flexDirection={'row'} gap={'4px'}>
+                                            <Typography variant='h6' fontSize={'18px'} fontWeight={'600'}>
+                                                Resume
+                                            </Typography>
+                                            <Typography color={'#ff0000'} fontWeight={'600'}>
+                                                *
+                                            </Typography>
+                                        </Box>
                                         <Typography variant='body2' fontWeight={'400'} color={'#7F8781'}>
                                             Max file size 5MB in .pdf, .docx or .txt
                                         </Typography>
@@ -128,9 +164,11 @@ const ResumeUpload = () => {
                                         <PrimaryWhiteButton component="label" disabled={(status !== null)}>
                                             <FileUploadOutlinedIcon fontSize='medium' />
                                             <Typography variant='body2' fontWeight={'500'}>
-                                                {!file ? 'Upload' : 'Re Upload'}
+                                                {!resume ? 'Upload' : 'Re Upload'}
                                             </Typography>
                                             <input
+                                                name='resume'
+                                                key={inputKeys.resume}
                                                 style={{ display: 'none' }}
                                                 id="contained-button-file"
                                                 accept=".docx, .doc, application/pdf, application/msword, text/plain"
@@ -141,7 +179,7 @@ const ResumeUpload = () => {
                                     </Grid>
                                 </Grid>
                                 {
-                                    file
+                                    resume
                                     &&
                                     <Grid container item paddingTop={'0.5rem'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'12px'} borderTop={'1px solid rgba(85, 185, 130, 0.30)'}>
                                         <Grid item display={'flex'} alignItems={'center'} gap={'4px'}>
@@ -162,7 +200,7 @@ const ResumeUpload = () => {
                                                 background: '#FFF',
                                             }}>
                                                 <Typography variant='body2' fontWeight={'500'} paddingTop={'8px'} paddingBottom={'8px'}>
-                                                    {file?.name}
+                                                    {resume?.name}
                                                 </Typography>
                                                 <IconButton aria-label="delete" onClick={handleResumeDelete}>
                                                     <DeleteOutlineOutlinedIcon htmlColor='#001405' />
@@ -172,7 +210,7 @@ const ResumeUpload = () => {
                                     </Grid>
                                 }
                                 {
-                                    (status === 'Uploading' || status === 'Parsing Resume')
+                                    status === 'Uploading'
                                     &&
                                     <Box textAlign={'center'}>
                                         <Dots color='#55B982' size={'18'} />
@@ -184,14 +222,101 @@ const ResumeUpload = () => {
                             </Grid>
                         </Card>
                     </Box>
+                    <Box marginTop={'1.5rem'} width={'100%'}>
+                        <Card variant='outlined' sx={{
+                            width: '100%',
+                            boxSizing: 'border-box',
+                            Border: '1px',
+                            padding: '1.25rem 1.5rem',
+                            borderRadius: '8px',
+                            border: '1px solid #55B982',
+                            background: 'rgba(234, 247, 239, 0.30)',
+                        }}>
+                            <Grid container display={'flex'} flexDirection={'column'} rowGap={'1rem'}>
+                                <Grid container item display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'} columnGap={'1rem'} rowGap={'1rem'}>
+                                    <Grid item>
+                                        <Box display={'flex'} flexDirection={'row'} gap={'4px'} alignItems={'center'}>
+                                            <Typography variant='h6' fontSize={'18px'} fontWeight={'600'}>
+                                                Cover Letter
+                                            </Typography>
+                                            <Typography variant='body2' color={'#7F8781'} fontWeight={'400'}>
+                                                (optional)
+                                            </Typography>
+                                        </Box>
+                                        <Typography variant='body2' fontWeight={'400'} color={'#7F8781'}>
+                                            Max file size 5MB in .pdf, .docx or .txt
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item>
+                                        <PrimaryWhiteButton component="label" disabled={(status !== null)}>
+                                            <FileUploadOutlinedIcon fontSize='medium' />
+                                            <Typography variant='body2' fontWeight={'500'}>
+                                                {!coverLetter ? 'Upload' : 'Re Upload'}
+                                            </Typography>
+                                            <input
+                                                name='coverLetter'
+                                                key={inputKeys.coverLetter}
+                                                style={{ display: 'none' }}
+                                                id="contained-button-file"
+                                                accept=".docx, .doc, application/pdf, application/msword, text/plain"
+                                                type="file"
+                                                onChange={handleFileChange}
+                                            />
+                                        </PrimaryWhiteButton>
+                                    </Grid>
+                                </Grid>
+                                {
+                                    coverLetter
+                                    &&
+                                    <Grid container item paddingTop={'0.5rem'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'12px'} borderTop={'1px solid rgba(85, 185, 130, 0.30)'}>
+                                        <Grid item display={'flex'} alignItems={'center'} gap={'4px'}>
+                                            <CheckCircleIcon fontSize='14px' htmlColor='#55B982' />
+                                            <Typography variant='body2' fontWeight={'500'} color={'#55B982'} letterSpacing={'0.14px'}>
+                                                Cover letter uploaded
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item width={'100%'} >
+                                            <Card variant='outlined' sx={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                                flexWrap: 'wrap',
+                                                padding: '0px 12px',
+                                                borderRadius: '6px',
+                                                border: '1px solid rgba(85, 185, 130, 0.30)',
+                                                background: '#FFF',
+                                            }}>
+                                                <Typography variant='body2' fontWeight={'500'} paddingTop={'8px'} paddingBottom={'8px'}>
+                                                    {coverLetter?.name}
+                                                </Typography>
+                                                <IconButton aria-label="delete" onClick={handleCoverLetterDelete}>
+                                                    <DeleteOutlineOutlinedIcon htmlColor='#001405' />
+                                                </IconButton>
+                                            </Card>
+                                        </Grid>
+                                    </Grid>
+                                }
+                                {/* {
+                                    status === 'Uploading'
+                                    &&
+                                    <Box textAlign={'center'}>
+                                        <Dots color='#55B982' size={'18'} />
+                                        <Typography variant='body2' textAlign={'center'} fontWeight={'600'} color={'#55B982'} letterSpacing={'1.2px'}>
+                                            {status}
+                                        </Typography>
+                                    </Box>
+                                } */}
+                            </Grid>
+                        </Card>
+                    </Box>
                     <Box width={'100%'} marginTop={'1.5rem'}>
-                        <PrimaryGreenButton variant='container' disabled={!file}>
+                        <PrimaryGreenButton sx={{ width: '100%' }} variant='container' disabled={!resume} onClick={handleNext}>
                             Continue
                         </PrimaryGreenButton>
                     </Box>
                 </Card>
             </Box>
-        </Container >
+        </Container>
     );
 };
 
