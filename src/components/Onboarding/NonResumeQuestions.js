@@ -86,7 +86,7 @@ const NonResumeQuestions = ({ handleNext }) => {
                     }}>
                     <Grid container width={'70%'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} rowGap={'3rem'}>
                         <Box width={'100%'} display={'flex'} flexDirection={'column'} gap={'8px'}>
-                            <Typography fontWeight={'500'}>
+                            <Typography fontWeight={'600'}>
                                 Race
                             </Typography>
                             <Select
@@ -111,7 +111,7 @@ const NonResumeQuestions = ({ handleNext }) => {
                             </Select>
                         </Box>
                         <Box width={'100%'} display={'flex'} flexDirection={'column'} gap={'8px'}>
-                            <Typography fontWeight={'500'}>
+                            <Typography fontWeight={'600'}>
                                 Notice period in days ?
                             </Typography>
                             <OutlinedInput
@@ -124,7 +124,7 @@ const NonResumeQuestions = ({ handleNext }) => {
                             />
                         </Box>
                         <Box width={'100%'} display={'flex'} flexDirection={'column'} gap={'8px'}>
-                            <Typography fontWeight={'500'}>
+                            <Typography fontWeight={'600'}>
                                 Veteran Status
                             </Typography>
                             <Select
@@ -148,7 +148,7 @@ const NonResumeQuestions = ({ handleNext }) => {
                             </Select>
                         </Box>
                         <Box width={'100%'} display={'flex'} flexDirection={'column'} gap={'8px'}>
-                            <Typography fontWeight={'500'}>
+                            <Typography fontWeight={'600'}>
                                 Disability Status
                             </Typography>
                             <Select
@@ -172,7 +172,7 @@ const NonResumeQuestions = ({ handleNext }) => {
                             </Select>
                         </Box>
                         <Box width={'100%'} display={'flex'} flexDirection={'column'} gap={'8px'}>
-                            <Typography fontWeight={'500'}>
+                            <Typography fontWeight={'600'}>
                                 Desired salary Currency
                             </Typography>
                             <Select
@@ -191,7 +191,7 @@ const NonResumeQuestions = ({ handleNext }) => {
                             </Select>
                         </Box>
                         <Box width={'100%'} display={'flex'} flexDirection={'column'} gap={'8px'}>
-                            <Typography fontWeight={'500'}>
+                            <Typography fontWeight={'600'}>
                                 Desired salary
                             </Typography>
                             <OutlinedInput
@@ -204,7 +204,7 @@ const NonResumeQuestions = ({ handleNext }) => {
                                 sx={{ height: '44px' }} />
                         </Box>
                         <Box width={'100%'} display={'flex'} flexDirection={'column'} gap={'8px'}>
-                            <Typography fontWeight={'500'}>
+                            <Typography fontWeight={'600'}>
                                 Will you now, or in the future, require sponsorship for employment visa status (e.g. H-1B visa status)?
                             </Typography>
                             <Select
@@ -227,7 +227,7 @@ const NonResumeQuestions = ({ handleNext }) => {
                             </Select>
                         </Box>
                         <Box width={'100%'} display={'flex'} flexDirection={'column'} gap={'8px'}>
-                            <Typography fontWeight={'500'}>
+                            <Typography fontWeight={'600'}>
                                 Are you legally authorized to work in the United States?
                             </Typography>
                             <Select
@@ -251,7 +251,7 @@ const NonResumeQuestions = ({ handleNext }) => {
                             </Select>
                         </Box>
                         <Box width={'100%'} display={'flex'} flexDirection={'column'} gap={'8px'}>
-                            <Typography fontWeight={'500'}>
+                            <Typography fontWeight={'600'}>
                                 What work settings are you comfortable with?
                             </Typography>
                             <Select
