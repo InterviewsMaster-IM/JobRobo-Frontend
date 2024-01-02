@@ -4,9 +4,9 @@ import Box from '@mui/material/Box';
 
 const MainLayout = ({ children }) => {
     return (
-        <Box minHeight={'100vh'}>
+        <Box position={'relative'} display={'flex'}>
             <DesktopSidebar />
-            <Box>
+            <Box position={'relative'} flex={'1 1 0%'} >
                 {children}
             </Box>
         </Box>
