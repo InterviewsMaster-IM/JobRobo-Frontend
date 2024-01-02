@@ -30,7 +30,7 @@ export const PrimaryWhiteButton = styled(Button)({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: '8px',
-    padding: '8px 12px',
+    padding: '8px 20px',
     color: '#001405',
     textTransform: 'none',
     textAlign: 'center',
