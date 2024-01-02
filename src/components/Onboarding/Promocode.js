@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import CardMedia from '@mui/material/CardMedia';
-import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
+import CircularProgress from '@mui/material/CircularProgress';
+import { PrimaryGreenButton } from '../../styles/Buttons';
 import WavingHandTwoToneIcon from '@mui/icons-material/WavingHandTwoTone';
-import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 
 const Promocode = ({ referralCode }) => {
@@ -44,8 +43,11 @@ const Promocode = ({ referralCode }) => {
                     Congratulations! You've been referred by someone
                 </Typography>
                 <Box width={'100%'} marginTop={'1.5rem'} display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                    <PrimaryGreenButton id='Promocode-Card-Continue-Button' sx={{ width: '80%', gap: '4px' }} >
-                        Continue
+                    <PrimaryGreenButton id='Promocode-Card-Continue-Button' sx={{ width: '80%', gap: '8px' }}>
+                        <Typography>
+                            Continue
+                        </Typography>
+                        <CircularProgress color='white' size={20} thickness={4} />
                     </PrimaryGreenButton>
                 </Box>
             </Card>
