@@ -7,7 +7,8 @@ import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutl
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { PrimaryWhiteButton } from '../../styles/Buttons';
 
-const SkillsDisplayCard = () => {
+const SkillsDisplayCard = ({ handleOpenForm }) => {
+
     return (
         <Box width={'100%'} minWidth={'max-content'}>
             <Card variant='outlined' sx={{
@@ -25,7 +26,7 @@ const SkillsDisplayCard = () => {
                             </Typography>
                         </Grid>
                         <Grid item>
-                            <PrimaryWhiteButton>
+                            <PrimaryWhiteButton onClick={() => handleOpenForm('skills')}>
                                 <ModeEditOutlineOutlinedIcon fontSize='small' />
                                 <Typography variant='body2' fontWeight={'500'}>
                                     Edit
