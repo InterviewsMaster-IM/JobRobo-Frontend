@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import { PrimaryWhiteButton } from '../../styles/Buttons';
 
-const PersonalDetailsCard = () => {
+const PersonalDetailsCard = ({ handleOpenForm }) => {
     return (
         <Box width={'100%'} minWidth={'max-content'}>
             <Card variant='outlined' sx={{
@@ -37,7 +37,7 @@ const PersonalDetailsCard = () => {
                             </Typography>
                         </Grid>
                         <Grid item>
-                            <PrimaryWhiteButton>
+                            <PrimaryWhiteButton onClick={() => handleOpenForm('personalDetails')}>
                                 <ModeEditOutlineOutlinedIcon fontSize='small' />
                                 <Typography variant='body2' fontWeight={'500'}>
                                     Edit

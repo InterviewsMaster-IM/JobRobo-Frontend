@@ -5,13 +5,11 @@ import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
-import SchoolTwoToneIcon from '@mui/icons-material/SchoolTwoTone';
+import BusinessTwoToneIcon from '@mui/icons-material/BusinessTwoTone';
 import { PrimaryWhiteButton } from '../../styles/Buttons';
 
-const EducationDetailsCard = ({ handleOpenForm }) => {
-
-    const [educationDetailsList, setEducationDetailsList] = useState([{}]);
-
+const WorkExperienceDetailsCard = ({ handleOpenForm }) => {
+    const [workExperiencesList, setWorkExperiencesList] = useState([{}]);
     return (
         <Box width={'100%'} minWidth={'max-content'}>
             <Card variant='outlined' sx={{
@@ -25,14 +23,14 @@ const EducationDetailsCard = ({ handleOpenForm }) => {
                     <Grid container item display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'} columnGap={'1rem'} rowGap={'1rem'}>
                         <Grid item>
                             <Typography variant='h6' fontSize={'18px'} fontWeight={'600'}>
-                                Education
+                                Work experience
                             </Typography>
                             <Typography variant='body2' fontWeight={'400'} color={'#7F8781'}>
-                                Add your education details
+                                Add your relevant work experience
                             </Typography>
                         </Grid>
                         <Grid item>
-                            <PrimaryWhiteButton onClick={() => handleOpenForm('education')}>
+                            <PrimaryWhiteButton onClick={() => handleOpenForm('workExperience')}>
                                 <AddIcon fontSize='small' />
                                 <Typography variant='body2' fontWeight={'500'} marginRight={'4px'}>
                                     Add
@@ -41,11 +39,11 @@ const EducationDetailsCard = ({ handleOpenForm }) => {
                         </Grid>
                     </Grid>
                     {
-                        educationDetailsList.length > 0
+                        workExperiencesList.length > 0
                         &&
                         <Grid container display={'flex'} flexDirection={'column'} gap={'12px'} paddingTop={'8px'} borderTop={'1px solid #E5E5E5'}>
                             {
-                                educationDetailsList.map((detailsObj, index) => {
+                                workExperiencesList.map((workExp, index) => {
                                     return (
                                         <>
                                             <Grid container item paddingY={'12px'} paddingX={'8px'} display={'flex'} justifyContent={'flex-start'} alignItems={'flex-start'} gap={'12px'}>
@@ -59,18 +57,18 @@ const EducationDetailsCard = ({ handleOpenForm }) => {
                                                         justifyContent={'center'}
                                                         borderRadius={'50%'}
                                                     >
-                                                        <SchoolTwoToneIcon fontSize='small' htmlColor='#7F8781' />
+                                                        <BusinessTwoToneIcon fontSize='small' htmlColor='#7F8781' />
                                                     </Box>
                                                 </Grid>
-                                                <Grid item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
+                                                <Grid item xs={6} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                                                     <Typography variant='body2' fontWeight={'500'} color={'#1A1A1A'}>
-                                                        Master's, Computer Science Engineering
+                                                        Teaching Assistant in Algorithms III
                                                     </Typography>
                                                     <Typography variant='body2' fontWeight={'500'} color={'#808080'}>
-                                                        University of California Berkeley
+                                                        University of California Berkeley | Part-time
                                                     </Typography>
-                                                    <Typography variant='body2' fontWeight={'400'} color={'#808080'}>
-                                                        GPA: 3.78
+                                                    <Typography variant='body2' width={'22rem'} fontWeight={'400'} color={'#808080'} whiteSpace={'wrap'}>
+                                                        Graded student assignments for a class of 200 students Prepared question papers for 7 examinations along with the support of 4 other teaching assistants
                                                     </Typography>
                                                 </Grid>
                                                 <Grid item marginLeft={'auto'}>
@@ -80,7 +78,7 @@ const EducationDetailsCard = ({ handleOpenForm }) => {
                                                 </Grid>
                                             </Grid>
                                             {
-                                                index !== educationDetailsList.length - 1
+                                                index !== workExperiencesList.length - 1
                                                 &&
                                                 <Divider />
                                             }
@@ -89,6 +87,7 @@ const EducationDetailsCard = ({ handleOpenForm }) => {
                                 })
                             }
                         </Grid>
+
                     }
                 </Grid>
             </Card>
@@ -96,4 +95,4 @@ const EducationDetailsCard = ({ handleOpenForm }) => {
     )
 }
 
-export default EducationDetailsCard;
+export default WorkExperienceDetailsCard;
