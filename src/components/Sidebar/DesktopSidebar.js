@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink as NavLinkBase } from 'react-router-dom';
+import { Link, NavLink as NavLinkBase } from 'react-router-dom';
 // import { styled } from '@mui/system';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -10,6 +10,8 @@ import CardMedia from '@mui/material/CardMedia';
 // import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import Popover from "@mui/material/Popover";
+import MenuItem from "@mui/material/MenuItem";
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import LogoImage from '../../assets/images/FinnTheHuman.svg';
@@ -22,6 +24,8 @@ import WorkIcon from '@mui/icons-material/Work';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const CardContentNoPadding = styled(CardContent)(`
   padding: 0;
@@ -99,6 +103,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const DesktopSidebar = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [anchorEl, setAnchorEl] = useState(null);
 
     const handleOpenDrawer = () => {
         setIsSidebarOpen(true);
@@ -107,6 +112,75 @@ const DesktopSidebar = () => {
     const handleCloseDrawer = () => {
         setIsSidebarOpen(false);
     };
+
+    const handlePopoverOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handlePopoverClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? "simple-popover" : undefined;
+
+    const PopOverMenu = ({ handlePopoverClose }) => (
+        <Box
+            sx={{
+                color: '#001405',
+                display: 'flex',
+                width: '15rem',
+                padding: '8px',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                gap: '8px',
+                borderRadius: '6px',
+                border: '1px solid rgba(11, 19, 36, 0.07)',
+                background: 'rgba(85, 185, 130, 0.1)',
+                boxShadow: '0px 5px 12px 0px rgba(11, 19, 36, 0.2), 0px 1px 5px 0px rgba(11, 19, 36, 0.1)',
+                boxSizing: 'border-box',
+                '> p': {
+                    cursor: 'pointer',
+                    display: 'flex',
+                    padding: '8px 16px 8px 12px',
+                    alignItems: 'center',
+                    gap: '8px',
+                    alignSelf: 'stretch',
+                    borderRadius: '8px',
+                    background: 'rgba(85, 185, 130, 0.1)',
+                    color: '#001405',
+                    opacity: 0.7,
+                    fontSize: '14px',
+                    fontStyle: 'normal',
+                    fontWeight: 400,
+                    lineHeight: 'normal',
+                    letterSpacing: '0.14px',
+                    '> a': {
+                        textDecoration: 'none',
+                        cursor: 'pointer',
+                        color: '#001405',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                    },
+                },
+            }}
+            onMouseLeave={handlePopoverClose}
+        >
+            <Typography sx={{ p: 2 }}>
+                <Link to="/settings" onClick={handlePopoverClose}>
+                    <SettingsIcon />
+                    Account settings
+                </Link>
+            </Typography>
+            <Typography sx={{ p: 2 }}>
+                <Link to="/signout">
+                    <LogoutIcon />
+                    Sign out
+                </Link>
+            </Typography>
+        </Box>
+    );
 
     return (
         <Drawer variant="permanent" open={isSidebarOpen}>
@@ -178,19 +252,22 @@ const DesktopSidebar = () => {
                                 </NavLink>
                             </ListItem>
                             <ListItem disablePadding>
-                                <Button sx={{
-                                    width: '100%',
-                                    minWidth: '100%',
-                                    height: 'auto',
-                                    padding: isSidebarOpen ? '8px 12px' : '8px 0px',
-                                    border: '1px solid #E5E5E5',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: isSidebarOpen ? 'flex-start' : 'center',
-                                    gap: '8px',
-                                    textTransform: 'none',
-                                }}>
-                                    <AccountCircleIcon htmlColor='#7F8781'/>
+                                <Button
+                                    aria-describedby={id}
+                                    onMouseEnter={handlePopoverOpen}
+                                    sx={{
+                                        width: '100%',
+                                        minWidth: '100%',
+                                        height: 'auto',
+                                        padding: isSidebarOpen ? '8px 12px' : '8px 0px',
+                                        border: '1px solid #E5E5E5',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: isSidebarOpen ? 'flex-start' : 'center',
+                                        gap: '8px',
+                                        textTransform: 'none',
+                                    }}>
+                                    <AccountCircleIcon htmlColor='#7F8781' />
                                     <Typography variant='body2' textAlign={'left'} color={'#001405'} sx={{ display: isSidebarOpen ? 'block' : 'none', whiteSpace: 'wrap' }}>
                                         Priyanshi Maheshwari
                                     </Typography>
@@ -198,6 +275,22 @@ const DesktopSidebar = () => {
                                         <KeyboardArrowRightIcon />
                                     </IconButton>
                                 </Button>
+                                <Popover
+                                    id={id}
+                                    open={open}
+                                    anchorEl={anchorEl}
+                                    onClose={handlePopoverClose}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'right',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'left',
+                                    }}
+                                >
+                                    <PopOverMenu handlePopoverClose={handlePopoverClose}/>
+                                </Popover>
                             </ListItem>
                         </List>
                     </Grid>
