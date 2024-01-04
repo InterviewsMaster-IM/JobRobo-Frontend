@@ -10,7 +10,8 @@ import HomePage from './pages/HomePage';
 import PastJobRoboPage from './pages/PastJobRoboPage';
 import AppliedJobDetails from './components/PastJobRobos/AppliedJobDetails';
 import ProfilePage from './pages/ProfilePage';
-import ResumeQuestionsTests from './pages/resumeQuestionsTest';import AccountSettings from './pages/AccountSettings';
+import AccountSettingsPage from './pages/AccountSettingsPage';
+import ResumeQuestionsTests from './pages/resumeQuestionsTest';
 
 function App() {
     return (
@@ -25,7 +26,7 @@ function App() {
                     <Route path="/pastjobrobo" element={<ProtectedRoute component={PastJobRoboPage}></ProtectedRoute>} />
                     <Route path="/pastjobrobo/:id" element={<ProtectedRoute component={AppliedJobDetails}></ProtectedRoute>} />
                     <Route path="/profile" element={<ProtectedRoute component={ProfilePage}></ProtectedRoute>} />
-                    <Route path="/settings" element={<ProtectedRoute component={AccountSettings}></ProtectedRoute>}  />
+                    <Route path="/settings" element={<ProtectedRoute component={AccountSettingsPage}></ProtectedRoute>}  />
                     <Route path="/test" element={<ProtectedRoute component={ResumeQuestionsTests}></ProtectedRoute>} />
                 </Routes>
             </Router>
