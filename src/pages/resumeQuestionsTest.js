@@ -64,7 +64,7 @@ const ResumeQuestionsTests = () => {
             >
                 Submit Query
             </Button>
-            {response && <p>{response.response}</p>}
+            {response && <p>{JSON.stringify(response)}</p>}
         </Box>
     );
 };
