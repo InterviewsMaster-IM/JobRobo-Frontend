@@ -1,13 +1,18 @@
 // store.js
 import { configureStore } from '@reduxjs/toolkit';
 import { creditsApi } from '../api/creditsApi';
+import { profileApi } from '../api/profileApi';
 
 export const store = configureStore({
   reducer: {
     [creditsApi.reducerPath]: creditsApi.reducer,
+    [profileApi.reducerPath]: profileApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(creditsApi.middleware),
+    getDefaultMiddleware().concat(
+      creditsApi.middleware,
+      profileApi.middleware,
+      ),
 });
 
 // Optionally export the hooks if needed

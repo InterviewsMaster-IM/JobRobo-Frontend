@@ -15,7 +15,7 @@ const FreeCreditsDisplay = () => {
             console.log(userCredits);
         }
     }, [isSuccess]);
-    
+
     return (
         <Box width={'100%'} sx={{
             boxSizing: 'border-box',

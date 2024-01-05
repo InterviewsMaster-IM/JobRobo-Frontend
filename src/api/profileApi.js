@@ -4,8 +4,8 @@ import ApiUrls from './ApiUrls';
 
 const baseApiUrl = config.REACT_APP_ROOT_URL;
 
-export const creditsApi = createApi({
-    reducerPath: 'creditsApi',
+export const profileApi = createApi({
+    reducerPath: 'profileApi',
     baseQuery: fetchBaseQuery({
         baseUrl: baseApiUrl,
         prepareHeaders: (headers) => {
@@ -16,29 +16,22 @@ export const creditsApi = createApi({
         credentials: "include",
     }),
     endpoints: (builder) => ({
-        getUserCredits: builder.query({
+        getProfileOtherDetails: builder.query({
             query: () => ({
-                url: ApiUrls.USER_CREDITS,
+                url: ApiUrls.PROFILE_OTHER_DETAILS,
                 method: 'GET',
             }),
         }),
-        getCreditPlans: builder.query({
+        addProfileOtherDetails: builder.mutation({
             query: () => ({
-                url: ApiUrls.CREDIT_PLANS,
-                method: 'GET',
-            }),
-        }),
-        getCreditHistory: builder.query({
-            query: () => ({
-                url: ApiUrls.CREDIT_HISTORY,
-                method: 'GET',
+                url: `${ApiUrls.PROFILE_OTHER_DETAILS}add/`,
+                method: 'POST',
             }),
         }),
     }),
 });
 
 export const {
-    useGetUserCreditsQuery,
-    useGetCreditPlansQuery,
-    useGetCreditHistoryQuery,
-} = creditsApi;
+    useGetProfileOtherDetailsQuery,
+    useAddProfileOtherDetailsMutation
+} = profileApi;
