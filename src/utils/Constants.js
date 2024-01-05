@@ -78,6 +78,21 @@ export const workPreferenceOptions = [
     },
 ]
 
+export const employmentTypeOptions = [
+    {
+        label: 'Full Time',
+        value: 'full_time'
+    },
+    {
+        label: 'Contract',
+        value: 'contract'
+    },
+    {
+        label: 'Internsip',
+        value: 'internship'
+    },
+]
+
 export const booleanValues = [
     {
         label: 'Yes',
@@ -88,3 +103,66 @@ export const booleanValues = [
         value: 'no'
     },
 ]
+
+export const months = [
+    {
+        label: 'January',
+        value: 'january'
+    },
+    {
+        label: 'Feburary',
+        value: 'feburary'
+    },
+    {
+        label: 'March',
+        value: 'march'
+    },
+    {
+        label: 'April',
+        value: 'april'
+    },
+    {
+        label: 'May',
+        value: 'may'
+    },
+    {
+        label: 'June',
+        value: 'june'
+    },
+    {
+        label: 'July',
+        value: 'july'
+    },
+    {
+        label: 'August',
+        value: 'august'
+    },
+    {
+        label: 'September',
+        value: 'september'
+    },
+    {
+        label: 'October',
+        value: 'october'
+    },
+    {
+        label: 'November',
+        value: 'november'
+    },
+    {
+        label: 'December',
+        value: 'december'
+    },
+]
+
+export function getYears(startYear) {
+    let options = [];
+    let thisYear = new Date().getFullYear();
+    for (let i = thisYear; i >= (startYear || 1950); i--) {
+        options.push({
+            label: i,
+            value: i,
+        });
+    }
+    return options;
+}
