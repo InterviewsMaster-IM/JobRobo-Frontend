@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, NavLink as NavLinkBase } from 'react-router-dom';
+import { Link as LinkBase, NavLink as NavLinkBase } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -64,6 +64,19 @@ const NavLink = styled(NavLinkBase)(({ theme, open }) => ({
     }
 }));
 
+const Link = styled(LinkBase)(({ theme }) => ({
+    textDecoration: 'none',
+    padding: '8px 16px 8px 12px',
+    display: 'flex',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    gap: '8px',
+    borderRadius: '8px',
+    background: 'rgba(85, 185, 130, 0.1)',
+    color: '#001405',
+    opacity: 0.7,
+}));
+
 const openedMixin = (theme) => ({
     width: 280,
     transition: theme.transitions.create('width', {
@@ -123,60 +136,28 @@ const DesktopSidebar = () => {
     const id = open ? "simple-popover" : undefined;
 
     const PopOverMenu = ({ handlePopoverClose }) => (
-        <Box
+        <Box width={'15rem'} padding={'8px'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}
             sx={{
-                color: '#001405',
-                display: 'flex',
-                width: '15rem',
-                padding: '8px',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
-                gap: '8px',
+                boxSizing: 'border-box',
                 borderRadius: '6px',
                 border: '1px solid rgba(11, 19, 36, 0.07)',
                 background: 'rgba(85, 185, 130, 0.1)',
                 boxShadow: '0px 5px 12px 0px rgba(11, 19, 36, 0.2), 0px 1px 5px 0px rgba(11, 19, 36, 0.1)',
-                boxSizing: 'border-box',
-                '> p': {
-                    cursor: 'pointer',
-                    display: 'flex',
-                    padding: '8px 16px 8px 12px',
-                    alignItems: 'center',
-                    gap: '8px',
-                    alignSelf: 'stretch',
-                    borderRadius: '8px',
-                    background: 'rgba(85, 185, 130, 0.1)',
-                    color: '#001405',
-                    opacity: 0.7,
-                    fontSize: '14px',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    lineHeight: 'normal',
-                    letterSpacing: '0.14px',
-                    '> a': {
-                        textDecoration: 'none',
-                        cursor: 'pointer',
-                        color: '#001405',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                    },
-                },
             }}
             onMouseLeave={handlePopoverClose}
         >
-            <Typography sx={{ p: 2 }}>
-                <Link to="/settings" onClick={handlePopoverClose}>
-                    <SettingsIcon />
+            <Link to="/settings" onClick={handlePopoverClose}>
+                <SettingsIcon />
+                <Typography variant='body2' color={'#001405'}>
                     Account settings
-                </Link>
-            </Typography>
-            <Typography sx={{ p: 2 }}>
-                <Link to="/signout">
-                    <LogoutIcon />
+                </Typography>
+            </Link>
+            <Link to="/signout">
+                <LogoutIcon />
+                <Typography variant='body2' color={'#001405'}>
                     Sign out
-                </Link>
-            </Typography>
+                </Typography>
+            </Link>
         </Box>
     );
 
