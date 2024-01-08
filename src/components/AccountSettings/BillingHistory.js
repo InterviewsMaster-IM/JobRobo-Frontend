@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
@@ -10,6 +10,8 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
+import apiService from '../../services/apiService';
+import { format } from 'date-fns';
 
 const columns = [
     { id: 'plan', label: 'Plan', minWidth: 120 },
@@ -18,6 +20,7 @@ const columns = [
         id: 'amount',
         label: 'Amount',
         minWidth: 100,
+        format: (value) => `$ ${value.toFixed(2)}`,
     }
 ];
 
@@ -35,6 +38,23 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const BillingHistory = () => {
 
+    const [history, setHistory] = useState([]);
+
+    const getHistory = async () => {
+        try {
+            const response = await apiService.get('credits/credit-history/');
+            if (response.status === 200 && response.data) {
+                setHistory(response.data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch billing history:', error);
+        }
+    };
+
+    useEffect(() => {
+        getHistory();
+    }, []);
+
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -46,19 +66,6 @@ const BillingHistory = () => {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
-
-    const rows = [
-        {
-            plan: 'JobRobo STANDARD 6 months',
-            date: '11 Aug 2023',
-            amount: '$ 79.99',
-        },
-        {
-            plan: 'JobRobo Free',
-            date: '08 july 2023',
-            amount: '$ 0',
-        }
-    ]
 
     return (
         <Box width={'100%'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={2}>
@@ -86,21 +93,14 @@ const BillingHistory = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows
+                            {history
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((row) => {
+                                .map((historyEntry, index) => {
                                     return (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={row.code} onMouseEnter={() => { console.log("9384398") }}>
-                                            {columns.map((column) => {
-                                                const value = row[column.id];
-                                                return (
-                                                    <StyledTableCell key={column.id} align={column.align}>
-                                                        {column.format && typeof value === 'number'
-                                                            ? column.format(value)
-                                                            : value}
-                                                    </StyledTableCell>
-                                                );
-                                            })}
+                                        <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                                            <StyledTableCell>{historyEntry.plan.name}</StyledTableCell>
+                                            <StyledTableCell>{format(new Date(historyEntry.date), 'dd MMM yyyy')}</StyledTableCell>
+                                            <StyledTableCell>{columns.find(x => x.id === 'amount').format(parseFloat(historyEntry.plan.price))}</StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -110,7 +110,7 @@ const BillingHistory = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25, 50, 100]}
                     component="div"
-                    count={rows.length}
+                    count={history.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
