@@ -6,15 +6,21 @@ import CircularProgress from '@mui/material/CircularProgress';
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
 import { PrimaryWhiteButton } from '../../styles/Buttons';
 import { useGetUserCreditsQuery } from '../../api/creditsApi';
+import { useNavigate } from 'react-router-dom';
 
 const FreeCreditsDisplay = () => {
     const { data: userCredits, error, isSuccess } = useGetUserCreditsQuery();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isSuccess) {
             console.log(userCredits);
         }
     }, [isSuccess]);
+
+    const handleUpgradePlanButton = () => {
+        navigate('/pricing');
+    }
 
     return (
         <Box width={'100%'} sx={{
@@ -37,7 +43,7 @@ const FreeCreditsDisplay = () => {
                     </Grid>
                 </Grid>
                 <Grid item display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'flex-start'} gap={'16px'}>
-                    <PrimaryWhiteButton>
+                    <PrimaryWhiteButton onClick={handleUpgradePlanButton}>
                         <RocketLaunchOutlinedIcon htmlColor='#656565' fontSize='small' />
                         <Typography variant='body2' fontWeight={'500'}>
                             Upgrade plan
@@ -50,7 +56,7 @@ const FreeCreditsDisplay = () => {
                     </PrimaryWhiteButton>
                 </Grid>
             </Grid>
-        </Box >
+        </Box>
     )
 }
 

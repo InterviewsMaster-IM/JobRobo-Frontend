@@ -10,8 +10,15 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import BillingHistory from './BillingHistory';
 import CreditsHistory from './CreditsHistory';
+import { useNavigate } from 'react-router-dom';
 
 const AccountSettings = () => {
+    const navigate = useNavigate();
+
+    const handleUpgradePlanButton = () => {
+        navigate('/pricing');
+    }
+
     return (
         <Box component={"main"} sx={{ flexGrow: 1 }}>
             <Box
@@ -36,7 +43,7 @@ const AccountSettings = () => {
                                 <Typography variant='h6' fontSize={'18px'}>
                                     Pricing Plan
                                 </Typography>
-                                <PrimaryGreenButton sx={{ gap: '8px', paddingY: '4px', paddingX: '12px' }}>
+                                <PrimaryGreenButton sx={{ gap: '8px', paddingY: '4px', paddingX: '12px' }} onClick={handleUpgradePlanButton}>
                                     <RocketLaunchOutlinedIcon fontSize='small' />
                                     <Typography variant='body2' fontWeight={'500'} fontSize={'16px'}>
                                         Upgrade plan
