@@ -1,12 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
 import { PrimaryWhiteButton } from '../../styles/Buttons';
+import { useGetUserCreditsQuery } from '../../api/creditsApi';
 
 const FreeCreditsDisplay = () => {
+    const { data: userCredits, error, isSuccess } = useGetUserCreditsQuery();
+
+    useEffect(() => {
+        if (isSuccess) {
+            console.log(userCredits);
+        }
+    }, [isSuccess]);
+
     return (
         <Box width={'100%'} sx={{
             boxSizing: 'border-box',
