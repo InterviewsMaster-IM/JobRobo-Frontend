@@ -166,3 +166,30 @@ export function getYears(startYear) {
     }
     return options;
 }
+
+export const pricingPlans = [
+    {
+        name: 'starter',
+        price: '$ 9.99',
+        benefits: [
+            '300 JobRobo Credits per month',
+            'Unlimited jobs per session',
+        ]
+    },
+    {
+        name: 'standard',
+        price: '$ 19.99',
+        benefits: [
+            '750 JobRobo Credits per month',
+            'Unlimited jobs per session',
+        ]
+    },
+    {
+        name: 'premium',
+        price: '$ 29.99',
+        benefits: [
+            '1500 JobRobo Credits per month',
+            'Unlimited jobs per session',
+        ]
+    },
+]
