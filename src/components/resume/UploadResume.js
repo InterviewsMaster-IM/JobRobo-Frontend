@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import apiService from "../../services/apiService";
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -10,6 +10,7 @@ import IconButton from '@mui/material/IconButton';
 import DescriptionTwoToneIcon from '@mui/icons-material/DescriptionTwoTone';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
 import Dots from "react-activity/dist/Dots";
@@ -28,6 +29,20 @@ const uploadResume = (file) => {
     });
 };
 
+
+// Function to upload a file
+const uploadCoverLetter = (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return apiService.post('resumes/coverletter/upload/', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+};
+
+
 //start parsing the resume after uploading
 const startParseResumeTask = (resumeId) => {
     return apiService.post('resumes/start-task/', { resume_id: resumeId });
@@ -41,59 +56,99 @@ const checkParseResumeTaskStatus = (taskId) => {
 const ResumeUpload = ({ handleNext }) => {
     const navigate = useNavigate();
 
-    const [resume, setResume] = useState(null);
-    const [coverLetter, setCoverLetter] = useState(null);
+    const [resumeObject, setResumeObject] = useState(null);
     const [status, setStatus] = useState(null);
+
+    const [coverLetterObject, setCoverLetterObject] = useState(null);
+
     const [inputKeys, setInputKeys] = useState({ resume: 0, coverLetter: 0 });
+    const [errorMsg, setErrorMsg] = useState(null);
+    const [errorMsg2, setErrorMsg2] = useState(null);
+    const [status2, setStatus2] = useState(null);
 
     const handleFileChange = (event) => {
         if (event.target.files[0]) {
             if (event.target.name === 'resume') {
-                setResume(event.target.files[0]);
+                handleResumeUpload(event.target.files[0]);
             }
             else {
-                setCoverLetter(event.target.files[0]);
+                handleCoverLetterUpload(event.target.files[0]);
             }
         }
         // handleUpload(event.target.files[0]);
     };
 
-    const handleUpload = async (file) => {
+    const handleResumeUpload = async (file) => {
         try {
             setStatus("Uploading");
             const uploadResponse = await uploadResume(file);
             console.log(uploadResponse);
             setStatus(null);
-            setResume(file);
+            setResumeObject(uploadResponse.data);
+            setErrorMsg(null);
 
-
-            // const resumeId = uploadResponse.data.id;
-            // const startParseResponse = await startParseResumeTask(resumeId);
-            // console.log(startParseResponse);
-
-            // const intervalId = setInterval(async () => {
-            //     const statusResponse = await checkParseResumeTaskStatus(resumeId);
-            //     console.log(statusResponse.data);
-            //     if (statusResponse.data.status === 'SUCCESS') {
-            //         clearInterval(intervalId);
-            //         setStatus("Done!!");
-            //         setResume(file);
-            //         // Handle success (e.g., notify user, update UI)
-            //     }
-            // }, 1000);
         } catch (error) {
-            // Handle error (e.g., notify user, update UI)
+            if (error.response && error.response.status === 400) {
+                setErrorMsg(error.response.data.error);
+                setStatus(null);
+
+            } else {
+                setErrorMsg(error.response.data.error);
+                setStatus(null);
+
+            }
         }
     };
 
-    const handleResumeDelete = () => {
-        handleFileRemove('resume');
-        setResume(null);
+
+    const handleCoverLetterUpload = async (file) => {
+        try {
+            setStatus2("Uploading");
+            const uploadResponse = await uploadCoverLetter(file);
+            console.log(uploadResponse);
+            setStatus2(null);
+            setCoverLetterObject(uploadResponse.data);
+            setErrorMsg2(null);
+
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                setErrorMsg2(error.response.data.error);
+                setStatus2(null);
+
+            } else {
+                setErrorMsg2(error.response.data.error);
+                setStatus2(null);
+
+            }
+        }
+    };
+
+
+
+    const handleResumeDelete = async () => {
+        try {
+            handleFileRemove('resume');
+            const response = await apiService.delete(`resumes/delete/${resumeObject.id}/`);
+            console.log(response);
+            setResumeObject(null);
+        }
+        catch (error) {
+            console.log(error);
+        }
+        // setResume(null);
     }
 
-    const handleCoverLetterDelete = () => {
+    const handleCoverLetterDelete = async () => {
         handleFileRemove('coverLetter');
-        setCoverLetter(null);
+        try {
+            handleFileRemove('coverLetter');
+            const response = await apiService.delete(`resumes/coverletter/delete/${coverLetterObject.id}/`);
+            console.log(response);
+            setCoverLetterObject(null);
+        }
+        catch (error) {
+            console.log(error);
+        }
     }
 
     const handleFileRemove = (inputKey) => {
@@ -106,6 +161,26 @@ const ResumeUpload = ({ handleNext }) => {
     const handleNextPage = () => {
         navigate('/extension');
     }
+
+    const get_uploads = async () => {
+        try {
+            const response = await apiService.get('resumes/uploads');
+            console.log(response);
+            if (response.data.resume) {
+                setResumeObject(response.data.resume);
+            }
+            if (response.data.coverletter) {
+                setCoverLetterObject(response.data.coverletter);
+            }
+        } catch (error) {
+            console.error('Failed to fetch uploads:', error);
+        }
+    }
+
+
+    useEffect(() => {
+        get_uploads();
+    }, [])
 
     return (
         <Container>
@@ -164,7 +239,7 @@ const ResumeUpload = ({ handleNext }) => {
                                         <PrimaryWhiteButton component="label" disabled={(status !== null)}>
                                             <FileUploadOutlinedIcon fontSize='medium' />
                                             <Typography variant='body2' fontWeight={'500'}>
-                                                {!resume ? 'Upload' : 'Re Upload'}
+                                                {!resumeObject ? 'Upload' : 'Re Upload'}
                                             </Typography>
                                             <input
                                                 name='resume'
@@ -178,8 +253,18 @@ const ResumeUpload = ({ handleNext }) => {
                                         </PrimaryWhiteButton>
                                     </Grid>
                                 </Grid>
+                                {errorMsg
+                                    &&
+                                    <Grid item display={'flex'} alignItems={'center'} gap={'4px'}>
+                                        <CancelIcon fontSize='14px' htmlColor='#ff0000' />
+                                        <Typography variant='body2' fontWeight={'500'} color={'#ff0000'} letterSpacing={'0.14px'}>
+                                            {errorMsg}
+                                        </Typography>
+                                    </Grid>
+                                }
+
                                 {
-                                    resume
+                                    resumeObject
                                     &&
                                     <Grid container item paddingTop={'0.5rem'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'12px'} borderTop={'1px solid rgba(85, 185, 130, 0.30)'}>
                                         <Grid item display={'flex'} alignItems={'center'} gap={'4px'}>
@@ -200,7 +285,7 @@ const ResumeUpload = ({ handleNext }) => {
                                                 background: '#FFF',
                                             }}>
                                                 <Typography variant='body2' fontWeight={'500'} paddingTop={'8px'} paddingBottom={'8px'}>
-                                                    {resume?.name}
+                                                    {resumeObject?.filename}
                                                 </Typography>
                                                 <IconButton aria-label="delete" onClick={handleResumeDelete}>
                                                     <DeleteOutlineOutlinedIcon htmlColor='#001405' />
@@ -251,7 +336,7 @@ const ResumeUpload = ({ handleNext }) => {
                                         <PrimaryWhiteButton component="label" disabled={(status !== null)}>
                                             <FileUploadOutlinedIcon fontSize='medium' />
                                             <Typography variant='body2' fontWeight={'500'}>
-                                                {!coverLetter ? 'Upload' : 'Re Upload'}
+                                                {!coverLetterObject ? 'Upload' : 'Re Upload'}
                                             </Typography>
                                             <input
                                                 name='coverLetter'
@@ -265,8 +350,17 @@ const ResumeUpload = ({ handleNext }) => {
                                         </PrimaryWhiteButton>
                                     </Grid>
                                 </Grid>
+                                {errorMsg2
+                                    &&
+                                    <Grid item display={'flex'} alignItems={'center'} gap={'4px'}>
+                                        <CancelIcon fontSize='14px' htmlColor='#ff0000' />
+                                        <Typography variant='body2' fontWeight={'500'} color={'#ff0000'} letterSpacing={'0.14px'}>
+                                            {errorMsg2}
+                                        </Typography>
+                                    </Grid>
+                                }
                                 {
-                                    coverLetter
+                                    coverLetterObject
                                     &&
                                     <Grid container item paddingTop={'0.5rem'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'12px'} borderTop={'1px solid rgba(85, 185, 130, 0.30)'}>
                                         <Grid item display={'flex'} alignItems={'center'} gap={'4px'}>
@@ -287,7 +381,7 @@ const ResumeUpload = ({ handleNext }) => {
                                                 background: '#FFF',
                                             }}>
                                                 <Typography variant='body2' fontWeight={'500'} paddingTop={'8px'} paddingBottom={'8px'}>
-                                                    {coverLetter?.name}
+                                                    {coverLetterObject?.filename}
                                                 </Typography>
                                                 <IconButton aria-label="delete" onClick={handleCoverLetterDelete}>
                                                     <DeleteOutlineOutlinedIcon htmlColor='#001405' />
@@ -296,21 +390,21 @@ const ResumeUpload = ({ handleNext }) => {
                                         </Grid>
                                     </Grid>
                                 }
-                                {/* {
-                                    status === 'Uploading'
+                                {
+                                    status2 === 'Uploading'
                                     &&
                                     <Box textAlign={'center'}>
                                         <Dots color='#55B982' size={'18'} />
                                         <Typography variant='body2' textAlign={'center'} fontWeight={'600'} color={'#55B982'} letterSpacing={'1.2px'}>
-                                            {status}
+                                            {status2}
                                         </Typography>
                                     </Box>
-                                } */}
+                                }
                             </Grid>
                         </Card>
                     </Box>
                     <Box width={'100%'} marginTop={'1.5rem'}>
-                        <PrimaryGreenButton sx={{ width: '100%' }} variant='container' disabled={!resume} onClick={handleNext}>
+                        <PrimaryGreenButton sx={{ width: '100%' }} variant='container' disabled={!resumeObject} onClick={handleNext}>
                             Continue
                         </PrimaryGreenButton>
                     </Box>
