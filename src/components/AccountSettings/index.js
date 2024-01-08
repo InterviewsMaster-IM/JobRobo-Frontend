@@ -8,6 +8,8 @@ import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
 import CircularProgress from '@mui/material/CircularProgress';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import BillingHistory from './BillingHistory';
+import CreditsHistory from './CreditsHistory';
 
 const AccountSettings = () => {
     return (
@@ -17,7 +19,7 @@ const AccountSettings = () => {
                 paddingY={'2rem'}
                 display={'flex'}
                 flexDirection={'column'}
-                gap={2}
+                gap={3}
             >
                 <Box>
                     <Typography variant='h6' fontWeight={'500'}>
@@ -88,6 +90,8 @@ const AccountSettings = () => {
                         </Box>
                     </Card>
                 </Box>
+                <BillingHistory />
+                <CreditsHistory />
             </Box>
         </Box>
     )
