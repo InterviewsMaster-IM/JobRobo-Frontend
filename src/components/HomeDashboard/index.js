@@ -7,7 +7,7 @@ import HomePageCard from '../common/HomePageCard';
 
 const HomeDashboard = () => {
     return (
-        <Box component={"main"} sx={{ flexGrow: 1 }}>
+        <Box component={"main"} sx={{ flexGrow: 1 }} marginTop={{ sm: '0', xs: '3rem' }}>
             <FreeCreditsDisplay />
             <Box padding={'2rem'}>
                 <Typography variant='h5' fontWeight={'500'}>
