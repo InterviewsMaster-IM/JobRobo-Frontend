@@ -3,6 +3,7 @@ import { Link as LinkBase, NavLink as NavLinkBase } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
+import Drawer from '@mui/material/Drawer';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -24,6 +25,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
+import Support from '../Support';
 
 const CardContentNoPadding = styled(CardContent)(`
   padding: 0;
@@ -64,6 +66,27 @@ const NavLink = styled(NavLinkBase)(({ theme, open }) => ({
     }
 }));
 
+const NavButton = styled(Button)(({ theme, open }) => ({
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: open ? 'flex-start' : 'center',
+    gap: '8px',
+    border: '1px solid transparent',
+    textTransform: 'none',
+    color: '#001405',
+    padding: open ? '8px 12px' : '8px 0px',
+    transition: !open ? 'justify-content 1s linear, padding 1s linear' : 'none',
+
+    'svg': {
+        opacity: '0.6'
+    },
+
+    "&:hover": {
+        backgroundColor: '#FFF'
+    },
+}));
+
 const Link = styled(LinkBase)(({ theme }) => ({
     textDecoration: 'none',
     padding: '8px 16px 8px 12px',
@@ -95,7 +118,7 @@ const closedMixin = (theme) => ({
     width: `6rem`,
 });
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+const DrawerPermanent = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
         width: 280,
         flexShrink: 0,
@@ -114,6 +137,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const DesktopSidebar = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [showSupportModal, setShowSupportModal] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
 
     const handleOpenDrawer = () => {
@@ -130,6 +154,14 @@ const DesktopSidebar = () => {
 
     const handlePopoverClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleSupportModalOpen = () => {
+        setShowSupportModal(true);
+    };
+
+    const handleSupportModalClose = (reason) => {
+        setShowSupportModal(false);
     };
 
     const open = Boolean(anchorEl);
@@ -162,122 +194,124 @@ const DesktopSidebar = () => {
     );
 
     return (
-        <Box display={{ xs: 'none', sm: 'block' }}>
-            <Drawer variant="permanent" open={isSidebarOpen}>
-                <Box padding={'1.5rem'} height={'100%'} marginTop={'1rem'}>
-                    <Grid container height={'100%'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} flexWrap={'nowrap'} rowGap={'2rem'}>
-                        <Grid item width={'100%'} display={'flex'} alignItems={'center'} justifyContent={isSidebarOpen ? 'space-between' : 'center'}>
-                            <Card variant='none' sx={{ display: isSidebarOpen ? 'flex' : 'none', gap: '4px', alignItems: 'center', backgroundColor: 'transparent' }}>
-                                <CardMedia
-                                    component="img"
-                                    sx={{ width: 36 }}
-                                    image={GreenLogo}
-                                    alt="JobRobo"
-                                >
-                                </CardMedia>
-                                <CardContentNoPadding>
-                                    <Typography variant='h5' fontSize={'18px'} fontWeight={'600'} color={'#001405'}>
-                                        JobRobo
-                                    </Typography>
-                                </CardContentNoPadding>
-                            </Card>
-                            {
-                                isSidebarOpen
-                                    ?
-                                    <IconButton aria-label="toggleSideBar" onClick={handleCloseDrawer}>
-                                        <KeyboardDoubleArrowLeftIcon fontSize='medium' />
-                                    </IconButton>
-                                    :
-                                    <IconButton aria-label="toggleSideBar" onClick={handleOpenDrawer}>
-                                        <KeyboardDoubleArrowRightIcon fontSize='medium' />
-                                    </IconButton>
-                            }
-                        </Grid>
-                        <Grid item width={'100%'}>
-                            <List sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '12px' }}>
-                                <ListItem disablePadding >
-                                    <NavLink to={'/home'} open={isSidebarOpen}>
-                                        <HomeIcon />
-                                        <Typography variant='body2' fontWeight={'500'} sx={{ display: isSidebarOpen ? 'block' : 'none' }} >
-                                            Home
-                                        </Typography>
-                                    </NavLink>
-                                </ListItem>
-                                <ListItem disablePadding>
-                                    <NavLink to={'/pastjobrobo'} open={isSidebarOpen}>
-                                        <WorkIcon />
-                                        <Typography variant='body2' fontWeight={'500'} sx={{ display: isSidebarOpen ? 'block' : 'none' }} >
-                                            Past Job Robos
-                                        </Typography>
-                                    </NavLink>
-                                </ListItem>
-                                <ListItem disablePadding>
-                                    <NavLink to={'/profile'} open={isSidebarOpen}>
-                                        <DescriptionIcon />
-                                        <Typography variant='body2' fontWeight={'500'} sx={{ display: isSidebarOpen ? 'block' : 'none', transition: 'display 2.5s ease-in-out' }} >
-                                            JobRobo Profile
-                                        </Typography>
-                                    </NavLink>
-                                </ListItem>
-                            </List>
-                        </Grid>
-                        <Grid item width={'100%'} marginTop={'auto'}>
-                            <List sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '12px' }}>
-                                <ListItem disablePadding >
-                                    <NavLink to={'/home'} open={isSidebarOpen}>
-                                        <HelpOutlineIcon />
-                                        <Typography variant='body2' fontWeight={'500'} sx={{ display: isSidebarOpen ? 'block' : 'none' }} >
-                                            Support
-                                        </Typography>
-                                    </NavLink>
-                                </ListItem>
-                                <ListItem disablePadding>
-                                    <Button
-                                        aria-describedby={id}
-                                        onMouseEnter={handlePopoverOpen}
-                                        sx={{
-                                            width: '100%',
-                                            minWidth: '100%',
-                                            height: 'auto',
-                                            padding: isSidebarOpen ? '8px 12px' : '8px 0px',
-                                            border: '1px solid #E5E5E5',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: isSidebarOpen ? 'flex-start' : 'center',
-                                            gap: '8px',
-                                            textTransform: 'none',
-                                        }}>
-                                        <AccountCircleIcon htmlColor='#7F8781' />
-                                        <Typography variant='body2' textAlign={'left'} color={'#001405'} sx={{ display: isSidebarOpen ? 'block' : 'none', whiteSpace: 'wrap' }}>
-                                            Priyanshi Maheshwari
-                                        </Typography>
-                                        <IconButton sx={{ marginLeft: 'auto', display: isSidebarOpen ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center' }}>
-                                            <KeyboardArrowRightIcon />
-                                        </IconButton>
-                                    </Button>
-                                    <Popover
-                                        id={id}
-                                        open={open}
-                                        anchorEl={anchorEl}
-                                        onClose={handlePopoverClose}
-                                        anchorOrigin={{
-                                            vertical: 'bottom',
-                                            horizontal: 'right',
-                                        }}
-                                        transformOrigin={{
-                                            vertical: 'top',
-                                            horizontal: 'left',
-                                        }}
+        <>
+            <Box display={{ xs: 'none', sm: 'block' }}>
+                <DrawerPermanent variant="permanent" open={isSidebarOpen}>
+                    <Box padding={'1.5rem'} height={'100%'} marginTop={'1rem'}>
+                        <Grid container height={'100%'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} flexWrap={'nowrap'} rowGap={'2rem'}>
+                            <Grid item width={'100%'} display={'flex'} alignItems={'center'} justifyContent={isSidebarOpen ? 'space-between' : 'center'}>
+                                <Card variant='none' sx={{ display: isSidebarOpen ? 'flex' : 'none', gap: '4px', alignItems: 'center', backgroundColor: 'transparent' }}>
+                                    <CardMedia
+                                        component="img"
+                                        sx={{ width: 36 }}
+                                        image={GreenLogo}
+                                        alt="JobRobo"
                                     >
-                                        <PopOverMenu handlePopoverClose={handlePopoverClose} />
-                                    </Popover>
-                                </ListItem>
-                            </List>
+                                    </CardMedia>
+                                    <CardContentNoPadding>
+                                        <Typography variant='h5' fontSize={'18px'} fontWeight={'600'} color={'#001405'}>
+                                            JobRobo
+                                        </Typography>
+                                    </CardContentNoPadding>
+                                </Card>
+                                {
+                                    isSidebarOpen
+                                        ?
+                                        <IconButton aria-label="toggleSideBar" onClick={handleCloseDrawer}>
+                                            <KeyboardDoubleArrowLeftIcon fontSize='medium' />
+                                        </IconButton>
+                                        :
+                                        <IconButton aria-label="toggleSideBar" onClick={handleOpenDrawer}>
+                                            <KeyboardDoubleArrowRightIcon fontSize='medium' />
+                                        </IconButton>
+                                }
+                            </Grid>
+                            <Grid item width={'100%'}>
+                                <List sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '12px' }}>
+                                    <ListItem disablePadding >
+                                        <NavLink to={'/home'} open={isSidebarOpen}>
+                                            <HomeIcon />
+                                            <Typography variant='body2' fontWeight={'500'} sx={{ display: isSidebarOpen ? 'block' : 'none' }} >
+                                                Home
+                                            </Typography>
+                                        </NavLink>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                        <NavLink to={'/pastjobrobo'} open={isSidebarOpen}>
+                                            <WorkIcon />
+                                            <Typography variant='body2' fontWeight={'500'} sx={{ display: isSidebarOpen ? 'block' : 'none' }} >
+                                                Past Job Robos
+                                            </Typography>
+                                        </NavLink>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                        <NavLink to={'/profile'} open={isSidebarOpen}>
+                                            <DescriptionIcon />
+                                            <Typography variant='body2' fontWeight={'500'} sx={{ display: isSidebarOpen ? 'block' : 'none', transition: 'display 2.5s ease-in-out' }} >
+                                                JobRobo Profile
+                                            </Typography>
+                                        </NavLink>
+                                    </ListItem>
+                                </List>
+                            </Grid>
+                            <Grid item width={'100%'} marginTop={'auto'}>
+                                <List sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '12px' }}>
+                                    <ListItem disablePadding >
+                                        <NavButton open={isSidebarOpen} onClick={handleSupportModalOpen}>
+                                            <HelpOutlineIcon />
+                                            <Typography variant='body2' fontWeight={'500'} sx={{ display: isSidebarOpen ? 'block' : 'none' }} >
+                                                Support
+                                            </Typography>
+                                        </NavButton>
+                                    </ListItem>
+                                    <ListItem disablePadding>
+                                        <NavButton
+                                            open={isSidebarOpen}
+                                            aria-describedby={id}
+                                            onMouseEnter={handlePopoverOpen}
+                                            sx={{
+                                                height: 'auto',
+                                                border: '1px solid #E5E5E5',
+                                            }}>
+                                            <AccountCircleIcon />
+                                            <Typography variant='body2' textAlign={'left'} color={'#001405'} sx={{ display: isSidebarOpen ? 'block' : 'none', whiteSpace: 'wrap' }}>
+                                                Priyanshi Maheshwari
+                                            </Typography>
+                                            <IconButton sx={{ marginLeft: 'auto', display: isSidebarOpen ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center' }}>
+                                                <KeyboardArrowRightIcon />
+                                            </IconButton>
+                                        </NavButton>
+                                        <Popover
+                                            id={id}
+                                            open={open}
+                                            anchorEl={anchorEl}
+                                            onClose={handlePopoverClose}
+                                            anchorOrigin={{
+                                                vertical: 'bottom',
+                                                horizontal: 'right',
+                                            }}
+                                            transformOrigin={{
+                                                vertical: 'top',
+                                                horizontal: 'left',
+                                            }}
+                                        >
+                                            <PopOverMenu handlePopoverClose={handlePopoverClose} />
+                                        </Popover>
+                                    </ListItem>
+                                </List>
+                            </Grid>
                         </Grid>
-                    </Grid>
-                </Box>
+                    </Box>
+                </DrawerPermanent>
+            </Box>
+            <Drawer
+                anchor='right'
+                open={showSupportModal}
+                onClose={(_, reason) => { handleSupportModalClose(reason) }}
+            >
+                <Support handleSupportModalClose={handleSupportModalClose} />
             </Drawer>
-        </Box>
+        </>
     )
 }
 
