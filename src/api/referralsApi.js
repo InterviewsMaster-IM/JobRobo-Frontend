@@ -10,19 +10,18 @@ export const referralsApi = createApi({
         baseUrl: baseApiUrl,
         prepareHeaders: (headers) => {
             const accessToken = localStorage.getItem('access_token');
-            headers.set('Content-Type', 'application/json');
-            headers.set('authorization', accessToken);
+            headers.set('authorization', `Bearer ${accessToken}`);
         },
         credentials: "include",
     }),
     endpoints: (builder) => ({
-        addCreateReferrals: builder.mutation({
+        createReferrals: builder.mutation({
             query: () => ({
                 url: ApiUrls.CREATE_REFERRAL,
                 method: 'POST',
             }),
         }),
-        addValidateReferrals: builder.mutation({
+        validateReferrals: builder.mutation({
             query: ({ code }) => ({
                 url: `${ApiUrls.VALIDATE_REFERRAL}${code}/`,
                 method: 'POST',
@@ -32,6 +31,6 @@ export const referralsApi = createApi({
 });
 
 export const {
-    useAddCreateReferralsMutation,
-    useAddValidateReferralsMutation
+    useCreateReferralsMutation,
+    useValidateReferralsMutation
 } = referralsApi;

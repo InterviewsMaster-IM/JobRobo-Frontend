@@ -9,14 +9,8 @@ import { useGetUserCreditsQuery } from '../../api/creditsApi';
 import { useNavigate } from 'react-router-dom';
 
 const FreeCreditsDisplay = () => {
-    const { data: userCredits, error, isSuccess } = useGetUserCreditsQuery();
+    const { data: userCredits } = useGetUserCreditsQuery();
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (isSuccess) {
-            console.log(userCredits);
-        }
-    }, [isSuccess]);
 
     const handleUpgradePlanButton = () => {
         navigate('/pricing');
@@ -35,7 +29,7 @@ const FreeCreditsDisplay = () => {
                     <CircularProgress sx={{ color: '#001405' }} variant="determinate" value={75} />
                     <Grid item>
                         <Typography variant='body2' fontWeight={'600'}>
-                            Only 32 free credits left!
+                            Only {userCredits?.total_credits || 0} free credits left!
                         </Typography>
                         <Typography variant='body2' fontWeight={'500'} color={'#7F8781'}>
                             Upgrade now to keep auto-applying and get your next job using JobRobo

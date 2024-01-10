@@ -10,8 +10,7 @@ export const creditsApi = createApi({
         baseUrl: baseApiUrl,
         prepareHeaders: (headers) => {
             const accessToken = localStorage.getItem('access_token');
-            headers.set('Content-Type', 'application/json');
-            headers.set('authorization', accessToken);
+            headers.set('authorization', `Bearer ${accessToken}`);
         },
         credentials: "include",
     }),
