@@ -16,6 +16,7 @@ import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
 import Dots from "react-activity/dist/Dots";
 import "react-activity/dist/Dots.css";
 import { useNavigate } from 'react-router-dom';
+import { useGetUploadedFilesQuery, useUploadCoverLetterMutation, useUploadResumeMutation } from '../../api/resumesApi';
 
 // Function to upload a file
 const uploadResume = (file) => {
@@ -55,6 +56,12 @@ const checkParseResumeTaskStatus = (taskId) => {
 
 const ResumeUpload = ({ handleNext }) => {
     const navigate = useNavigate();
+    const {data: uploadedFiles} = useGetUploadedFilesQuery();
+    const [ uploadResume, uploadResumeResponse ] = useUploadResumeMutation();
+    const { isLoading: uploadResumeLoading } = uploadResumeResponse;
+
+    const [ uploadConverLetter, uploadConverLetterResponse ] = useUploadCoverLetterMutation();
+    const { isLoading: uploadConverLetterLoading } = uploadResumeResponse;
 
     const [resumeObject, setResumeObject] = useState(null);
     const [status, setStatus] = useState(null);
@@ -75,52 +82,63 @@ const ResumeUpload = ({ handleNext }) => {
                 handleCoverLetterUpload(event.target.files[0]);
             }
         }
-        // handleUpload(event.target.files[0]);
     };
 
     const handleResumeUpload = async (file) => {
         try {
-            setStatus("Uploading");
-            const uploadResponse = await uploadResume(file);
-            console.log(uploadResponse);
-            setStatus(null);
-            setResumeObject(uploadResponse.data);
-            setErrorMsg(null);
-
+            const response = await uploadResume(file);
+            console.log('Resume uploaded successfully', response);
         } catch (error) {
-            if (error.response && error.response.status === 400) {
-                setErrorMsg(error.response.data.error);
-                setStatus(null);
-
-            } else {
-                setErrorMsg(error.response.data.error);
-                setStatus(null);
-
-            }
+            console.error('Error uploading Resume', error);
         }
+        // try {
+        //     setStatus("Uploading");
+        //     const uploadResponse = await uploadResume(file);
+        //     console.log(uploadResponse);
+        //     setStatus(null);
+        //     setResumeObject(uploadResponse.data);
+        //     setErrorMsg(null);
+
+        // } catch (error) {
+        //     if (error.response && error.response.status === 400) {
+        //         setErrorMsg(error.response.data.error);
+        //         setStatus(null);
+
+        //     } else {
+        //         setErrorMsg(error.response.data.error);
+        //         setStatus(null);
+
+        //     }
+        // }
     };
 
 
     const handleCoverLetterUpload = async (file) => {
         try {
-            setStatus2("Uploading");
-            const uploadResponse = await uploadCoverLetter(file);
-            console.log(uploadResponse);
-            setStatus2(null);
-            setCoverLetterObject(uploadResponse.data);
-            setErrorMsg2(null);
-
+            const response = await uploadConverLetter(file);
+            console.log('Conver letter uploaded successfully', response);
         } catch (error) {
-            if (error.response && error.response.status === 400) {
-                setErrorMsg2(error.response.data.error);
-                setStatus2(null);
-
-            } else {
-                setErrorMsg2(error.response.data.error);
-                setStatus2(null);
-
-            }
+            console.error('Error uploading Cover letter', error);
         }
+        // try {
+        //     setStatus2("Uploading");
+        //     const uploadResponse = await uploadCoverLetter(file);
+        //     console.log(uploadResponse);
+        //     setStatus2(null);
+        //     setCoverLetterObject(uploadResponse.data);
+        //     setErrorMsg2(null);
+
+        // } catch (error) {
+        //     if (error.response && error.response.status === 400) {
+        //         setErrorMsg2(error.response.data.error);
+        //         setStatus2(null);
+
+        //     } else {
+        //         setErrorMsg2(error.response.data.error);
+        //         setStatus2(null);
+
+        //     }
+        // }
     };
 
 
@@ -164,7 +182,7 @@ const ResumeUpload = ({ handleNext }) => {
 
     const get_uploads = async () => {
         try {
-            const response = await apiService.get('resumes/uploads');
+            const response = await apiService.get('resumes/uploads/');
             console.log(response);
             if (response.data.resume) {
                 setResumeObject(response.data.resume);
@@ -176,7 +194,6 @@ const ResumeUpload = ({ handleNext }) => {
             console.error('Failed to fetch uploads:', error);
         }
     }
-
 
     useEffect(() => {
         get_uploads();

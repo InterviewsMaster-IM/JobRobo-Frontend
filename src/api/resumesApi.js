@@ -10,43 +10,81 @@ export const resumesApi = createApi({
         baseUrl: baseApiUrl,
         prepareHeaders: (headers) => {
             const accessToken = localStorage.getItem('access_token');
-            headers.set('Content-Type', 'application/json');
-            headers.set('authorization', accessToken);
+            headers.set('authorization', `Bearer ${accessToken}`);
         },
         credentials: "include",
     }),
     endpoints: (builder) => ({
-        getResumeCheckTask: builder.query({
+        getUploadedFiles: builder.query({
+            query: () => ({
+                url: ApiUrls.RESUME_UPLOADED,
+                method: 'GET',
+            }),
+        }),
+        resumeCheckTask: builder.query({
             query: ({ taskId }) => ({
                 url: `${ApiUrls.RESUME_CHECK_TASK}${taskId}/`,
                 method: 'GET',
             }),
         }),
-        addResumeUpload: builder.mutation({
-            query: () => ({
-                url: ApiUrls.RESUME_UPLOAD,
-                method: 'POST',
-            }),
+        uploadResume: builder.mutation({
+            query: (file) => {
+                const formData = new FormData();
+                formData.append('file', file);
+                return {
+                    url: ApiUrls.RESUME_UPLOAD,
+                    method: 'POST',
+                    body: formData,
+                    formData: true,
+                }
+            },
         }),
-        addResumeQA: builder.mutation({
+        resumeQA: builder.mutation({
             query: () => ({
                 url: ApiUrls.RESUME_QA,
                 method: 'POST',
             }),
         }),
-        addResumeStartTask: builder.mutation({
+        resumeStartTask: builder.mutation({
             query: () => ({
                 url: ApiUrls.RESUME_START_TASK,
                 method: 'POST',
             }),
         }),
-
+        deleteResume: builder.mutation({
+            query: (resumeId) => ({
+                url: `${ApiUrls.RESUME_DELETE}${resumeId}`,
+                method: 'DELETE',
+            }),
+        }),
+        uploadCoverLetter: builder.mutation({
+            query: (file) => {
+                const formData = new FormData();
+                formData.append('file', file);
+                return {
+                    url: ApiUrls.COVER_LETTER_UPLOAD,
+                    method: 'POST',
+                    body: formData,
+                    formData: true,
+                }
+            },
+        }),
+        deleteCoverLetter: builder.mutation({
+            query: (coverLetterId) => ({
+                url: `${ApiUrls.COVER_LETTER_DELETE}${coverLetterId}`,
+                method: 'DELETE',
+            }),
+        }),
     }),
 });
 
 export const {
-    getResumeCheckTask,
-    addResumeUpload,
-    addResumeQA,
-    addResumeStartTask
+    useGetUploadedFilesQuery,
+    useResumeCheckTaskQuery,
+    useUploadResumeMutation,
+    useResumeQAMutation,
+    useResumeStartTaskMutation,
+    useDeleteResumeMutation,
+    useUploadCoverLetterMutation,
+    useDeleteCoverLetterMutation,
 } = resumesApi;
