@@ -3,7 +3,6 @@ import { NavLink as NavLinkBase } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -12,6 +11,7 @@ import ListItem from '@mui/material/ListItem';
 import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import Popover from "@mui/material/Popover";
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import LogoImage from '../../assets/images/FinnTheHuman.svg';
@@ -20,6 +20,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import WorkIcon from '@mui/icons-material/Work';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import PopOverMenu from './PopOverMenu';
 
 const CardContentNoPadding = styled(CardContent)(`
   padding: 0;
@@ -39,7 +40,7 @@ const NavLink = styled(NavLinkBase)(({ theme }) => ({
     textDecoration: 'none',
     padding: '8px 12px',
     color: '#FFF',
-    
+
     'svg': {
         opacity: '0.8'
     },
@@ -55,24 +56,47 @@ const NavLink = styled(NavLinkBase)(({ theme }) => ({
     }
 }));
 
+const NavButton = styled(Button)(({ theme }) => ({
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    gap: '8px',
+    border: '1px solid transparent',
+    textTransform: 'none',
+    padding: '8px 12px',
+    color: '#FFF',
+}))
 
-const MobileSidebar = () => {
+const MobileSidebar = ({ handleSupportModalOpen }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
 
     const toggleSidebar = (value) => {
         setIsSidebarOpen(value);
     }
 
+    const handlePopoverOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handlePopoverClose = () => {
+        setAnchorEl(null);
+    };
+
+    const open = Boolean(anchorEl);
+    const id = open ? "simple-popover-mobile" : undefined;
+
     return (
         <Box display={{ sm: 'none', xs: 'block' }} position={'relative'}>
             <IconButton onClick={() => toggleSidebar(true)} sx={{ position: 'fixed', top: '10px', left: '10px', zIndex: '10', borderRadius: '6px', border: '1px solid #E5E5E5', padding: '0px 8px' }}>
-                <MenuOutlinedIcon fontSize='large'/>
+                <MenuOutlinedIcon fontSize='large' />
             </IconButton>
             <Drawer
                 anchor='left'
                 open={isSidebarOpen}
                 onClose={() => toggleSidebar(false)}
-                sx={{ display: { sm: 'none' }}}
+                sx={{ display: { sm: 'none' } }}
             >
                 <Box padding={'1.5rem'} paddingTop={'2.5rem'} height={'100%'} sx={{ backgroundColor: '#55B982' }}>
                     <Grid container height={'100%'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} flexWrap={'nowrap'} rowGap={'2rem'}>
@@ -119,34 +143,45 @@ const MobileSidebar = () => {
                                     </NavLink>
                                 </ListItem>
                                 <ListItem disablePadding >
-                                    <NavLink to={'/home'}>
+                                    <NavButton open={isSidebarOpen} onClick={handleSupportModalOpen}>
                                         <HelpOutlineIcon />
                                         <Typography variant='body2' fontWeight={'500'}>
                                             Support
                                         </Typography>
-                                    </NavLink>
+                                    </NavButton>
                                 </ListItem>
                                 <ListItem disablePadding>
-                                    <Button sx={{
-                                        width: '100%',
-                                        minWidth: '100%',
-                                        height: 'auto',
-                                        padding: '8px 12px',
-                                        border: '1px solid #FFF',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'flex-start',
-                                        gap: '8px',
-                                        textTransform: 'none',
-                                        marginTop: '10px'
-                                    }}>
+                                    <NavButton
+                                        aria-describedby={id}
+                                        onMouseEnter={handlePopoverOpen}
+                                        sx={{
+                                            height: 'auto',
+                                            border: '1px solid #FFF',
+                                            marginTop: '10px'
+                                        }}>
                                         <Typography variant='body2' textAlign={'left'} color={'#FFF'} sx={{ whiteSpace: 'wrap' }}>
                                             Priyanshi Maheshwari
                                         </Typography>
-                                        <IconButton sx={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center'  }}>
-                                            <KeyboardArrowRightIcon htmlColor='#FFF'/>
+                                        <IconButton sx={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <KeyboardArrowRightIcon htmlColor='#FFF' />
                                         </IconButton>
-                                    </Button>
+                                    </NavButton>
+                                    <Popover
+                                        id={id}
+                                        open={open}
+                                        anchorEl={anchorEl}
+                                        onClose={handlePopoverClose}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'right',
+                                        }}
+                                        transformOrigin={{
+                                            vertical: 'top',
+                                            horizontal: 'left',
+                                        }}
+                                    >
+                                        <PopOverMenu handlePopoverClose={handlePopoverClose} />
+                                    </Popover>
                                 </ListItem>
                             </List>
                         </Grid>

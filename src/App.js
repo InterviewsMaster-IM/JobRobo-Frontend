@@ -13,6 +13,7 @@ import ProfilePage from './pages/ProfilePage';
 import AccountSettingsPage from './pages/AccountSettingsPage';
 import ResumeQuestionsTests from './pages/resumeQuestionsTest';
 import PricingPage from './pages/PricingPage';
+import MainLayout from './components/Layouts/MainLayout';
 
 function App() {
     return (
@@ -23,11 +24,13 @@ function App() {
                     <Route path="/token-handler" element={<TokenHandler></TokenHandler>} />
                     <Route path="/dashboard" element={<ProtectedRoute component={DashboardPage}></ProtectedRoute>} />
                     <Route path="/onboarding" element={<ProtectedRoute component={OnboardingPage}></ProtectedRoute>} />
-                    <Route path="/home" element={<ProtectedRoute component={HomePage}></ProtectedRoute>} />
-                    <Route path="/pastjobrobo" element={<ProtectedRoute component={PastJobRoboPage}></ProtectedRoute>} />
-                    <Route path="/pastjobrobo/:id" element={<ProtectedRoute component={AppliedJobDetails}></ProtectedRoute>} />
-                    <Route path="/profile" element={<ProtectedRoute component={ProfilePage}></ProtectedRoute>} />
-                    <Route path="/settings" element={<ProtectedRoute component={AccountSettingsPage}></ProtectedRoute>} />
+                    <Route element={<MainLayout />}>
+                        <Route path="/home" element={<ProtectedRoute component={HomePage}></ProtectedRoute>} />
+                        <Route path="/pastjobrobo" element={<ProtectedRoute component={PastJobRoboPage}></ProtectedRoute>} />
+                        <Route path="/pastjobrobo/:id" element={<ProtectedRoute component={AppliedJobDetails}></ProtectedRoute>} />
+                        <Route path="/profile" element={<ProtectedRoute component={ProfilePage}></ProtectedRoute>} />
+                        <Route path="/settings" element={<ProtectedRoute component={AccountSettingsPage}></ProtectedRoute>} />
+                    </Route>
                     <Route path="/pricing" element={<ProtectedRoute component={PricingPage}></ProtectedRoute>} />
                     <Route path="/test" element={<ProtectedRoute component={ResumeQuestionsTests}></ProtectedRoute>} />
                 </Routes>

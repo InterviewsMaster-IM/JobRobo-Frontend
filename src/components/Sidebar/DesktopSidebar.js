@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Link as LinkBase, NavLink as NavLinkBase } from 'react-router-dom';
+import { NavLink as NavLinkBase, useLocation } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
-import Drawer from '@mui/material/Drawer';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -23,9 +22,7 @@ import WorkIcon from '@mui/icons-material/Work';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
-import SettingsIcon from '@mui/icons-material/Settings';
-import LogoutIcon from '@mui/icons-material/Logout';
-import Support from '../Support';
+import PopOverMenu from './PopOverMenu';
 
 const CardContentNoPadding = styled(CardContent)(`
   padding: 0;
@@ -66,7 +63,7 @@ const NavLink = styled(NavLinkBase)(({ theme, open }) => ({
     }
 }));
 
-const NavButton = styled(Button)(({ theme, open }) => ({
+const NavButton = styled(Button)(({ theme, open, selected }) => ({
     width: '100%',
     display: 'flex',
     alignItems: 'center',
@@ -75,29 +72,18 @@ const NavButton = styled(Button)(({ theme, open }) => ({
     border: '1px solid transparent',
     textTransform: 'none',
     color: '#001405',
+    background: selected ? 'linear-gradient(0deg, rgba(85, 185, 130, 0.10) 0%, rgba(85, 185, 130, 0.10) 100%), #FFF' : '#FFF',
     padding: open ? '8px 12px' : '8px 0px',
     transition: !open ? 'justify-content 1s linear, padding 1s linear' : 'none',
 
     'svg': {
-        opacity: '0.6'
+        color: selected ? '#55B982' : '#001405',
+        opacity: selected ? '1' : '0.6'
     },
 
     "&:hover": {
         backgroundColor: '#FFF'
     },
-}));
-
-const Link = styled(LinkBase)(({ theme }) => ({
-    textDecoration: 'none',
-    padding: '8px 16px 8px 12px',
-    display: 'flex',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    gap: '8px',
-    borderRadius: '8px',
-    background: 'rgba(85, 185, 130, 0.1)',
-    color: '#001405',
-    opacity: 0.7,
 }));
 
 const openedMixin = (theme) => ({
@@ -135,10 +121,10 @@ const DrawerPermanent = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !=
     }),
 );
 
-const DesktopSidebar = () => {
+const DesktopSidebar = ({ handleSupportModalOpen }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [showSupportModal, setShowSupportModal] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
+    const location = useLocation();
 
     const handleOpenDrawer = () => {
         setIsSidebarOpen(true);
@@ -156,42 +142,8 @@ const DesktopSidebar = () => {
         setAnchorEl(null);
     };
 
-    const handleSupportModalOpen = () => {
-        setShowSupportModal(true);
-    };
-
-    const handleSupportModalClose = (reason) => {
-        setShowSupportModal(false);
-    };
-
     const open = Boolean(anchorEl);
     const id = open ? "simple-popover" : undefined;
-
-    const PopOverMenu = ({ handlePopoverClose }) => (
-        <Box width={'15rem'} padding={'8px'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}
-            sx={{
-                boxSizing: 'border-box',
-                borderRadius: '6px',
-                border: '1px solid rgba(11, 19, 36, 0.07)',
-                background: 'rgba(85, 185, 130, 0.1)',
-                boxShadow: '0px 5px 12px 0px rgba(11, 19, 36, 0.2), 0px 1px 5px 0px rgba(11, 19, 36, 0.1)',
-            }}
-            onMouseLeave={handlePopoverClose}
-        >
-            <Link to="/settings" onClick={handlePopoverClose}>
-                <SettingsIcon />
-                <Typography variant='body2' color={'#001405'}>
-                    Account settings
-                </Typography>
-            </Link>
-            <Link to="/signout">
-                <LogoutIcon />
-                <Typography variant='body2' color={'#001405'}>
-                    Sign out
-                </Typography>
-            </Link>
-        </Box>
-    );
 
     return (
         <>
@@ -269,12 +221,13 @@ const DesktopSidebar = () => {
                                             open={isSidebarOpen}
                                             aria-describedby={id}
                                             onMouseEnter={handlePopoverOpen}
+                                            selected={location.pathname === '/settings'}
                                             sx={{
                                                 height: 'auto',
-                                                border: '1px solid #E5E5E5',
+                                                border: location.pathname === '/settings' ? '1px solid #55B982' : '1px solid #E5E5E5',
                                             }}>
                                             <AccountCircleIcon />
-                                            <Typography variant='body2' textAlign={'left'} color={'#001405'} sx={{ display: isSidebarOpen ? 'block' : 'none', whiteSpace: 'wrap' }}>
+                                            <Typography variant='body2' textAlign={'left'} sx={{ display: isSidebarOpen ? 'block' : 'none', whiteSpace: 'wrap' }}>
                                                 Priyanshi Maheshwari
                                             </Typography>
                                             <IconButton sx={{ marginLeft: 'auto', display: isSidebarOpen ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center' }}>
@@ -304,13 +257,6 @@ const DesktopSidebar = () => {
                     </Box>
                 </DrawerPermanent>
             </Box>
-            <Drawer
-                anchor='right'
-                open={showSupportModal}
-                onClose={(_, reason) => { handleSupportModalClose(reason) }}
-            >
-                <Support handleSupportModalClose={handleSupportModalClose} />
-            </Drawer>
         </>
     )
 }

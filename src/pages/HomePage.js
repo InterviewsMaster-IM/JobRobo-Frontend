@@ -1,12 +1,9 @@
-import React from 'react'
-import MainLayout from '../components/Layouts/MainLayout';
+import React from 'react';
 import HomeDashboard from '../components/HomeDashboard';
 
 const HomePage = () => {
     return (
-        <MainLayout>
-            <HomeDashboard />
-        </MainLayout>
+        <HomeDashboard />
     )
 }
 
