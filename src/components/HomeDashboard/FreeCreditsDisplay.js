@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -7,15 +7,18 @@ import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
 import { PrimaryWhiteButton } from '../../styles/Buttons';
 import { useGetUserCreditsQuery } from '../../api/creditsApi';
 import { useNavigate } from 'react-router-dom';
-import apiService from '../../services/apiService'
 
 const FreeCreditsDisplay = () => {
-    const { data: userCredits } = useGetUserCreditsQuery();
+    const { data: userCredits, refetch: fetchCredits } = useGetUserCreditsQuery();
     const navigate = useNavigate();
 
     const handleUpgradePlanButton = () => {
         navigate('/pricing');
     }
+
+    useEffect(() => {
+        fetchCredits();
+    }, []);
 
     return (
         <Box width={'100%'} sx={{
@@ -27,7 +30,7 @@ const FreeCreditsDisplay = () => {
         }}>
             <Grid container width={'100%'} display={'flex'} alignItems={'center'} justifyContent={'space-between'} gap={'20px'}>
                 <Grid item display={'flex'} alignItems={'center'} justifyContent={'flex-start'} gap={'12px'}>
-                    <CircularProgress sx={{ color: '#001405' }} variant="determinate" value={(credits ? credits.total_credits : 0) / 50 * 100} />
+                    <CircularProgress sx={{ color: '#001405' }} variant="determinate" value={75} />
                     <Grid item>
                         <Typography variant='body2' fontWeight={'600'}>
                             Only {userCredits?.total_credits || 0} free credits left!
