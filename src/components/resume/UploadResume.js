@@ -70,7 +70,6 @@ const ResumeUpload = ({ handleNext }) => {
         try {
             const response = await uploadCoverLetter(file);
             toast.custom(<CustomToast type={"success"} message={NotificationMessages.COVER_LETTER_UPLOAD_SUCCESS} />);
-            console.log('Conver letter uploaded successfully', response);
         } catch (error) {
             toast.custom(<CustomToast type={"error"} message={error.message} />);
         }
