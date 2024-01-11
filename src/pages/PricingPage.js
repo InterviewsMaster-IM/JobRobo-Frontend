@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Container from "@mui/material/Container";
 import Typography from '@mui/material/Typography';
@@ -8,12 +8,12 @@ import { useNavigate } from 'react-router-dom';
 import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined';
 import RectangleMask from '../assets/images/Rectanglesmaskgroup.png';
 import PricingCard from '../components/Pricing/PricingCard';
-import apiService from '../services/apiService';
+import { useGetCreditPlansQuery } from '../api/creditsApi';
 
 const PricingPage = () => {
     const navigate = useNavigate();
+    const { data: plans, isLoading } = useGetCreditPlansQuery();
     const [activePlan, setActivePlan] = useState("STANDARD");
-    const [plans, setPlans] = useState([]);
 
     const handleActivePlan = (plan) => {
         setActivePlan(plan);
@@ -22,24 +22,6 @@ const PricingPage = () => {
     const handleNavigateBack = () => {
         navigate(-1);
     }
-
-    const getPlans = async () => {
-        try {
-            const response = await apiService.get('credits/credit-plans/');
-            if (response.status === 200) {
-                setPlans(response.data);
-            } else {
-                console.error('Failed to fetch plans:', response.status);
-            }
-        } catch (error) {
-            console.error('An error occurred while fetching plans:', error);
-        }
-    }
-
-    useEffect(() => {
-        getPlans();
-    }, [])
-
 
     return (
         <Box minHeight={'100vh'} paddingTop={'4rem'} display={'flex'}
@@ -66,9 +48,16 @@ const PricingPage = () => {
                         </Typography>
                         <Box display={'flex'} alignItems={'center'} justifyContent={'flex-start'} gap={'46px'}>
                             {
-                                plans.map((plan, index) => {
+                                plans?.map((plan, index) => {
                                     return (
-                                        <PricingCard key={index} name={plan.name} price={plan.price} benefits={plan.description.split('\n')} activePlan={activePlan} handleActivePlan={handleActivePlan} />
+                                        <PricingCard
+                                            key={index}
+                                            name={plan.name}
+                                            price={plan.price}
+                                            benefits={plan.description.split('\n')}
+                                            activePlan={activePlan}
+                                            handleActivePlan={handleActivePlan}
+                                        />
                                     )
                                 })
                             }

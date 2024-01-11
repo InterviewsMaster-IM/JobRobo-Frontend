@@ -28,7 +28,7 @@ const PricingCard = (props) => {
         >
             <Box width={'100%'} height={'100%'} position={'relative'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} justifyContent={'space-between'}>
                 {
-                    name === 'standard'
+                    name === 'STANDARD'
                     &&
                     <Box position={'absolute'} top={'0'} right={'0'} padding={'4px 12px'} border={'1px solid #55B982'} borderRadius={'24px'} >
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'} letterSpacing={'0.72px'} color={'#55B982'}>
