@@ -15,8 +15,10 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
 import Dots from "react-activity/dist/Dots";
 import "react-activity/dist/Dots.css";
-import { useNavigate } from 'react-router-dom';
+import toast from "react-hot-toast";
 import { useDeleteCoverLetterMutation, useDeleteResumeMutation, useGetUploadedFilesQuery, useUploadCoverLetterMutation, useUploadResumeMutation } from '../../api/resumesApi';
+import CustomToast from '../common/CustomToast';
+import NotificationMessages from '../../utils/notificationConstants';
 
 //start parsing the resume after uploading
 const startParseResumeTask = (resumeId) => {
@@ -30,7 +32,7 @@ const checkParseResumeTaskStatus = (taskId) => {
 
 const ResumeUpload = ({ handleNext }) => {
 
-    const { data: uploadedFiles, isLoading: getFilesLoading, isSuccess: getFilesSuccess, isError: getFilesError } = useGetUploadedFilesQuery();
+    const { data: uploadedFiles, isLoading: getFilesLoading } = useGetUploadedFilesQuery();
     const resume = uploadedFiles?.resume;
     const coverletter = uploadedFiles?.coverletter;
 
@@ -58,18 +60,19 @@ const ResumeUpload = ({ handleNext }) => {
     const handleResumeUpload = async (file) => {
         try {
             const response = await uploadResume(file);
-            console.log('Resume uploaded successfully', response);
+            toast.custom(<CustomToast type={"success"} message={NotificationMessages.RESUME_UPLOAD_SUCCESS} />);
         } catch (error) {
-            console.error('Error uploading Resume', error);
+            toast.custom(<CustomToast type={"error"} message={error.message} />);
         }
     };
 
     const handleCoverLetterUpload = async (file) => {
         try {
             const response = await uploadCoverLetter(file);
+            toast.custom(<CustomToast type={"success"} message={NotificationMessages.COVER_LETTER_UPLOAD_SUCCESS} />);
             console.log('Conver letter uploaded successfully', response);
         } catch (error) {
-            console.error('Error uploading Cover letter', error);
+            toast.custom(<CustomToast type={"error"} message={error.message} />);
         }
     };
 
@@ -77,9 +80,9 @@ const ResumeUpload = ({ handleNext }) => {
         handleFileRemove('resume');
         try {
             const response = await deleteResume(resume.id);
-            console.log('Resume Deleted successfully', response);
+            toast.custom(<CustomToast type={"success"} message={NotificationMessages.RESUME_DELETE_SUCCESS} />);
         } catch (error) {
-            console.error('Error Deleting Resume', error);
+            toast.custom(<CustomToast type={"error"} message={error.message} />);
         }
     }
 
@@ -87,9 +90,9 @@ const ResumeUpload = ({ handleNext }) => {
         handleFileRemove('coverLetter');
         try {
             const response = await deleteCoverLetter(coverletter.id);
-            console.log('Cover Letter Deleted successfully', response);
+            toast.custom(<CustomToast type={"success"} message={NotificationMessages.COVER_LETTER_DELETE_SUCCESS} />);
         } catch (error) {
-            console.error('Error Deleting Cover letter ', error);
+            toast.custom(<CustomToast type={"error"} message={error.message} />);
         }
     }
 
