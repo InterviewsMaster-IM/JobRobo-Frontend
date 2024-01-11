@@ -20,6 +20,7 @@ export const resumesApi = createApi({
                 url: ApiUrls.RESUME_UPLOADED,
                 method: 'GET',
             }),
+            providesTags: ['uploadedFiles']
         }),
         resumeCheckTask: builder.query({
             query: ({ taskId }) => ({
@@ -38,6 +39,7 @@ export const resumesApi = createApi({
                     formData: true,
                 }
             },
+            invalidatesTags: ['uploadedFiles']
         }),
         resumeQA: builder.mutation({
             query: () => ({
@@ -56,6 +58,7 @@ export const resumesApi = createApi({
                 url: `${ApiUrls.RESUME_DELETE}${resumeId}`,
                 method: 'DELETE',
             }),
+            invalidatesTags: ['uploadedFiles'],
         }),
         uploadCoverLetter: builder.mutation({
             query: (file) => {
@@ -68,12 +71,14 @@ export const resumesApi = createApi({
                     formData: true,
                 }
             },
+            invalidatesTags: ['uploadedFiles']
         }),
         deleteCoverLetter: builder.mutation({
             query: (coverLetterId) => ({
                 url: `${ApiUrls.COVER_LETTER_DELETE}${coverLetterId}`,
                 method: 'DELETE',
             }),
+            invalidatesTags: ['uploadedFiles'],
         }),
     }),
 });
