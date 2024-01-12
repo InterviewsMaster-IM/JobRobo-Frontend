@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import apiService from "../../services/apiService";
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
@@ -20,15 +19,6 @@ import { useDeleteCoverLetterMutation, useDeleteResumeMutation, useGetUploadedFi
 import CustomToast from '../common/CustomToast';
 import NotificationMessages from '../../utils/notificationConstants';
 
-//start parsing the resume after uploading
-const startParseResumeTask = (resumeId) => {
-    return apiService.post('resumes/start-task/', { resume_id: resumeId });
-};
-
-// Function to check the status of a resume parsing task
-const checkParseResumeTaskStatus = (taskId) => {
-    return apiService.get(`resumes/check-task/${taskId}/`);
-};
 
 const ResumeUpload = ({ handleNext }) => {
 

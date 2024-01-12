@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
@@ -10,7 +10,6 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
-import apiService from '../../services/apiService';
 import { format, add } from 'date-fns';
 
 const columns = [
@@ -37,24 +36,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
 }));
 
-const CreditsHistory = () => {
-
-    const [history, setHistory] = useState([]);
-
-    const getHistory = async () => {
-        try {
-            const response = await apiService.get('credits/credit-history/');
-            if (response.status === 200 && response.data) {
-                setHistory(response.data);
-            }
-        } catch (error) {
-            console.error('Failed to fetch credits history:', error);
-        }
-    };
-
-    useEffect(() => {
-        getHistory();
-    }, []);
+const CreditsHistory = ({ history }) => {
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -69,7 +51,7 @@ const CreditsHistory = () => {
     };
 
     const parseDuration = (duration) => {
-        const [days, time] = duration.split(' ');
+        const [days, time] = (duration || "30 00:00:00").split(' ');
         const [hours, minutes, seconds] = time.split(':');
         return { days: parseInt(days, 10), hours: parseInt(hours, 10), minutes: parseInt(minutes, 10), seconds: parseInt(seconds, 10) };
     };
@@ -100,30 +82,16 @@ const CreditsHistory = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {history
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((historyEntry) => {
+                            {history?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map((historyEntry, index) => {
+                                    const duration = parseDuration(historyEntry?.plan?.expiry_duration);
+                                    const expiryDate = add(new Date(historyEntry?.date), { days: duration?.days, hours: duration?.hours, minutes: duration?.minutes, seconds: duration?.seconds });
                                     return (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={historyEntry.id}>
-                                            {columns.map((column) => {
-                                                let value = historyEntry[column.id];
-                                                if (column.id === 'plan') {
-                                                    value = historyEntry.plan.name;
-                                                } else if (column.id === 'date') {
-                                                    value = format(new Date(historyEntry.date), 'dd MMM yyyy');
-                                                } else if (column.id === 'credits') {
-                                                    value = column.format(parseFloat(historyEntry.plan.credits));
-                                                } else if (column.id === 'expiry') {
-                                                    const duration = parseDuration(historyEntry.plan.expiry_duration);
-                                                    const expiryDate = add(new Date(historyEntry.date), { days: duration.days, hours: duration.hours, minutes: duration.minutes, seconds: duration.seconds });
-                                                    value = format(expiryDate, 'dd MMM yyyy');
-                                                }
-                                                return (
-                                                    <StyledTableCell key={column.id} align={column.align}>
-                                                        {value}
-                                                    </StyledTableCell>
-                                                );
-                                            })}
+                                        <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                                            <StyledTableCell>{historyEntry?.plan?.name}</StyledTableCell>
+                                            <StyledTableCell>{format(new Date(historyEntry?.date), 'dd MMM yyyy')}</StyledTableCell>
+                                            <StyledTableCell>{historyEntry?.plan?.credits}</StyledTableCell>
+                                            <StyledTableCell>{format(new Date(expiryDate), 'dd MMM yyyy')}</StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -133,7 +101,7 @@ const CreditsHistory = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25, 50, 100]}
                     component="div"
-                    count={history.length}
+                    count={history?.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}

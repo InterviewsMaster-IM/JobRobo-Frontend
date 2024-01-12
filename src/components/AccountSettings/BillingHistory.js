@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
@@ -10,7 +10,6 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
-import apiService from '../../services/apiService';
 import { format } from 'date-fns';
 
 const columns = [
@@ -36,24 +35,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
 }));
 
-const BillingHistory = () => {
-
-    const [history, setHistory] = useState([]);
-
-    const getHistory = async () => {
-        try {
-            const response = await apiService.get('credits/credit-history/');
-            if (response.status === 200 && response.data) {
-                setHistory(response.data);
-            }
-        } catch (error) {
-            console.error('Failed to fetch billing history:', error);
-        }
-    };
-
-    useEffect(() => {
-        getHistory();
-    }, []);
+const BillingHistory = ({ history }) => {
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -93,14 +75,13 @@ const BillingHistory = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {history
-                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            {history?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((historyEntry, index) => {
                                     return (
                                         <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                                            <StyledTableCell>{historyEntry.plan.name}</StyledTableCell>
-                                            <StyledTableCell>{format(new Date(historyEntry.date), 'dd MMM yyyy')}</StyledTableCell>
-                                            <StyledTableCell>{columns.find(x => x.id === 'amount').format(parseFloat(historyEntry.plan.price))}</StyledTableCell>
+                                            <StyledTableCell>{historyEntry?.plan?.name}</StyledTableCell>
+                                            <StyledTableCell>{format(new Date(historyEntry?.date), 'dd MMM yyyy')}</StyledTableCell>
+                                            <StyledTableCell>{columns.find(x => x.id === 'amount').format(parseFloat(historyEntry?.plan?.price))}</StyledTableCell>
                                         </TableRow>
                                     );
                                 })}
@@ -110,7 +91,7 @@ const BillingHistory = () => {
                 <TablePagination
                     rowsPerPageOptions={[5, 10, 25, 50, 100]}
                     component="div"
-                    count={history.length}
+                    count={history?.length}
                     rowsPerPage={rowsPerPage}
                     page={page}
                     onPageChange={handleChangePage}
