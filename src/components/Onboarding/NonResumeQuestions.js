@@ -7,9 +7,11 @@ import Select from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Card from '@mui/material/Card';
-import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
-import { useNavigate } from 'react-router-dom';
-import { booleanValues, disabilityStatusOptions, raceOptionsList, veteranStatusOptions, workPreferenceOptions } from '../../utils/Constants';
+import { PrimaryGreenButton } from '../../styles/Buttons';
+import { booleanValues, disabilityStatusOptions, raceOptionsList, salaryCurrencyOptions, veteranStatusOptions, workPreferenceOptions } from '../../utils/Constants';
+import { useAddNonResumeOnboardingDetailsMutation } from '../../api/profileApi';
+import toast from 'react-hot-toast';
+import CustomToast from '../common/CustomToast';
 
 const initialFormData = {
     race: '',
@@ -34,37 +36,55 @@ const MenuProps = {
 const NonResumeQuestions = ({ handleNext }) => {
 
     const [formData, setFormData] = useState(initialFormData);
-
-    useEffect(() => {
-        console.log(formData);
-    }, [formData])
+    const [addNonResumeOnboardingDetails] = useAddNonResumeOnboardingDetailsMutation();
 
     const handleChange = (event) => {
         const { name, value } = event.target;
         setFormData({ ...formData, [name]: value });
-        console.log(formData);
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        // Process or submit the form data as needed
-        console.log(formData);
+        const nonResumeFormData = getFormData();
+        try {
+            const response = await addNonResumeOnboardingDetails(nonResumeFormData);
+            if (response?.data?.message === 'successful') {
+                handleNext();
+            }
+        } catch (error) {
+            toast.custom(<CustomToast type={"error"} message={error.message} />);
+        }
     };
 
-    const renderValue = (selected) => {
-        console.log(selected);
+    const getFormData = () => {
+        const nonResumeFormData = new FormData();
+
+        Object.entries(formData).map(([key, value]) => {
+            nonResumeFormData.append(key, value);
+            return null;
+        });
+
+        return nonResumeFormData;
+    }
+
+    const renderValue = (selected, options) => {
         if (selected === '') {
             return <Typography color={'#7F8781'}>Select an option</Typography>
         }
-        return selected.label;
+        else {
+            const selectedOption = options.find((option) => option.value === selected);
+            return selectedOption ? selectedOption.label : '';
+        }
     };
 
-    const renderMultipleValues = (selected) => {
-        console.log(selected);
+    const renderMultipleValues = (selected, options) => {
         if (selected.length === 0) {
             return <Typography color={'#7F8781'}>Select</Typography>;
         }
-        return selected.map((obj) => obj.label).join(', ');
+        return selected.map((value) => {
+            const selectedOption = options.find((option) => option.value === value);
+            return selectedOption ? selectedOption.label : '';
+        }).join(', ');
     }
 
     return (
@@ -96,14 +116,14 @@ const NonResumeQuestions = ({ handleNext }) => {
                                 value={formData.race}
                                 onChange={handleChange}
                                 displayEmpty
-                                renderValue={renderValue}
+                                renderValue={(selected) => renderValue(selected, raceOptionsList)}
                                 sx={{ height: '44px' }}
                                 MenuProps={MenuProps}
                             >
                                 {raceOptionsList.map((option) => (
                                     <MenuItem
                                         key={option.value}
-                                        value={option}
+                                        value={option.value}
                                     >
                                         {option.label}
                                     </MenuItem>
@@ -133,14 +153,14 @@ const NonResumeQuestions = ({ handleNext }) => {
                                 value={formData.veteranStatus}
                                 onChange={handleChange}
                                 displayEmpty
-                                renderValue={renderValue}
+                                renderValue={(selected) => renderValue(selected, veteranStatusOptions)}
                                 sx={{ height: '44px' }}
                                 MenuProps={MenuProps}
                             >
                                 {veteranStatusOptions.map((option) => (
                                     <MenuItem
                                         key={option.value}
-                                        value={option}
+                                        value={option.value}
                                     >
                                         {option.label}
                                     </MenuItem>
@@ -157,14 +177,14 @@ const NonResumeQuestions = ({ handleNext }) => {
                                 value={formData.disabilityStatus}
                                 onChange={handleChange}
                                 displayEmpty
-                                renderValue={renderValue}
+                                renderValue={(selected) => renderValue(selected, disabilityStatusOptions)}
                                 sx={{ height: '44px' }}
                                 MenuProps={MenuProps}
                             >
                                 {disabilityStatusOptions.map((option) => (
                                     <MenuItem
                                         key={option.value}
-                                        value={option}
+                                        value={option.value}
                                     >
                                         {option.label}
                                     </MenuItem>
@@ -181,13 +201,18 @@ const NonResumeQuestions = ({ handleNext }) => {
                                 value={formData.desiredSalaryCurrency}
                                 onChange={handleChange}
                                 displayEmpty
-                                renderValue={renderValue}
+                                renderValue={(selected) => renderValue(selected, salaryCurrencyOptions)}
                                 sx={{ height: '44px' }}
                                 MenuProps={MenuProps}
                             >
-                                <MenuItem value="option 1">option 1</MenuItem>
-                                <MenuItem value="option 2">option 2</MenuItem>
-                                <MenuItem value="option 3">option 3</MenuItem>
+                                {salaryCurrencyOptions.map((option) => (
+                                    <MenuItem
+                                        key={option.value}
+                                        value={option.value}
+                                    >
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
                             </Select>
                         </Box>
                         <Box width={'100%'} display={'flex'} flexDirection={'column'} gap={'8px'}>
@@ -213,13 +238,13 @@ const NonResumeQuestions = ({ handleNext }) => {
                                 value={formData.visaSponsorshipStatus}
                                 onChange={handleChange}
                                 displayEmpty
-                                renderValue={renderValue}
+                                renderValue={(selected) => renderValue(selected, booleanValues)}
                                 sx={{ height: '44px' }}
                             >
                                 {booleanValues.map((option) => (
                                     <MenuItem
                                         key={option.value}
-                                        value={option}
+                                        value={option.value}
                                     >
                                         {option.label}
                                     </MenuItem>
@@ -236,14 +261,14 @@ const NonResumeQuestions = ({ handleNext }) => {
                                 value={formData.workAuthorizationStatus}
                                 onChange={handleChange}
                                 displayEmpty
-                                renderValue={renderValue}
+                                renderValue={(selected) => renderValue(selected, booleanValues)}
                                 sx={{ height: '44px' }}
                                 MenuProps={MenuProps}
                             >
                                 {booleanValues.map((option) => (
                                     <MenuItem
                                         key={option.value}
-                                        value={option}
+                                        value={option.value}
                                     >
                                         {option.label}
                                     </MenuItem>
@@ -261,14 +286,14 @@ const NonResumeQuestions = ({ handleNext }) => {
                                 value={formData.workPreference}
                                 onChange={handleChange}
                                 displayEmpty
-                                renderValue={renderMultipleValues}
+                                renderValue={(selected) => renderMultipleValues(selected, workPreferenceOptions)}
                                 sx={{ height: '44px' }}
                                 MenuProps={MenuProps}
                             >
                                 {workPreferenceOptions.map((option) => (
                                     <MenuItem
                                         key={option.value}
-                                        value={option}
+                                        value={option.value}
                                     >
                                         {option.label}
                                     </MenuItem>
@@ -277,7 +302,7 @@ const NonResumeQuestions = ({ handleNext }) => {
                         </Box>
                     </Grid>
                     <Box width={'100%'} marginTop={'2rem'} display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                        <PrimaryGreenButton sx={{ width: '70%' }} onClick={handleNext}>
+                        <PrimaryGreenButton sx={{ width: '70%' }} onClick={handleSubmit}>
                             Continue
                         </PrimaryGreenButton>
                     </Box>

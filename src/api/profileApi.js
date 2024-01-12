@@ -27,10 +27,19 @@ export const profileApi = createApi({
                 method: 'POST',
             }),
         }),
+        addNonResumeOnboardingDetails: builder.mutation({
+            query: (formData) => ({
+                url: ApiUrls.NON_RESUME_ONBOARDING_DETAILS,
+                method: 'POST',
+                body: formData,
+                formData: true,
+            }),
+        })
     }),
 });
 
 export const {
     useGetProfileOtherDetailsQuery,
-    useAddProfileOtherDetailsMutation
+    useAddProfileOtherDetailsMutation,
+    useAddNonResumeOnboardingDetailsMutation,
 } = profileApi;

@@ -104,6 +104,25 @@ export const booleanValues = [
     },
 ]
 
+export const salaryCurrencyOptions = [
+    {
+        label: 'USD',
+        value: 'usd'
+    },
+    {
+        label: 'EUR',
+        value: 'eur'
+    },
+    {
+        label: 'GBP',
+        value: 'gbp'
+    },
+    {
+        label: 'INR',
+        value: 'inr'
+    },
+]
+
 export const months = [
     {
         label: 'January',
