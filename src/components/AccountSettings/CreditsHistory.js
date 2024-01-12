@@ -11,6 +11,9 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
 import { format, add } from 'date-fns';
+import IconButton from '@mui/material/IconButton';
+import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
+import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
 
 const columns = [
     { id: 'plan', label: 'Plan', minWidth: 120 },
@@ -38,6 +41,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const CreditsHistory = ({ history }) => {
 
+    const [showTable, setShowTable] = useState(true);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -60,54 +64,69 @@ const CreditsHistory = ({ history }) => {
         <Box width={'100%'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={2}>
             <Typography variant='h6' fontWeight={'500'}>
                 Your Credits history
+                <IconButton>
+                    {showTable ?
+                        <ExpandLessOutlinedIcon onClick={() => { setShowTable(false) }} />
+                        :
+                        <ExpandMoreOutlinedIcon onClick={() => { setShowTable(true) }} />
+                    }
+                </IconButton>
             </Typography>
-            <Paper variant='outlined' sx={{
-                height: 'auto',
-                width: '100%', overflow: 'hidden', borderRadius: '6px',
-                border: '1px solid #E5E5E5'
-            }}>
-                <TableContainer sx={{ maxHeight: '75vh' }}>
-                    <Table stickyHeader aria-label="sticky table">
-                        <TableHead>
-                            <TableRow>
-                                {columns.map((column) => (
-                                    <StyledTableCell
-                                        key={column.id}
-                                        align={column.align}
-                                        style={{ minWidth: column.minWidth }}
-                                    >
-                                        {column.label}
-                                    </StyledTableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {history?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                .map((historyEntry, index) => {
-                                    const duration = parseDuration(historyEntry?.plan?.expiry_duration);
-                                    const expiryDate = add(new Date(historyEntry?.date), { days: duration?.days, hours: duration?.hours, minutes: duration?.minutes, seconds: duration?.seconds });
-                                    return (
-                                        <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                                            <StyledTableCell>{historyEntry?.plan?.name}</StyledTableCell>
-                                            <StyledTableCell>{format(new Date(historyEntry?.date), 'dd MMM yyyy')}</StyledTableCell>
-                                            <StyledTableCell>{historyEntry?.plan?.credits}</StyledTableCell>
-                                            <StyledTableCell>{format(new Date(expiryDate), 'dd MMM yyyy')}</StyledTableCell>
+            {showTable ? (
+                <Paper variant='outlined' sx={{
+                    height: 'auto',
+                    width: '100%', overflow: 'hidden', borderRadius: '6px',
+                    border: '1px solid #E5E5E5'
+                }}>
+                    {(history?.length > 0) ? (
+                        <>
+                            <TableContainer sx={{ maxHeight: '75vh' }}>
+                                <Table stickyHeader aria-label="sticky table">
+                                    <TableHead>
+                                        <TableRow>
+                                            {columns.map((column) => (
+                                                <StyledTableCell
+                                                    key={column.id}
+                                                    align={column.align}
+                                                    style={{ minWidth: column.minWidth }}
+                                                >
+                                                    {column.label}
+                                                </StyledTableCell>
+                                            ))}
                                         </TableRow>
-                                    );
-                                })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 25, 50, 100]}
-                    component="div"
-                    count={history?.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-            </Paper>
+                                    </TableHead>
+                                    <TableBody>
+                                        {history?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                            .map((historyEntry, index) => {
+                                                const duration = parseDuration(historyEntry?.plan?.expiry_duration);
+                                                const expiryDate = add(new Date(historyEntry?.date), { days: duration?.days, hours: duration?.hours, minutes: duration?.minutes, seconds: duration?.seconds });
+                                                return (
+                                                    <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                                                        <StyledTableCell>{historyEntry?.plan?.name}</StyledTableCell>
+                                                        <StyledTableCell>{format(new Date(historyEntry?.date), 'dd MMM yyyy')}</StyledTableCell>
+                                                        <StyledTableCell>{historyEntry?.plan?.credits}</StyledTableCell>
+                                                        <StyledTableCell>{format(new Date(expiryDate), 'dd MMM yyyy')}</StyledTableCell>
+                                                    </TableRow>
+                                                );
+                                            })}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                            <TablePagination
+                                rowsPerPageOptions={[5, 10, 25, 50, 100]}
+                                component="div"
+                                count={history?.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                            />
+                        </>
+                    ) : (
+                        <Box padding={'0.2rem'} fontWeight={'400'} >No Credits history found</Box>
+                    )}
+                </Paper>
+            ) : null}
         </Box>
     )
 }
