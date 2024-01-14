@@ -16,6 +16,7 @@ const ApiUrls = {
     RESUME_DELETE: 'resumes/delete/',
 
     NON_RESUME_ONBOARDING_DETAILS: 'resumes/onboarding-details/',
+    GET_ONBOARDING_DETAILS: 'resumes/get-onboarding-details/',
 
     COVER_LETTER_UPLOAD: 'resumes/coverletter/upload/',
     COVER_LETTER_DELETE: 'resumes/coverletter/delete/',
