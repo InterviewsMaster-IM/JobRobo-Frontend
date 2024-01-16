@@ -38,8 +38,8 @@ const ProfileDetailsSection = () => {
             <Box width={'100%'} height={'auto'}>
                 <Grid container display={'flex'} flexDirection={'row'} alignItems={'flex-start'} gap={'24px'}>
                     <Grid item width={'max-content'} flex={'3 0 auto'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'24px'}>
-                        <VisaDetailsCard handleOpenForm={handleOpenForm} />
-                        <FrequentJobQuestionsDisplayCard handleOpenForm={handleOpenForm} />
+                        {/* <VisaDetailsCard handleOpenForm={handleOpenForm} />
+                        <FrequentJobQuestionsDisplayCard handleOpenForm={handleOpenForm} /> */}
                         <EducationDetailsCard handleOpenForm={handleOpenForm} />
                         <WorkExperienceDetailsCard handleOpenForm={handleOpenForm} />
                     </Grid>
