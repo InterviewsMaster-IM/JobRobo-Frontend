@@ -3,11 +3,6 @@ const ApiUrls = {
     CREDIT_PLANS: 'credits/credit-plans/',
     CREDIT_HISTORY: 'credits/credit-history/',
 
-    PROFILE_OTHER_DETAILS: 'profiles/other-details/',
-
-    CREATE_REFERRAL: 'referrals/create/',
-    VALIDATE_REFERRAL: 'referrals/validate/',
-
     RESUME_QA: 'resumes/qa/',
     RESUME_UPLOAD: 'resumes/upload/',
     RESUME_UPLOADED: 'resumes/uploads/',
@@ -15,11 +10,13 @@ const ApiUrls = {
     RESUME_CHECK_TASK: 'resumes/check-task/',
     RESUME_DELETE: 'resumes/delete/',
 
-    NON_RESUME_ONBOARDING_DETAILS: 'resumes/onboarding-details/',
-    GET_ONBOARDING_DETAILS: 'resumes/get-onboarding-details/',
-
     COVER_LETTER_UPLOAD: 'resumes/coverletter/upload/',
     COVER_LETTER_DELETE: 'resumes/coverletter/delete/',
+
+    ONBOARDING_DETAILS: 'resumes/onboarding-details/',
+
+    CREATE_REFERRAL: 'referrals/create/',
+    VALIDATE_REFERRAL: 'referrals/validate/',
 }
 
 export default ApiUrls;

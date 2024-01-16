@@ -9,7 +9,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import Card from '@mui/material/Card';
 import { PrimaryGreenButton } from '../../styles/Buttons';
 import { nonResumeQuestionsData } from '../../utils/Constants';
-import { useAddNonResumeOnboardingDetailsMutation, useGetNonResumeOnboardingDetailsQuery } from '../../api/profileApi';
+import { useAddOnboardingDetailsMutation, useGetOnboardingDetailsQuery } from '../../api/profileApi';
 import toast from 'react-hot-toast';
 import CustomToast from '../common/CustomToast';
 
@@ -34,14 +34,14 @@ const generateInitialFormData = () => {
 
 const NonResumeQuestions = ({ handleNext }) => {
 
-    const { data: onboardingDetailsData, isFetching: onboardingDetailsDataFetching, isSuccess: onboardingDetailsDataSuccess, refetch: fetchNonResumeOnboardingDetails } = useGetNonResumeOnboardingDetailsQuery();
-    const [addNonResumeOnboardingDetails] = useAddNonResumeOnboardingDetailsMutation();
+    const { data: onboardingDetailsData, isFetching: onboardingDetailsDataFetching, isSuccess: onboardingDetailsDataSuccess, refetch: fetchOnboardingDetails } = useGetOnboardingDetailsQuery();
+    const [addOnboardingDetails] = useAddOnboardingDetailsMutation();
     const [formData, setFormData] = useState(() => generateInitialFormData());
     const [showErrorMsg, setShowErrorMsg] = useState(false);
     const [questionErrorStates, setQuestionErrorStates] = useState({});
 
     useEffect(() => {
-        fetchNonResumeOnboardingDetails();
+        fetchOnboardingDetails();
     }, [])
 
     useEffect(() => {
@@ -70,7 +70,7 @@ const NonResumeQuestions = ({ handleNext }) => {
         if (!errorStatus) {
             setShowErrorMsg(false);
             try {
-                const response = await addNonResumeOnboardingDetails(nonResumeFormData);
+                const response = await addOnboardingDetails(nonResumeFormData);
                 if (response?.data?.message === 'successful') {
                     handleNext();
                 }

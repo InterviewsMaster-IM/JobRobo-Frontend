@@ -15,27 +15,15 @@ export const profileApi = createApi({
         credentials: "include",
     }),
     endpoints: (builder) => ({
-        getProfileOtherDetails: builder.query({
+        getOnboardingDetails: builder.query({
             query: () => ({
-                url: ApiUrls.PROFILE_OTHER_DETAILS,
+                url: ApiUrls.ONBOARDING_DETAILS,
                 method: 'GET',
             }),
         }),
-        addProfileOtherDetails: builder.mutation({
-            query: () => ({
-                url: `${ApiUrls.PROFILE_OTHER_DETAILS}add/`,
-                method: 'POST',
-            }),
-        }),
-        getNonResumeOnboardingDetails: builder.query({
-            query: () => ({
-                url: ApiUrls.GET_ONBOARDING_DETAILS,
-                method: 'GET',
-            }),
-        }),
-        addNonResumeOnboardingDetails: builder.mutation({
+        addOnboardingDetails: builder.mutation({
             query: (formData) => ({
-                url: ApiUrls.NON_RESUME_ONBOARDING_DETAILS,
+                url: ApiUrls.ONBOARDING_DETAILS,
                 method: 'POST',
                 body: formData,
                 formData: true,
@@ -45,8 +33,6 @@ export const profileApi = createApi({
 });
 
 export const {
-    useGetProfileOtherDetailsQuery,
-    useAddProfileOtherDetailsMutation,
-    useGetNonResumeOnboardingDetailsQuery,
-    useAddNonResumeOnboardingDetailsMutation,
+    useGetOnboardingDetailsQuery,
+    useAddOnboardingDetailsMutation,
 } = profileApi;
