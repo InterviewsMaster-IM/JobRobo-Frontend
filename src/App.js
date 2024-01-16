@@ -4,6 +4,7 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './components/common/ProtectRoute';
 import { AuthProvider } from './utils/authContext';
+import { Toaster } from "react-hot-toast";
 import TokenHandler from './pages/TokenHandler';
 import OnboardingPage from './pages/OnboardingPage';
 import HomePage from './pages/HomePage';
@@ -19,6 +20,7 @@ function App() {
     return (
         <AuthProvider>
             <Router>
+                <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
                 <Routes>
                     <Route exact path="/" element={<LoginPage />} />
                     <Route path="/token-handler" element={<TokenHandler></TokenHandler>} />

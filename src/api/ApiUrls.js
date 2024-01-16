@@ -10,8 +10,16 @@ const ApiUrls = {
 
     RESUME_QA: 'resumes/qa/',
     RESUME_UPLOAD: 'resumes/upload/',
+    RESUME_UPLOADED: 'resumes/uploads/',
     RESUME_START_TASK: 'resumes/start-task/',
     RESUME_CHECK_TASK: 'resumes/check-task/',
+    RESUME_DELETE: 'resumes/delete/',
+
+    NON_RESUME_ONBOARDING_DETAILS: 'resumes/onboarding-details/',
+    GET_ONBOARDING_DETAILS: 'resumes/get-onboarding-details/',
+
+    COVER_LETTER_UPLOAD: 'resumes/coverletter/upload/',
+    COVER_LETTER_DELETE: 'resumes/coverletter/delete/',
 }
 
 export default ApiUrls;

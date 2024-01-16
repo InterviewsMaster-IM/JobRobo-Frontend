@@ -104,6 +104,25 @@ export const booleanValues = [
     },
 ]
 
+export const salaryCurrencyOptions = [
+    {
+        label: 'USD',
+        value: 'usd'
+    },
+    {
+        label: 'EUR',
+        value: 'eur'
+    },
+    {
+        label: 'GBP',
+        value: 'gbp'
+    },
+    {
+        label: 'INR',
+        value: 'inr'
+    },
+]
+
 export const months = [
     {
         label: 'January',
@@ -191,5 +210,86 @@ export const pricingPlans = [
             '1500 JobRobo Credits per month',
             'Unlimited jobs per session',
         ]
+    },
+]
+
+export const nonResumeQuestionsData = [
+    {
+        questionLabel: 'Race',
+        type: 'DROPDOWN',
+        name: 'race',
+        placeholder: 'Select an option',
+        isRequired: true,
+        errorMessage: 'Please select an option',
+        options: raceOptionsList,
+    },
+    {
+        questionLabel: 'Notice period in days ?',
+        type: 'INPUT',
+        name: 'noticePeriod',
+        placeholder: 'Days',
+        isRequired: true,
+        errorMessage: 'Please enter a value',
+    },
+    {
+        questionLabel: 'Veteran Status',
+        type: 'DROPDOWN',
+        name: 'veteranStatus',
+        placeholder: 'Select an option',
+        isRequired: true,
+        errorMessage: 'Please select an option',
+        options: veteranStatusOptions,
+    },
+    {
+        questionLabel: 'Disability Status',
+        type: 'DROPDOWN',
+        name: 'disabilityStatus',
+        placeholder: 'Select an option',
+        isRequired: true,
+        errorMessage: 'Please select an option',
+        options: disabilityStatusOptions,
+    },
+    {
+        questionLabel: 'Desired salary Currency',
+        type: 'DROPDOWN',
+        name: 'desiredSalaryCurrency',
+        placeholder: 'Select an option',
+        isRequired: false,
+        options: salaryCurrencyOptions,
+    },
+    {
+        questionLabel: 'Desired salary',
+        type: 'INPUT',
+        name: 'desiredSalary',
+        placeholder: 'Number',
+        isRequired: false,
+    },
+    {
+        questionLabel: 'Will you now, or in the future, require sponsorship for employment visa status (e.g. H-1B visa status)?',
+        type: 'DROPDOWN',
+        name: 'visaSponsorshipStatus',
+        placeholder: 'Select an option',
+        isRequired: true,
+        errorMessage: 'Please select an option',
+        options: booleanValues,
+    },
+    {
+        questionLabel: 'Are you legally authorized to work in the United States?',
+        type: 'DROPDOWN',
+        name: 'workAuthorizationStatus',
+        placeholder: 'Select an option',
+        isRequired: true,
+        errorMessage: 'Please select an option',
+        options: booleanValues
+    },
+    {
+        questionLabel: 'What work settings are you comfortable with?',
+        type: 'DROPDOWN',
+        isMulti: true,
+        name: 'workPreference',
+        placeholder: 'Select',
+        isRequired: true,
+        errorMessage: 'Please select atleast one option',
+        options: workPreferenceOptions,
     },
 ]

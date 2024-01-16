@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -11,30 +11,18 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import BillingHistory from './BillingHistory';
 import CreditsHistory from './CreditsHistory';
 import { useNavigate } from 'react-router-dom';
-import apiService from '../../services/apiService';
+import { useGetCreditHistoryQuery, useGetUserCreditsQuery } from '../../api/creditsApi';
 
 const AccountSettings = () => {
     const navigate = useNavigate();
-    const [credits, setCredits] = useState(null);
-
-
-    const getCreditDetails = async () => {
-        try {
-            const response = await apiService.get('credits/user-credits/');
-            if (response.status === 200 && response.data) {
-                setCredits(response.data);
-            }
-            console.log(response.data);
-        } catch (error) {
-            console.error('Failed to fetch credit details:', error);
-        }
-    };
-
+    const { data: userCredits, refetch: fetchCredits } = useGetUserCreditsQuery();
+    const { data: history, refetch: fetchCreditsHistory } = useGetCreditHistoryQuery();
 
     useEffect(() => {
-        getCreditDetails();
+        fetchCredits();
+        fetchCreditsHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
 
     const handleUpgradePlanButton = () => {
         navigate('/pricing');
@@ -58,47 +46,50 @@ const AccountSettings = () => {
                     </Typography>
                 </Box>
                 <Box display={'flex'} gap={4} width={'100%'} alignItems={'center'} justifyContent={'flex-start'}>
-                    {credits ? <Card variant='outlined' sx={{ width: '30rem', height: '14rem', borderRadius: '0.5rem', padding: '1.5rem' }}>
-                        <CardContent sx={{ padding: '0 !important', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                            <Box display={'flex'} justifyContent={'space-between'}>
-                                <Typography variant='h6' fontSize={'18px'}>
-                                    Pricing Plan
-                                </Typography>
-                                <PrimaryGreenButton sx={{ gap: '8px', paddingY: '4px', paddingX: '12px' }} onClick={handleUpgradePlanButton}>
-                                    <RocketLaunchOutlinedIcon fontSize='small' />
-                                    <Typography variant='body2' fontWeight={'500'} fontSize={'16px'}>
-                                        Upgrade plan
+                    {userCredits ? (
+                        <Card variant='outlined' sx={{ width: '30rem', height: '14rem', borderRadius: '0.5rem', padding: '1.5rem' }}>
+                            <CardContent sx={{ padding: '0 !important', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                <Box display={'flex'} justifyContent={'space-between'}>
+                                    <Typography variant='h6' fontSize={'18px'}>
+                                        Pricing Plan
                                     </Typography>
-                                </PrimaryGreenButton>
-                            </Box>
-                            <Box border={'1px solid #55B982'} padding={'1.5rem'} borderRadius={'0.4rem'}>
-                                <Box display={'flex'} alignItems={'center'} gap={'0.5rem'}>
-                                    <CircularProgress sx={{ color: '#001405' }} variant="determinate" value={75} size={'1.5rem'} />
-                                    <Typography variant='body2' fontWeight={'600'}>
-                                        {credits.total_credits} credits left this month
-                                    </Typography>
-                                </Box>
-
-                                {credits.current_plan ?
-                                    <>
-                                        <Typography marginTop={'0.3rem'}>
-                                            Currently on
-                                            <Typography component={'span'} color={'#55B982'} fontWeight={'600'}> {credits.current_plan.name} </Typography>
-                                            plan
+                                    <PrimaryGreenButton sx={{ gap: '8px', paddingY: '4px', paddingX: '12px' }} onClick={handleUpgradePlanButton}>
+                                        <RocketLaunchOutlinedIcon fontSize='small' />
+                                        <Typography variant='body2' fontWeight={'500'} fontSize={'16px'}>
+                                            Upgrade plan
                                         </Typography>
-                                        {credits.current_plan.description.split('\n').map((item, index) => {
-                                            return (
-                                                <Box key={index} display={'flex'} alignItems={'center'} gap={'0.5rem'} marginTop={'1rem'}>
-                                                    <CheckCircleIcon sx={{ color: '#55B982' }} />
-                                                    <Typography variant='body2' fontWeight={'500'} color={'#7F8781'}>
-                                                        {item}
-                                                    </Typography>
-                                                </Box>)
-                                        })}
-                                    </> : null}
-                            </Box>
-                        </CardContent>
-                    </Card> : null}
+                                    </PrimaryGreenButton>
+                                </Box>
+                                <Box border={'1px solid #55B982'} padding={'1.5rem'} borderRadius={'0.4rem'}>
+                                    <Box display={'flex'} alignItems={'center'} gap={'0.5rem'}>
+                                        <CircularProgress sx={{ color: '#001405' }} variant="determinate" value={75} size={'1.5rem'} />
+                                        <Typography variant='body2' fontWeight={'600'}>
+                                            {userCredits?.total_credits} credits left this month
+                                        </Typography>
+                                    </Box>
+
+                                    {userCredits?.current_plan ? (
+                                        <>
+                                            <Typography marginTop={'0.3rem'}>
+                                                Currently on
+                                                <Typography component={'span'} color={'#55B982'} fontWeight={'600'}> {userCredits?.current_plan.name} </Typography>
+                                                plan
+                                            </Typography>
+                                            {userCredits?.current_plan?.description?.split('\n')?.map((item, index) => {
+                                                return (
+                                                    <Box key={index} display={'flex'} alignItems={'center'} gap={'0.5rem'} marginTop={'1rem'}>
+                                                        <CheckCircleIcon sx={{ color: '#55B982' }} />
+                                                        <Typography variant='body2' fontWeight={'500'} color={'#7F8781'}>
+                                                            {item}
+                                                        </Typography>
+                                                    </Box>)
+                                            })}
+                                        </>
+                                    ) : null}
+                                </Box>
+                            </CardContent>
+                        </Card>
+                    ) : null}
                     <Card variant='outlined' sx={{ width: '20rem', height: '14rem', borderRadius: '0.5rem', padding: '1.5rem' }}>
                         <Box display={'flex'} flexDirection={'column'} gap={'1.5rem'}>
                             <Typography variant='h6' fontSize={'18px'}>Account Info</Typography>
@@ -119,8 +110,8 @@ const AccountSettings = () => {
                         </Box>
                     </Card>
                 </Box>
-                <BillingHistory />
-                <CreditsHistory />
+                <BillingHistory history={history} />
+                <CreditsHistory history={history} />
             </Box>
         </Box>
     )

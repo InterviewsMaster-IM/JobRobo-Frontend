@@ -10,8 +10,7 @@ export const profileApi = createApi({
         baseUrl: baseApiUrl,
         prepareHeaders: (headers) => {
             const accessToken = localStorage.getItem('access_token');
-            headers.set('Content-Type', 'application/json');
-            headers.set('authorization', accessToken);
+            headers.set('authorization', `Bearer ${accessToken}`);
         },
         credentials: "include",
     }),
@@ -28,10 +27,26 @@ export const profileApi = createApi({
                 method: 'POST',
             }),
         }),
+        getNonResumeOnboardingDetails: builder.query({
+            query: () => ({
+                url: ApiUrls.GET_ONBOARDING_DETAILS,
+                method: 'GET',
+            }),
+        }),
+        addNonResumeOnboardingDetails: builder.mutation({
+            query: (formData) => ({
+                url: ApiUrls.NON_RESUME_ONBOARDING_DETAILS,
+                method: 'POST',
+                body: formData,
+                formData: true,
+            }),
+        })
     }),
 });
 
 export const {
     useGetProfileOtherDetailsQuery,
-    useAddProfileOtherDetailsMutation
+    useAddProfileOtherDetailsMutation,
+    useGetNonResumeOnboardingDetailsQuery,
+    useAddNonResumeOnboardingDetailsMutation,
 } = profileApi;
