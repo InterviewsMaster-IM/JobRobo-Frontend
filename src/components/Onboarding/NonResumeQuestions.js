@@ -9,7 +9,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import Card from '@mui/material/Card';
 import { PrimaryGreenButton } from '../../styles/Buttons';
 import { nonResumeQuestionsData } from '../../utils/Constants';
-import { useAddOnboardingDetailsMutation, useGetOnboardingDetailsQuery } from '../../api/profileApi';
+import { useAddOnboardingDetailsMutation, useGetOnboardingDetailsQuery } from '../../api/onboardingApi';
 import toast from 'react-hot-toast';
 import CustomToast from '../common/CustomToast';
 

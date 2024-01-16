@@ -4,8 +4,8 @@ import ApiUrls from './ApiUrls';
 
 const baseApiUrl = config.REACT_APP_ROOT_URL;
 
-export const profileApi = createApi({
-    reducerPath: 'profileApi',
+export const onboardingApi = createApi({
+    reducerPath: 'onboardingApi',
     baseQuery: fetchBaseQuery({
         baseUrl: baseApiUrl,
         prepareHeaders: (headers) => {
@@ -28,11 +28,11 @@ export const profileApi = createApi({
                 body: formData,
                 formData: true,
             }),
-        })
+        }),
     }),
 });
 
 export const {
     useGetOnboardingDetailsQuery,
     useAddOnboardingDetailsMutation,
-} = profileApi;
+} = onboardingApi;
