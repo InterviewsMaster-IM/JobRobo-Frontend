@@ -8,22 +8,31 @@ import Select from '@mui/material/Select';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
+import { useUpdatePersonalInfoMutation } from '../../api/personalInfoApi';
+import { gender } from '../../utils/Constants';
+import toast from "react-hot-toast";
+import NotificationMessages from '../../utils/notificationConstants';
+import CustomToast from '../common/CustomToast';
 
-const initialData = {
-    countryCode: '',
-    phoneNumber: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    dateOfBirth: '',
-    gender: '',
-    linkedinUrl: '',
-    githubUrl: '',
-    portfolioUrl: '',
-}
+const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
+    const [formData, setFormData] = useState({});
+    const [updatePersonalInfo, updatePersonalInfoResponse] = useUpdatePersonalInfoMutation();
 
-const AddPersonalDetailsForm = ({ handleHideForm }) => {
-    const [formData, setFormData] = useState(initialData);
+    useEffect(() => {
+        setFormData({
+            firstName: personalDetail?.first_name || '',
+            lastName: personalDetail?.last_name || '',
+            email: personalDetail?.email || '',
+            countryCode: personalDetail?.country_code || '',
+            phoneNumber: personalDetail?.phone || '',
+            dateOfBirth: personalDetail?.dob || '',
+            gender: personalDetail?.gender || '',
+            location: personalDetail?.location || '',
+            linkedinUrl: personalDetail?.linkedin || '',
+            githubUrl: personalDetail?.github || '',
+            portfolioUrl: personalDetail?.portfolio_url || '',
+        });
+    }, [personalDetail]);
 
     const handleFormInput = (e) => {
         const { name, value } = e.target;
@@ -33,11 +42,37 @@ const AddPersonalDetailsForm = ({ handleHideForm }) => {
         }))
     }
 
+    useEffect(() => {
+        console.log('formData', formData);
+    }, [formData]);
+
     const renderValue = (selected) => {
-        if (selected === '') {
-            return <Typography variant='body2' color={'#7F8781'}>Select</Typography>
+        if (!selected) {
+            return <Typography color={'#7F8781'}>Select</Typography>
         }
         return selected;
+    };
+
+    const handleSubmit = async () => {
+        try {
+        const payload = {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            email: formData.email,
+            country_code: formData.countryCode,
+            phone: formData.phoneNumber,
+            dob: formData.dateOfBirth,
+            gender: formData.gender,
+            location: formData.location,
+            linkedin: formData.linkedinUrl,
+            github: formData.githubUrl,
+            portfolio_url: formData.portfolioUrl,
+        }
+            const response = await updatePersonalInfo(payload);
+            toast.custom(<CustomToast type={"success"} message={NotificationMessages.RESUME_UPLOAD_SUCCESS} />);
+        } catch (error) {
+            toast.custom(<CustomToast type={"error"} message={error.message} />);
+        }
     }
 
     return (
@@ -91,6 +126,7 @@ const AddPersonalDetailsForm = ({ handleHideForm }) => {
                                 name='firstName'
                                 value={formData.firstName}
                                 onChange={handleFormInput}
+                                placeholder='Enter your first name'
                                 sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
                         </Grid>
                         <Grid item xs={5.7}>
@@ -99,6 +135,7 @@ const AddPersonalDetailsForm = ({ handleHideForm }) => {
                                 name='lastName'
                                 value={formData.lastName}
                                 onChange={handleFormInput}
+                                placeholder='Enter your last name'
                                 sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
                         </Grid>
                     </Grid>
@@ -121,16 +158,33 @@ const AddPersonalDetailsForm = ({ handleHideForm }) => {
                         <Select
                             fullWidth
                             name='gender'
-                            value={formData.gender}
+                            value={formData?.gender || ''}
                             onChange={handleFormInput}
                             displayEmpty
                             renderValue={renderValue}
                             sx={{ height: '40px' }}
                         >
-                            <MenuItem value="male">Male</MenuItem>
-                            <MenuItem value="female">Female</MenuItem>
-                            <MenuItem value="other">Other</MenuItem>
+                            {Object.keys(gender).map((key) => (
+                                <MenuItem
+                                    key={key}
+                                    value={gender[key]}
+                                >
+                                    {gender[key]}
+                                </MenuItem>
+                            ))}
                         </Select>
+                    </Grid>
+                    <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
+                        <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
+                            Location
+                        </Typography>
+                        <OutlinedInput
+                            fullWidth
+                            name='location'
+                            value={formData.location}
+                            onChange={handleFormInput}
+                            placeholder='Enter location'
+                            sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
@@ -171,10 +225,10 @@ const AddPersonalDetailsForm = ({ handleHideForm }) => {
                 </Grid>
                 <Grid container item padding={'12px 24px'} marginTop={'auto'} borderTop={'1px solid #E5E5E5'}>
                     <Box width={'100%'} display={'flex'} alignItems={'center'} justifyContent={'center'} gap={'16px'}>
-                        <PrimaryWhiteButton sx={{ width: '50%', justifyContent: 'center' }} onClick={() => handleHideForm()}>
+                        <PrimaryWhiteButton sx={{ width: '50%', justifyContent: 'center' }} onClick={handleHideForm}>
                             Cancel
                         </PrimaryWhiteButton>
-                        <PrimaryGreenButton sx={{ width: '50%' }}>
+                        <PrimaryGreenButton sx={{ width: '50%' }} onClick={handleSubmit}>
                             Save
                         </PrimaryGreenButton>
                     </Box>

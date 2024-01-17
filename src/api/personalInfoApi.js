@@ -20,6 +20,7 @@ export const personalInfoApi = createApi({
                 url: ApiUrls.PERSONAL_INFO,
                 method: 'GET',
             }),
+            providesTags: ['personalInfo'],
         }),
         updatePersonalInfo: builder.mutation({
             query: (payload) => ({
@@ -27,6 +28,7 @@ export const personalInfoApi = createApi({
                 method: 'PUT',
                 body: payload,
             }),
+            invalidatesTags: ['personalInfo'],
         }),
     }),
 });

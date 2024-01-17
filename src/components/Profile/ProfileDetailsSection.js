@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Drawer from '@mui/material/Drawer';
@@ -13,8 +13,10 @@ import AddSkillsForm from '../ProfileForms/AddSkillsForm';
 import AddPersonalDetailsForm from '../ProfileForms/AddPersonalDetailsForm';
 import AddWorkExperienceForm from '../ProfileForms/AddWorkExperienceForm';
 import AddEducationDetailsForm from '../ProfileForms/AddEducationDetailsForm';
+import { useGetPersonalInfoQuery } from '../../api/personalInfoApi';
 
 const ProfileDetailsSection = () => {
+    const { data: personalDetail } = useGetPersonalInfoQuery();
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [activeForm, setActiveForm] = useState('');
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -44,7 +46,7 @@ const ProfileDetailsSection = () => {
                         <WorkExperienceDetailsCard handleOpenForm={handleOpenForm} />
                     </Grid>
                     <Grid item flex={'2 0 auto'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'24px'}>
-                        <PersonalDetailsCard handleOpenForm={handleOpenForm} />
+                        <PersonalDetailsCard handleOpenForm={handleOpenForm} personalDetail={personalDetail} />
                         <ResumesDisplayCard handleOpenForm={handleOpenForm} />
                         <SkillsDisplayCard handleOpenForm={handleOpenForm} />
                     </Grid>
@@ -56,7 +58,7 @@ const ProfileDetailsSection = () => {
                 onClose={(_, reason) => { handleHideForm(reason) }}
             >
                 {activeForm === 'skills' && <AddSkillsForm handleHideForm={handleHideForm} />}
-                {activeForm === 'personalDetails' && <AddPersonalDetailsForm handleHideForm={handleHideForm} />}
+                {activeForm === 'personalDetails' && <AddPersonalDetailsForm handleHideForm={handleHideForm} personalDetail={personalDetail} />}
                 {activeForm === 'workExperience' && <AddWorkExperienceForm handleHideForm={handleHideForm} />}
                 {activeForm === 'education' && <AddEducationDetailsForm handleHideForm={handleHideForm} />}
             </Drawer>
