@@ -12,17 +12,6 @@ import NotificationMessages from '../../utils/notificationConstants';
 import CustomToast from '../common/CustomToast';
 import toast from "react-hot-toast";
 
-const initialData = {
-    school: '',
-    degree: '',
-    major_field_of_study: '',
-    startMonth: '',
-    startYear: '',
-    endMonth: '',
-    endYear: '',
-    description: ''
-}
-
 const MenuProps = {
     PaperProps: {
         style: {
@@ -33,7 +22,7 @@ const MenuProps = {
 
 const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
 
-    const [formData, setFormData] = useState(initialData);
+    const [formData, setFormData] = useState({});
     const [addEducationDetails] = useAddEducationDetailsMutation();
     const [updateEducationDetails] = useUpdateEducationDetailsMutation();
     const [showErrorMsg, setShowErrorMsg] = useState(false);
@@ -54,13 +43,12 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
             degree: educationDetails?.degree || '',
             major_field_of_study: educationDetails?.major_field_of_study || '',
             startMonth: educationDetails?.start_month_year?.split('-')[1] || '',
-            startYear: parseInt(educationDetails?.start_month_year?.split('-')[0]) || '',
+            startYear: parseInt(educationDetails?.start_month_year?.split('-')[0] || ''),
             endMonth: educationDetails?.end_month_year?.split('-')[1] || '',
-            endYear: parseInt(educationDetails?.end_month_year?.split('-')[0]) || '',
+            endYear: parseInt(educationDetails?.end_month_year?.split('-')[0] || ''),
             description: educationDetails?.description || ''
         })
     }, [educationDetailsFetching])
-
 
     const handleFormInput = (e) => {
         const { name, value } = e.target;
@@ -115,7 +103,7 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
         let errorStatus = false;
         let errorStates = {};
         Object.entries(formData).forEach(([key, value]) => {
-            if (value === '' && key !== 'description') {
+            if (!value && key !== 'description') {
                 errorStatus = true;
                 errorStates = { ...errorStates, [key]: true };
             }
@@ -125,7 +113,7 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
     }
 
     const renderValue = ({ selected, options, placeholder }) => {
-        if (selected === '') {
+        if (!selected) {
             return <Typography color={'#7F8781'}>{placeholder}</Typography>
         }
         else {
@@ -201,7 +189,7 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                                 <Select
                                     fullWidth
                                     name='startMonth'
-                                    value={formData.startMonth}
+                                    value={formData?.startMonth || ''}
                                     onChange={handleFormInput}
                                     displayEmpty
                                     renderValue={(selected) => renderValue({ selected, options: months, placeholder: 'Month' })}
@@ -227,7 +215,7 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                                 <Select
                                     fullWidth
                                     name='startYear'
-                                    value={formData.startYear}
+                                    value={formData?.startYear || ''}
                                     onChange={handleFormInput}
                                     displayEmpty
                                     renderValue={(selected) => renderValue({ selected, options: years, placeholder: 'Year' })}
@@ -261,7 +249,7 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                                 <Select
                                     fullWidth
                                     name='endMonth'
-                                    value={formData.endMonth}
+                                    value={formData?.endMonth || ''}
                                     onChange={handleFormInput}
                                     displayEmpty
                                     renderValue={(selected) => renderValue({ selected, options: months, placeholder: 'Month' })}
@@ -287,7 +275,7 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                                 <Select
                                     fullWidth
                                     name='endYear'
-                                    value={formData.endYear}
+                                    value={formData?.endYear || ''}
                                     onChange={handleFormInput}
                                     displayEmpty
                                     renderValue={(selected) => renderValue({ selected, options: years, placeholder: 'Year' })}
