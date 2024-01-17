@@ -99,9 +99,11 @@ const EducationDetailsCard = ({ handleOpenForm }) => {
                                                     <Typography variant='body2' fontWeight={'500'} color={'#808080'}>
                                                         {school}
                                                     </Typography>
-                                                    <Typography variant='body2' fontWeight={'400'} color={'#808080'}>
-                                                        GPA: {description}
-                                                    </Typography>
+                                                    {description &&
+                                                        <Typography variant='body2' fontWeight={'400'} color={'#808080'}>
+                                                            GPA: {description}
+                                                        </Typography>
+                                                    }
                                                 </Grid>
                                                 <Box marginLeft={'auto'} width={'14rem'}>
                                                     {

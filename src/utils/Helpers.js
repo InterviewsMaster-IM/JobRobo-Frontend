@@ -22,3 +22,26 @@ export const formatShortMonthYear = (date) => {
         return '-';
     }
 };
+
+export function getDays() {
+    let options = [];
+    for (let i = 1; i <= 31; i++) {
+        options.push({
+            label: i,
+            value: i,
+        });
+    }
+    return options;
+}
+
+export function getYears(startYear) {
+    let options = [];
+    let thisYear = new Date().getFullYear();
+    for (let i = thisYear; i >= (startYear || 1950); i--) {
+        options.push({
+            label: i,
+            value: i,
+        });
+    }
+    return options;
+}

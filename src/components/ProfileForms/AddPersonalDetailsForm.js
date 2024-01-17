@@ -9,7 +9,8 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
 import { useUpdatePersonalInfoMutation } from '../../api/personalInfoApi';
-import { gender, getDays, getYears } from '../../utils/Constants';
+import { gender } from '../../utils/Constants';
+import { getDays, getYears } from '../../utils/Helpers';
 import toast from "react-hot-toast";
 import NotificationMessages from '../../utils/notificationConstants';
 import CustomToast from '../common/CustomToast';
@@ -64,10 +65,6 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
         }))
     }
 
-    useEffect(() => {
-        console.log('formData', formData);
-    }, [formData]);
-
     const renderValue = (selected, options, placeholder) => {
         if (!selected) {
             return <Typography color={'#7F8781'}>{placeholder}</Typography>
@@ -106,7 +103,8 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                 portfolio_url: formData.portfolioUrl,
             }
             const response = await updatePersonalInfo(payload);
-            toast.custom(<CustomToast type={"success"} message={NotificationMessages.RESUME_UPLOAD_SUCCESS} />);
+            handleHideForm();
+            toast.custom(<CustomToast type={"success"} message={NotificationMessages.PERSONAL_DETAILS_ADDED_SUCCESS} />);
         } catch (error) {
             toast.custom(<CustomToast type={"error"} message={error.message} />);
         }
