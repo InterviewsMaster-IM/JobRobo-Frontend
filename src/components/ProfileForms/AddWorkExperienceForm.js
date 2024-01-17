@@ -9,7 +9,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox';
 import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
-import { employmentTypeOptions, getYears, months } from '../../utils/Constants';
+import { employmentTypeOptions, months } from '../../utils/Constants';
+import { getYears } from '../../utils/Helpers';
 
 const initialData = {
     positionTitle: '',
@@ -31,6 +32,8 @@ const MenuProps = {
     },
 };
 
+const years = getYears();
+
 const AddWorkExperienceForm = ({ handleHideForm }) => {
 
     const [formData, setFormData] = useState(initialData);
@@ -44,7 +47,6 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
     }
 
     const renderValue = ({ selected, placeholder }) => {
-        console.log(selected);
         if (selected === '') {
             return <Typography variant='body2' color={'#7F8781'}>{placeholder}</Typography>
         }
@@ -153,7 +155,7 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
                                     MenuProps={MenuProps}
                                 >
                                     {
-                                        getYears().map((option) => (
+                                        years.map((option) => (
                                             <MenuItem
                                                 key={option.value}
                                                 value={option}
@@ -207,7 +209,7 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
                                     MenuProps={MenuProps}
                                 >
                                     {
-                                        getYears().map((option) => (
+                                        years.map((option) => (
                                             <MenuItem
                                                 key={option.value}
                                                 value={option}

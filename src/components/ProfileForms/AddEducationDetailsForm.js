@@ -6,11 +6,12 @@ import Select from '@mui/material/Select';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
-import { ActionType, getYears, months } from '../../utils/Constants';
+import { ActionType, months } from '../../utils/Constants';
 import { useAddEducationDetailsMutation, useGetEducationDetailByIdQuery, useUpdateEducationDetailsMutation } from '../../api/educationApi';
 import NotificationMessages from '../../utils/notificationConstants';
 import CustomToast from '../common/CustomToast';
 import toast from "react-hot-toast";
+import { getYears } from '../../utils/Helpers';
 
 const MenuProps = {
     PaperProps: {
@@ -19,6 +20,7 @@ const MenuProps = {
         },
     },
 };
+const years = getYears();
 
 const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
 
@@ -29,7 +31,6 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
     const [questionErrorStates, setQuestionErrorStates] = useState({});
 
     const { data: educationDetails, isFetching: educationDetailsFetching, refetch: fetchEducationDetailById } = useGetEducationDetailByIdQuery(id, { skip: !id });
-    const years = getYears();
 
     useEffect(() => {
         if (id) {
