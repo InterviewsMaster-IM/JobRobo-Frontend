@@ -1,3 +1,9 @@
+export const gender = {
+    MALE: 'Male',
+    FEMALE: 'Female',
+    OTHER: 'Other',
+};
+
 export const raceOptionsList = [
     {
         label: 'Hispanic or Latino',
