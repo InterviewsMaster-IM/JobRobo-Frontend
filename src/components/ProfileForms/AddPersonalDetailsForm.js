@@ -9,16 +9,35 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
 import { useUpdatePersonalInfoMutation } from '../../api/personalInfoApi';
-import { gender } from '../../utils/Constants';
+import { gender, getDays, getYears } from '../../utils/Constants';
 import toast from "react-hot-toast";
 import NotificationMessages from '../../utils/notificationConstants';
 import CustomToast from '../common/CustomToast';
+
+const daysOptions = getDays();
+const yearOptions = getYears();
+const monthOptions = [
+    { value: '01', label: 'January' },
+    { value: '02', label: 'February' },
+    { value: '03', label: 'March' },
+    { value: '04', label: 'April' },
+    { value: '05', label: 'May' },
+    { value: '06', label: 'June' },
+    { value: '07', label: 'July' },
+    { value: '08', label: 'August' },
+    { value: '09', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' },
+];
 
 const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
     const [formData, setFormData] = useState({});
     const [updatePersonalInfo, updatePersonalInfoResponse] = useUpdatePersonalInfoMutation();
 
     useEffect(() => {
+        const [yearPart, monthPart, dayPart] = (personalDetail?.dob || '').split('-');
+
         setFormData({
             firstName: personalDetail?.first_name || '',
             lastName: personalDetail?.last_name || '',
@@ -26,6 +45,9 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
             countryCode: personalDetail?.country_code || '',
             phoneNumber: personalDetail?.phone || '',
             dateOfBirth: personalDetail?.dob || '',
+            day: parseInt(dayPart) || '',
+            month: monthPart || '',
+            year: parseInt(yearPart) || '',
             gender: personalDetail?.gender || '',
             location: personalDetail?.location || '',
             linkedinUrl: personalDetail?.linkedin || '',
@@ -46,7 +68,17 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
         console.log('formData', formData);
     }, [formData]);
 
-    const renderValue = (selected) => {
+    const renderValue = (selected, options, placeholder) => {
+        if (!selected) {
+            return <Typography color={'#7F8781'}>{placeholder}</Typography>
+        }
+        else {
+            const selectedOption = options.find((option) => option.value === selected);
+            return selectedOption ? selectedOption.label : '';
+        }
+    };
+
+    const renderValueObject = (selected) => {
         if (!selected) {
             return <Typography color={'#7F8781'}>Select</Typography>
         }
@@ -55,19 +87,24 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
 
     const handleSubmit = async () => {
         try {
-        const payload = {
-            first_name: formData.firstName,
-            last_name: formData.lastName,
-            email: formData.email,
-            country_code: formData.countryCode,
-            phone: formData.phoneNumber,
-            dob: formData.dateOfBirth,
-            gender: formData.gender,
-            location: formData.location,
-            linkedin: formData.linkedinUrl,
-            github: formData.githubUrl,
-            portfolio_url: formData.portfolioUrl,
-        }
+            const { day, month, year } = formData;
+
+            const formattedDay = day < 10 ? `0${day}` : `${day}`;
+            const dateOfBirth = `${year}-${month}-${formattedDay}`;
+
+            const payload = {
+                first_name: formData.firstName,
+                last_name: formData.lastName,
+                email: formData.email,
+                country_code: formData.countryCode,
+                phone: formData.phoneNumber,
+                dob: dateOfBirth,
+                gender: formData.gender,
+                location: formData.location,
+                linkedin: formData.linkedinUrl,
+                github: formData.githubUrl,
+                portfolio_url: formData.portfolioUrl,
+            }
             const response = await updatePersonalInfo(payload);
             toast.custom(<CustomToast type={"success"} message={NotificationMessages.RESUME_UPLOAD_SUCCESS} />);
         } catch (error) {
@@ -153,6 +190,79 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
+                            Date of birth
+                        </Typography>
+                        <Grid container item gap={'16px'}>
+                            <Grid item xs={3.6}>
+                                <Select
+                                    fullWidth
+                                    name='day'
+                                    value={formData?.day || ''}
+                                    onChange={handleFormInput}
+                                    displayEmpty
+                                    renderValue={(selected) => renderValue(selected, daysOptions, 'Day')}
+                                    sx={{ height: '40px' }}
+                                >
+                                    {
+                                        daysOptions.map((option) => (
+                                            <MenuItem
+                                                key={option.value}
+                                                value={option.value}
+                                            >
+                                                {option.label}
+                                            </MenuItem>
+                                        ))
+                                    }
+                                </Select>
+                            </Grid>
+                            <Grid item xs={3.6}>
+                                <Select
+                                    fullWidth
+                                    name="month"
+                                    value={formData?.month || ''}
+                                    onChange={handleFormInput}
+                                    displayEmpty
+                                    renderValue={(selected) => renderValue(selected, monthOptions, 'Month')}
+                                    sx={{ height: '40px' }}
+                                >
+                                    {
+                                        monthOptions.map((option) => (
+                                            <MenuItem
+                                                key={option.value}
+                                                value={option.value}
+                                            >
+                                                {option.label}
+                                            </MenuItem>
+                                        ))
+                                    }
+                                </Select>
+                            </Grid>
+                            <Grid item xs={3.6}>
+                                <Select
+                                    fullWidth
+                                    name="year"
+                                    value={formData?.year || ''}
+                                    onChange={handleFormInput}
+                                    displayEmpty
+                                    renderValue={(selected) => renderValue(selected, yearOptions, 'Year')}
+                                    sx={{ height: '40px' }}
+                                >
+                                    {
+                                        yearOptions.map((option) => (
+                                            <MenuItem
+                                                key={option.value}
+                                                value={option.value}
+                                            >
+                                                {option.label}
+                                            </MenuItem>
+                                        ))
+                                    }
+                                </Select>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
+                        <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                             Gender
                         </Typography>
                         <Select
@@ -161,7 +271,7 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                             value={formData?.gender || ''}
                             onChange={handleFormInput}
                             displayEmpty
-                            renderValue={renderValue}
+                            renderValue={renderValueObject}
                             sx={{ height: '40px' }}
                         >
                             {Object.keys(gender).map((key) => (

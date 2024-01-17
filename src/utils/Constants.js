@@ -180,6 +180,17 @@ export const months = [
     },
 ]
 
+export function getDays() {
+    let options = [];
+    for (let i = 1; i <= 31; i++) {
+        options.push({
+            label: i,
+            value: i,
+        });
+    }
+    return options;
+}
+
 export function getYears(startYear) {
     let options = [];
     let thisYear = new Date().getFullYear();
