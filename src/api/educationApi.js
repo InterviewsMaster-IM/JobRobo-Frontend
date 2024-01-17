@@ -20,6 +20,7 @@ export const educationApi = createApi({
                 url: ApiUrls.EDUCATION_DETAILS,
                 method: 'GET',
             }),
+            providesTags: ['educationDetails']
         }),
         addEducationDetails: builder.mutation({
             query: (payload) => ({
@@ -27,19 +28,28 @@ export const educationApi = createApi({
                 method: 'POST',
                 body: payload,
             }),
+            invalidatesTags: ['educationDetails']
+        }),
+        getEducationDetailById: builder.query({
+            query: (id) => ({
+                url: `${ApiUrls.EDUCATION_DETAILS}${id}/`,
+                method: 'GET',
+            }),
         }),
         updateEducationDetails: builder.mutation({
             query: ({ id, payload }) => ({
-                url: `${ApiUrls.EDUCATION_DETAILS}/${id}`,
+                url: `${ApiUrls.EDUCATION_DETAILS}${id}/`,
                 method: 'PUT',
                 body: payload,
             }),
+            invalidatesTags: ['educationDetails']
         }),
-        deleteEducationDetails: builder.mutation({
+        deleteEducationDetailById: builder.mutation({
             query: (id) => ({
-                url: `${ApiUrls.EDUCATION_DETAILS}/${id}`,
+                url: `${ApiUrls.EDUCATION_DETAILS}${id}/`,
                 method: 'DELETE',
             }),
+            invalidatesTags: ['educationDetails']
         }),
     }),
 });
@@ -47,6 +57,7 @@ export const educationApi = createApi({
 export const {
     useGetEducationDetailsQuery,
     useAddEducationDetailsMutation,
+    useGetEducationDetailByIdQuery,
     useUpdateEducationDetailsMutation,
-    useDeleteEducationDetailsMutation,
+    useDeleteEducationDetailByIdMutation,
 } = educationApi;
