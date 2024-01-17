@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import { PrimaryWhiteButton } from '../../styles/Buttons';
+import { ProfileConstants } from '../../utils/Constants';
 import { format, parseISO } from 'date-fns';
 
 const PersonalDetailsCard = ({ handleOpenForm, personalDetail }) => {
@@ -54,7 +55,7 @@ const PersonalDetailsCard = ({ handleOpenForm, personalDetail }) => {
                             }
                         </Grid>
                         <Grid item>
-                            <PrimaryWhiteButton onClick={() => handleOpenForm('personalDetails')}>
+                            <PrimaryWhiteButton onClick={() => handleOpenForm(ProfileConstants.PERSONAL_DETAILS)}>
                                 {(personalDetail?.first_name) ?
                                     <ModeEditOutlineOutlinedIcon fontSize='small' />
                                     :
