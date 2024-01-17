@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import BusinessTwoToneIcon from '@mui/icons-material/BusinessTwoTone';
 import { PrimaryWhiteButton } from '../../styles/Buttons';
+import { ProfileConstants } from '../../utils/Constants';
 
 const WorkExperienceDetailsCard = ({ handleOpenForm }) => {
     const [workExperiencesList, setWorkExperiencesList] = useState([{}]);
@@ -30,7 +31,7 @@ const WorkExperienceDetailsCard = ({ handleOpenForm }) => {
                             </Typography>
                         </Grid>
                         <Grid item>
-                            <PrimaryWhiteButton onClick={() => handleOpenForm('workExperience')}>
+                            <PrimaryWhiteButton onClick={() => handleOpenForm(ProfileConstants.WORK_EXPERIENCE)}>
                                 <AddIcon fontSize='small' />
                                 <Typography variant='body2' fontWeight={'500'} marginRight={'4px'}>
                                     Add

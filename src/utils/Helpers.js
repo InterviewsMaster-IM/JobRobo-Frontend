@@ -1,3 +1,5 @@
+import { shortMonths } from "./Constants";
+
 const maxImagesUpload = 5;
 const maxImageSize = 2 * 1024 * 1024; // 2MB
 
@@ -10,4 +12,9 @@ export function image_validate(files, allSelectedFiles) {
         error = 'File size exceeds 2MB limit';
     }
     return error;
+}
+
+export function getMonthName(value) {
+    const month = shortMonths.find((month) => month.value === value);
+    return month ? month.label : '';
 }

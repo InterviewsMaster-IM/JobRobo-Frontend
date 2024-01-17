@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { PrimaryWhiteButton } from '../../styles/Buttons';
+import { ProfileConstants } from '../../utils/Constants';
 
 const SkillsDisplayCard = ({ handleOpenForm }) => {
 
@@ -26,7 +27,7 @@ const SkillsDisplayCard = ({ handleOpenForm }) => {
                             </Typography>
                         </Grid>
                         <Grid item>
-                            <PrimaryWhiteButton onClick={() => handleOpenForm('skills')}>
+                            <PrimaryWhiteButton onClick={() => handleOpenForm(ProfileConstants.SKILLS)}>
                                 <ModeEditOutlineOutlinedIcon fontSize='small' />
                                 <Typography variant='body2' fontWeight={'500'}>
                                     Edit

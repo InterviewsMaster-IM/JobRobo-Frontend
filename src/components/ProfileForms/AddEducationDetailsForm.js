@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import MenuItem from '@mui/material/MenuItem';
@@ -6,17 +6,21 @@ import Select from '@mui/material/Select';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
-import { getYears, months } from '../../utils/Constants';
+import { ActionType, getYears, months } from '../../utils/Constants';
+import { useAddEducationDetailsMutation, useGetEducationDetailByIdQuery, useUpdateEducationDetailsMutation } from '../../api/educationApi';
+import NotificationMessages from '../../utils/notificationConstants';
+import CustomToast from '../common/CustomToast';
+import toast from "react-hot-toast";
 
 const initialData = {
     school: '',
     degree: '',
-    fieldOfStudy: '',
+    major_field_of_study: '',
     startMonth: '',
     startYear: '',
     endMonth: '',
     endYear: '',
-    gpa: ''
+    description: ''
 }
 
 const MenuProps = {
@@ -27,9 +31,36 @@ const MenuProps = {
     },
 };
 
-const AddEducationDetailsForm = ({ handleHideForm }) => {
+const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
 
     const [formData, setFormData] = useState(initialData);
+    const [addEducationDetails] = useAddEducationDetailsMutation();
+    const [updateEducationDetails] = useUpdateEducationDetailsMutation();
+    const [showErrorMsg, setShowErrorMsg] = useState(false);
+    const [questionErrorStates, setQuestionErrorStates] = useState({});
+
+    const { data: educationDetails, isFetching: educationDetailsFetching, refetch: fetchEducationDetailById } = useGetEducationDetailByIdQuery(id, { skip: !id });
+    const years = getYears();
+
+    useEffect(() => {
+        if (id) {
+            fetchEducationDetailById();
+        }
+    }, [id]);
+
+    useEffect(() => {
+        setFormData({
+            school: educationDetails?.school || '',
+            degree: educationDetails?.degree || '',
+            major_field_of_study: educationDetails?.major_field_of_study || '',
+            startMonth: educationDetails?.start_month_year?.split('-')[1] || '',
+            startYear: parseInt(educationDetails?.start_month_year?.split('-')[0]) || '',
+            endMonth: educationDetails?.end_month_year?.split('-')[1] || '',
+            endYear: parseInt(educationDetails?.end_month_year?.split('-')[0]) || '',
+            description: educationDetails?.description || ''
+        })
+    }, [educationDetailsFetching])
+
 
     const handleFormInput = (e) => {
         const { name, value } = e.target;
@@ -39,13 +70,69 @@ const AddEducationDetailsForm = ({ handleHideForm }) => {
         }))
     }
 
-    const renderValue = ({ selected, placeholder }) => {
-        console.log(selected);
-        if (selected === '') {
-            return <Typography variant='body2' color={'#7F8781'}>{placeholder}</Typography>
+    const handleFormSubmit = async () => {
+        const formattedData = {
+            school: formData.school,
+            degree: formData.degree,
+            major_field_of_study: formData.major_field_of_study,
+            start_month_year: `${formData.startYear}-${formData.startMonth}-01`,
+            end_month_year: `${formData.endYear}-${formData.endMonth}-01`,
+            description: formData.description,
         }
-        return selected.label;
+        const errorStatus = getErrorStatus();
+
+        if (errorStatus) {
+            setShowErrorMsg(true);
+        }
+        else {
+            setShowErrorMsg(false);
+
+            if (actionType === ActionType.ADD) {
+                try {
+                    const response = await addEducationDetails(formattedData);
+                    if (response.data) {
+                        handleHideForm();
+                        toast.custom(<CustomToast type={"success"} message={NotificationMessages.EDUCATION_DETAILS_ADDED_SUCCESS} />);
+                    }
+                } catch (error) {
+                    toast.custom(<CustomToast type={"error"} message={error.message} />);
+                }
+            } else {
+                try {
+                    const response = await updateEducationDetails({ id, payload: formattedData });
+                    if (response.data) {
+                        handleHideForm();
+                        toast.custom(<CustomToast type={"success"} message={NotificationMessages.EDUCATION_DETAILS_UPDATED_SUCCESS} />);
+                    }
+                } catch (error) {
+                    toast.custom(<CustomToast type={"error"} message={error.message} />);
+                }
+            }
+        }
+    };
+
+    const getErrorStatus = () => {
+        let errorStatus = false;
+        let errorStates = {};
+        Object.entries(formData).forEach(([key, value]) => {
+            if (value === '' && key !== 'description') {
+                errorStatus = true;
+                errorStates = { ...errorStates, [key]: true };
+            }
+        });
+        setQuestionErrorStates(errorStates);
+        return errorStatus;
     }
+
+    const renderValue = ({ selected, options, placeholder }) => {
+        if (selected === '') {
+            return <Typography color={'#7F8781'}>{placeholder}</Typography>
+        }
+        else {
+            const selectedOption = options.find((option) => option.value === selected);
+            return selectedOption ? selectedOption.label : '';
+        }
+    };
 
     return (
         <Box width={'26rem'} height={'100%'}>
@@ -58,7 +145,8 @@ const AddEducationDetailsForm = ({ handleHideForm }) => {
                 <Grid container item padding={'16px 24px'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'32px'}>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
-                            School
+                            School/College
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <OutlinedInput
                             fullWidth
@@ -67,10 +155,14 @@ const AddEducationDetailsForm = ({ handleHideForm }) => {
                             onChange={handleFormInput}
                             placeholder='eg., Michigan State University'
                             sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
+                        <Typography variant='body2' marginLeft={'4px'} fontSize={'12px'} color="#ff0000" >
+                            {showErrorMsg && questionErrorStates?.school && 'School cannot be empty.'}
+                        </Typography>
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                             Degree
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <OutlinedInput
                             fullWidth
@@ -79,22 +171,30 @@ const AddEducationDetailsForm = ({ handleHideForm }) => {
                             onChange={handleFormInput}
                             placeholder="eg., Bachelor's"
                             sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
+                        <Typography variant='body2' marginLeft={'4px'} fontSize={'12px'} color="#ff0000" >
+                            {showErrorMsg && questionErrorStates?.degree && 'Degree cannot be empty.'}
+                        </Typography>
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                             Major/Field of study
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <OutlinedInput
                             fullWidth
-                            name='fieldOfStudy'
-                            value={formData.fieldOfStudy}
+                            name='major_field_of_study'
+                            value={formData.major_field_of_study}
                             onChange={handleFormInput}
                             placeholder='eg., Mechanical Engineering'
                             sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
+                        <Typography variant='body2' marginLeft={'4px'} fontSize={'12px'} color="#ff0000" >
+                            {showErrorMsg && questionErrorStates?.major_field_of_study && 'Field of study cannot be empty.'}
+                        </Typography>
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
-                            Start
+                            Start Date
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <Grid container item gap={'16px'}>
                             <Grid item xs={5.7}>
@@ -104,7 +204,7 @@ const AddEducationDetailsForm = ({ handleHideForm }) => {
                                     value={formData.startMonth}
                                     onChange={handleFormInput}
                                     displayEmpty
-                                    renderValue={(selected) => renderValue({ selected, placeholder: 'Month' })}
+                                    renderValue={(selected) => renderValue({ selected, options: months, placeholder: 'Month' })}
                                     sx={{ height: '40px' }}
                                     MenuProps={MenuProps}
                                 >
@@ -112,13 +212,16 @@ const AddEducationDetailsForm = ({ handleHideForm }) => {
                                         months.map((option) => (
                                             <MenuItem
                                                 key={option.value}
-                                                value={option}
+                                                value={option.value}
                                             >
                                                 {option.label}
                                             </MenuItem>
                                         ))
                                     }
                                 </Select>
+                                <Typography variant='body2' marginLeft={'4px'} fontSize={'12px'} color="#ff0000" >
+                                    {showErrorMsg && questionErrorStates?.startMonth && 'Select one'}
+                                </Typography>
                             </Grid>
                             <Grid item xs={5.7}>
                                 <Select
@@ -127,27 +230,31 @@ const AddEducationDetailsForm = ({ handleHideForm }) => {
                                     value={formData.startYear}
                                     onChange={handleFormInput}
                                     displayEmpty
-                                    renderValue={(selected) => renderValue({ selected, placeholder: 'Year' })}
+                                    renderValue={(selected) => renderValue({ selected, options: years, placeholder: 'Year' })}
                                     sx={{ height: '40px' }}
                                     MenuProps={MenuProps}
                                 >
                                     {
-                                        getYears().map((option) => (
+                                        years?.map((option) => (
                                             <MenuItem
                                                 key={option.value}
-                                                value={option}
+                                                value={option.value}
                                             >
                                                 {option.label}
                                             </MenuItem>
                                         ))
                                     }
                                 </Select>
+                                <Typography variant='body2' marginLeft={'4px'} fontSize={'12px'} color="#ff0000" >
+                                    {showErrorMsg && questionErrorStates?.startYear && 'Select one'}
+                                </Typography>
                             </Grid>
                         </Grid>
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
-                            End
+                            End Date
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <Grid container item gap={'16px'}>
                             <Grid item xs={5.7}>
@@ -157,7 +264,7 @@ const AddEducationDetailsForm = ({ handleHideForm }) => {
                                     value={formData.endMonth}
                                     onChange={handleFormInput}
                                     displayEmpty
-                                    renderValue={(selected) => renderValue({ selected, placeholder: 'Month' })}
+                                    renderValue={(selected) => renderValue({ selected, options: months, placeholder: 'Month' })}
                                     sx={{ height: '40px' }}
                                     MenuProps={MenuProps}
                                 >
@@ -165,13 +272,16 @@ const AddEducationDetailsForm = ({ handleHideForm }) => {
                                         months.map((option) => (
                                             <MenuItem
                                                 key={option.value}
-                                                value={option}
+                                                value={option.value}
                                             >
                                                 {option.label}
                                             </MenuItem>
                                         ))
                                     }
                                 </Select>
+                                <Typography variant='body2' marginLeft={'4px'} fontSize={'12px'} color="#ff0000" >
+                                    {showErrorMsg && questionErrorStates?.endMonth && 'Select one.'}
+                                </Typography>
                             </Grid>
                             <Grid item xs={5.7}>
                                 <Select
@@ -180,32 +290,35 @@ const AddEducationDetailsForm = ({ handleHideForm }) => {
                                     value={formData.endYear}
                                     onChange={handleFormInput}
                                     displayEmpty
-                                    renderValue={(selected) => renderValue({ selected, placeholder: 'Year' })}
+                                    renderValue={(selected) => renderValue({ selected, options: years, placeholder: 'Year' })}
                                     sx={{ height: '40px' }}
                                     MenuProps={MenuProps}
                                 >
                                     {
-                                        getYears().map((option) => (
+                                        getYears(formData.startYear)?.map((option) => (
                                             <MenuItem
                                                 key={option.value}
-                                                value={option}
+                                                value={option.value}
                                             >
                                                 {option.label}
                                             </MenuItem>
                                         ))
                                     }
                                 </Select>
+                                <Typography variant='body2' marginLeft={'4px'} fontSize={'12px'} color="#ff0000" >
+                                    {showErrorMsg && questionErrorStates?.endYear && 'Select one.'}
+                                </Typography>
                             </Grid>
                         </Grid>
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
-                            Description
+                            GPA
                         </Typography>
                         <OutlinedInput
                             fullWidth
-                            name='gpa'
-                            value={formData.gpa}
+                            name='description'
+                            value={formData.description}
                             onChange={handleFormInput}
                             placeholder='eg., 6.8'
                             sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
@@ -216,7 +329,7 @@ const AddEducationDetailsForm = ({ handleHideForm }) => {
                         <PrimaryWhiteButton sx={{ width: '50%', justifyContent: 'center' }} onClick={() => handleHideForm()}>
                             Cancel
                         </PrimaryWhiteButton>
-                        <PrimaryGreenButton sx={{ width: '50%' }}>
+                        <PrimaryGreenButton sx={{ width: '50%' }} onClick={() => handleFormSubmit()}>
                             Save
                         </PrimaryGreenButton>
                     </Box>
