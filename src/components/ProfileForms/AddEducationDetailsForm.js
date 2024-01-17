@@ -283,7 +283,7 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                                     MenuProps={MenuProps}
                                 >
                                     {
-                                        getYears(formData.startYear)?.map((option) => (
+                                        getYears(formData?.startYear)?.map((option) => (
                                             <MenuItem
                                                 key={option.value}
                                                 value={option.value}

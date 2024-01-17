@@ -14,7 +14,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import NotificationMessages from '../../utils/notificationConstants';
 import toast from "react-hot-toast";
 import CustomToast from '../common/CustomToast';
-import { getMonthName } from '../../utils/Helpers';
+import { formatShortMonthYear } from '../../utils/Helpers';
 
 const EducationDetailsCard = ({ handleOpenForm }) => {
 
@@ -124,7 +124,7 @@ const EducationDetailsCard = ({ handleOpenForm }) => {
                                                             :
                                                             <Grid item textAlign={'end'}>
                                                                 <Typography variant='body2' fontWeight={'400'} color={'#808080'}>
-                                                                    {getMonthName(start_month_year?.split('-')[1])} {start_month_year?.split('-')[0]} - {getMonthName(end_month_year?.split('-')[1])} {end_month_year?.split('-')[0]}
+                                                                    {formatShortMonthYear(start_month_year)} - {formatShortMonthYear(end_month_year)}
                                                                 </Typography>
                                                             </Grid>
                                                     }

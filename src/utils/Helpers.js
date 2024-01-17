@@ -1,4 +1,4 @@
-import { shortMonths } from "./Constants";
+import { format, parseISO } from 'date-fns';
 
 const maxImagesUpload = 5;
 const maxImageSize = 2 * 1024 * 1024; // 2MB
@@ -14,7 +14,11 @@ export function image_validate(files, allSelectedFiles) {
     return error;
 }
 
-export function getMonthName(value) {
-    const month = shortMonths.find((month) => month.value === value);
-    return month ? month.label : '';
-}
+export const formatShortMonthYear = (date) => {
+    if (date) {
+        const parsedDate = parseISO(date);
+        return format(parsedDate, "MMM yyyy");
+    } else {
+        return '-';
+    }
+};
