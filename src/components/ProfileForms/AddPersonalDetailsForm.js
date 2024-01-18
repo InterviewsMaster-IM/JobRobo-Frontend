@@ -77,9 +77,9 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
     };
 
     const getDisableStatus = () => {
-        const ignoreKeys = ["gender", "githubUrl", "portfolioUrl"];
+        const ignoreKeys = ["gender", "githubUrl", "portfolioUrl", "dateOfBirth"];
         const disableStatus =  Object.entries(formData).some(([key, value]) => {
-            return !value && !ignoreKeys.includes(key);
+            return (!value && !ignoreKeys.includes(key));
         });
         setDisableStatus(disableStatus);
     }
@@ -117,7 +117,7 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                     toast.custom(<CustomToast type={"error"} message={error?.data?.error} />);
                 } else {
                     // const errorMsg = Object.entries(error.data || {}).map(([key, value]) => value[0]).join(" ");
-                    const errorMsg = Object.values(error.data || {})[0][0];
+                    const errorMsg = Object.values(error?.data || {})[0][0];
                     toast.custom(<CustomToast type={"error"} message={errorMsg} />);
                 }
             }
