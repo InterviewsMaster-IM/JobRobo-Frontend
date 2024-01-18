@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import MenuItem from '@mui/material/MenuItem';
@@ -9,20 +9,12 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import TextField from '@mui/material/TextField';
 import Checkbox from '@mui/material/Checkbox';
 import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
-import { employmentTypeOptions, months } from '../../utils/Constants';
+import { ActionType, employmentTypeOptions, months } from '../../utils/Constants';
+import { useAddWorkExperienceMutation, useGetWorkExperienceByIdQuery, useUpdateWorkExperienceMutation } from '../../api/workExperienceApi';
+import NotificationMessages from '../../utils/notificationConstants';
+import CustomToast from '../common/CustomToast';
+import toast from "react-hot-toast";
 import { getYears } from '../../utils/Helpers';
-
-const initialData = {
-    positionTitle: '',
-    companyName: '',
-    employmentType: '',
-    currentRole: false,
-    startMonth: '',
-    startYear: '',
-    endMonth: '',
-    endYear: '',
-    description: ''
-}
 
 const MenuProps = {
     PaperProps: {
@@ -32,26 +24,110 @@ const MenuProps = {
     },
 };
 
-const years = getYears();
+const AddWorkExperienceForm = ({ actionType, handleHideForm, id }) => {
 
-const AddWorkExperienceForm = ({ handleHideForm }) => {
+    const [formData, setFormData] = useState({});
+    const [addWorkExperience] = useAddWorkExperienceMutation();
+    const [updateWorkExperience] = useUpdateWorkExperienceMutation();
+    const [disableStatus, setDisableStatus] = useState(true);
 
-    const [formData, setFormData] = useState(initialData);
+    const { data: workExperienceDetail, isFetching: workExperienceDetailFetching, refetch: fetchWorkExperienceById } = useGetWorkExperienceByIdQuery(id, { skip: !id });
+
+    const years = getYears();
+
+    useEffect(() => {
+        if (id) {
+            fetchWorkExperienceById();
+        }
+    }, [id]);
+
+    useEffect(() => {
+        setFormData({
+            position_title: workExperienceDetail?.position_title || '',
+            company_name: workExperienceDetail?.company_name || '',
+            employment_type: workExperienceDetail?.employment_type || '',
+            current_role: workExperienceDetail?.current_role || false,
+            startMonth: workExperienceDetail?.start_month_year?.split('-')[1] || '',
+            startYear: parseInt(workExperienceDetail?.start_month_year?.split('-')[0]) || '',
+            endMonth: workExperienceDetail?.end_month_year?.split('-')[1] || '',
+            endYear: parseInt(workExperienceDetail?.end_month_year?.split('-')[0]) || '',
+            description: workExperienceDetail?.description || ''
+        })
+    }, [workExperienceDetailFetching])
 
     const handleFormInput = (e) => {
-        const { name, value } = e.target;
+        const { name } = e.target;
+        const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
         setFormData((formData) => ({
             ...formData,
             [name]: value
         }))
     }
 
-    const renderValue = ({ selected, placeholder }) => {
-        if (selected === '') {
-            return <Typography variant='body2' color={'#7F8781'}>{placeholder}</Typography>
+    const handleFormSubmit = async () => {
+        const formattedData = {
+            position_title: formData.position_title,
+            company_name: formData.company_name,
+            employment_type: formData.employment_type,
+            current_role: formData.current_role,
+            start_month_year: `${formData.startYear}-${formData.startMonth}-01`,
+            ...(formData.current_role ? {} : { end_month_year: `${formData.endYear}-${formData.endMonth}-01` }),
+            description: formData.description,
         }
-        return selected.label;
+
+        if (actionType === ActionType.ADD) {
+            try {
+                const response = await addWorkExperience(formattedData).unwrap();
+                handleHideForm();
+                toast.custom(<CustomToast type={"success"} message={NotificationMessages.WORK_EXPERIENCE_ADDED_SUCCESS} />);
+            } catch (error) {
+                if (error?.data?.error) {
+                    toast.custom(<CustomToast type={"error"} message={error?.data?.error} />);
+                } else {
+                    const errorMsg = Object.values(error?.data || {})[0][0];
+                    toast.custom(<CustomToast type={"error"} message={errorMsg} />);
+                }
+            }
+        } else {
+            try {
+                const response = await updateWorkExperience({ id, payload: formattedData }).unwrap();
+                handleHideForm();
+                toast.custom(<CustomToast type={"success"} message={NotificationMessages.WORK_EXPERIENCE_UPDATED_SUCCESS} />);
+            } catch (error) {
+                if (error?.data?.error) {
+                    toast.custom(<CustomToast type={"error"} message={error?.data?.error} />);
+                } else {
+                    const errorMsg = Object.values(error?.data || {})[0][0];
+                    toast.custom(<CustomToast type={"error"} message={errorMsg} />);
+                }
+            }
+        }
+    };
+
+    const getDisableStatus = () => {
+        const ignoreKeys = ["description", "current_role"];
+        if (formData.current_role) {
+            ignoreKeys.push('endMonth', 'endYear');
+        }
+        const disableStatus = Object.entries(formData).some(([key, value]) => {
+            return !value && !ignoreKeys.includes(key);
+        });
+        setDisableStatus(disableStatus);
     }
+
+    useEffect(() => {
+        getDisableStatus();
+    }, [formData]);
+
+    const renderValue = ({ selected, options, placeholder }) => {
+        if (!selected) {
+            return <Typography fontSize={'14px'} color={'rgba(0, 0, 0, 0.4)'}>{placeholder}</Typography>
+        }
+        else {
+            const selectedOption = options.find((option) => option.value === selected);
+            return selectedOption ? selectedOption.label : '';
+        }
+    };
 
     return (
         <Box width={'26rem'} height={'100%'}>
@@ -65,11 +141,12 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                             Position title
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <OutlinedInput
                             fullWidth
-                            name='positionTitle'
-                            value={formData.positionTitle}
+                            name='position_title'
+                            value={formData.position_title}
                             onChange={handleFormInput}
                             placeholder='eg., Sales associate'
                             sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
@@ -77,11 +154,12 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                             Company name
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <OutlinedInput
                             fullWidth
-                            name='companyName'
-                            value={formData.companyName}
+                            name='company_name'
+                            value={formData.company_name}
                             onChange={handleFormInput}
                             placeholder='eg., Google'
                             sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
@@ -89,14 +167,15 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                             Employment type
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <Select
                             fullWidth
-                            name='employmentType'
-                            value={formData.employmentType}
+                            name='employment_type'
+                            value={formData?.employment_type || ''}
                             onChange={handleFormInput}
                             displayEmpty
-                            renderValue={(selected) => renderValue({ selected, placeholder: 'Choose an employment type' })}
+                            renderValue={(selected) => renderValue({ selected, options: employmentTypeOptions, placeholder: 'Choose an employment type' })}
                             sx={{ height: '40px' }}
                             MenuProps={MenuProps}
                         >
@@ -104,7 +183,7 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
                                 employmentTypeOptions.map((option) => (
                                     <MenuItem
                                         key={option.value}
-                                        value={option}
+                                        value={option.value}
                                     >
                                         {option.label}
                                     </MenuItem>
@@ -113,21 +192,24 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
                         </Select>
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
-                        <FormControlLabel control={<Checkbox color='customGreen' size='small' />} label={<Typography fontSize={'14px'}>This is my current role</Typography>} />
+                        <FormControlLabel sx={{ margin: '0px' }} control={<Checkbox name='current_role' checked={!!formData?.current_role} sx={{ padding: '0', marginRight: '4px' }} color='customGreen' size='small' onClick={handleFormInput} />} label={<Typography fontSize={'12px'}>
+                            This is my current role
+                        </Typography>} />
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
-                            Start
+                            Start Date
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <Grid container item gap={'16px'}>
                             <Grid item xs={5.7}>
                                 <Select
                                     fullWidth
                                     name='startMonth'
-                                    value={formData.startMonth}
+                                    value={formData?.startMonth || ''}
                                     onChange={handleFormInput}
                                     displayEmpty
-                                    renderValue={(selected) => renderValue({ selected, placeholder: 'Month' })}
+                                    renderValue={(selected) => renderValue({ selected, options: months, placeholder: 'Month' })}
                                     sx={{ height: '40px' }}
                                     MenuProps={MenuProps}
                                 >
@@ -135,7 +217,7 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
                                         months.map((option) => (
                                             <MenuItem
                                                 key={option.value}
-                                                value={option}
+                                                value={option.value}
                                             >
                                                 {option.label}
                                             </MenuItem>
@@ -147,18 +229,18 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
                                 <Select
                                     fullWidth
                                     name='startYear'
-                                    value={formData.startYear}
+                                    value={formData?.startYear || ''}
                                     onChange={handleFormInput}
                                     displayEmpty
-                                    renderValue={(selected) => renderValue({ selected, placeholder: 'Year' })}
+                                    renderValue={(selected) => renderValue({ selected, options: years, placeholder: 'Year' })}
                                     sx={{ height: '40px' }}
                                     MenuProps={MenuProps}
                                 >
                                     {
-                                        years.map((option) => (
+                                        years?.map((option) => (
                                             <MenuItem
                                                 key={option.value}
-                                                value={option}
+                                                value={option.value}
                                             >
                                                 {option.label}
                                             </MenuItem>
@@ -168,19 +250,25 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
+                    <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}
+                        sx={{
+                            opacity: formData.current_role ? 0.4 : 1,
+                            pointerEvents: formData.current_role ? 'none' : 'auto'
+                        }}
+                    >
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
-                            End
+                            End Date
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <Grid container item gap={'16px'}>
                             <Grid item xs={5.7}>
                                 <Select
                                     fullWidth
                                     name='endMonth'
-                                    value={formData.endMonth}
+                                    value={formData?.endMonth || ''}
                                     onChange={handleFormInput}
                                     displayEmpty
-                                    renderValue={(selected) => renderValue({ selected, placeholder: 'Month' })}
+                                    renderValue={(selected) => renderValue({ selected, options: months, placeholder: 'Month' })}
                                     sx={{ height: '40px' }}
                                     MenuProps={MenuProps}
                                 >
@@ -188,7 +276,7 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
                                         months.map((option) => (
                                             <MenuItem
                                                 key={option.value}
-                                                value={option}
+                                                value={option.value}
                                             >
                                                 {option.label}
                                             </MenuItem>
@@ -197,22 +285,21 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
                                 </Select>
                             </Grid>
                             <Grid item xs={5.7}>
-
                                 <Select
                                     fullWidth
                                     name='endYear'
-                                    value={formData.endYear}
+                                    value={formData?.endYear || ''}
                                     onChange={handleFormInput}
                                     displayEmpty
-                                    renderValue={(selected) => renderValue({ selected, placeholder: 'Year' })}
+                                    renderValue={(selected) => renderValue({ selected, options: years, placeholder: 'Year' })}
                                     sx={{ height: '40px' }}
                                     MenuProps={MenuProps}
                                 >
                                     {
-                                        years.map((option) => (
+                                        getYears(formData?.startYear)?.map((option) => (
                                             <MenuItem
                                                 key={option.value}
-                                                value={option}
+                                                value={option.value}
                                             >
                                                 {option.label}
                                             </MenuItem>
@@ -240,7 +327,6 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
                             multiline
                             rows={5}
                         />
-
                     </Grid>
                 </Grid>
                 <Grid container item padding={'12px 24px'} marginTop={'auto'} borderTop={'1px solid #E5E5E5'}>
@@ -248,7 +334,7 @@ const AddWorkExperienceForm = ({ handleHideForm }) => {
                         <PrimaryWhiteButton sx={{ width: '50%', justifyContent: 'center' }} onClick={() => handleHideForm()}>
                             Cancel
                         </PrimaryWhiteButton>
-                        <PrimaryGreenButton sx={{ width: '50%' }}>
+                        <PrimaryGreenButton sx={{ width: '50%' }} disabled={disableStatus} onClick={() => handleFormSubmit()}>
                             Save
                         </PrimaryGreenButton>
                     </Box>

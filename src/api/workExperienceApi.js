@@ -15,11 +15,12 @@ export const workExperienceApi = createApi({
         credentials: "include",
     }),
     endpoints: (builder) => ({
-        getWorkExperience: builder.query({
+        getWorkExperiences: builder.query({
             query: () => ({
                 url: ApiUrls.WORK_EXPERIENCE,
                 method: 'GET',
             }),
+            providesTags: ['workExperience']
         }),
         addWorkExperience: builder.mutation({
             query: (payload) => ({
@@ -27,26 +28,36 @@ export const workExperienceApi = createApi({
                 method: 'POST',
                 body: payload,
             }),
+            invalidatesTags: ['workExperience']
+        }),
+        getWorkExperienceById: builder.query({
+            query: (id) => ({
+                url: `${ApiUrls.WORK_EXPERIENCE}${id}/`,
+                method: 'GET',
+            }),
         }),
         updateWorkExperience: builder.mutation({
             query: ({ id, payload }) => ({
-                url: `${ApiUrls.WORK_EXPERIENCE}/${id}`,
+                url: `${ApiUrls.WORK_EXPERIENCE}${id}/`,
                 method: 'PUT',
                 body: payload,
             }),
+            invalidatesTags: ['workExperience']
         }),
         deleteWorkExperience: builder.mutation({
             query: (id) => ({
-                url: `${ApiUrls.WORK_EXPERIENCE}/${id}`,
+                url: `${ApiUrls.WORK_EXPERIENCE}${id}/`,
                 method: 'DELETE',
             }),
+            invalidatesTags: ['workExperience']
         }),
     }),
 });
 
 export const {
-    useGetWorkExperienceQuery,
+    useGetWorkExperiencesQuery,
     useAddWorkExperienceMutation,
+    useGetWorkExperienceByIdQuery,
     useUpdateWorkExperienceMutation,
     useDeleteWorkExperienceMutation,
 } = workExperienceApi;
