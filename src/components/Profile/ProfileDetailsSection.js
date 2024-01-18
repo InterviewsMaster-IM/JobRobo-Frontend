@@ -15,9 +15,11 @@ import AddWorkExperienceForm from '../ProfileForms/AddWorkExperienceForm';
 import AddEducationDetailsForm from '../ProfileForms/AddEducationDetailsForm';
 import { ActionType, ProfileConstants } from '../../utils/Constants';
 import { useGetPersonalInfoQuery } from '../../api/personalInfoApi';
+import { useGetSkillsQuery } from '../../api/skillsApi';
 
 const ProfileDetailsSection = () => {
     const { data: personalDetail } = useGetPersonalInfoQuery();
+    const { data: skillDetails } = useGetSkillsQuery();
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [activeForm, setActiveForm] = useState('');
     const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -57,7 +59,7 @@ const ProfileDetailsSection = () => {
                     <Grid item flex={'2 0 auto'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'24px'}>
                         <PersonalDetailsCard handleOpenForm={handleOpenForm} personalDetail={personalDetail} />
                         <ResumesDisplayCard handleOpenForm={handleOpenForm} />
-                        <SkillsDisplayCard handleOpenForm={handleOpenForm} />
+                        <SkillsDisplayCard handleOpenForm={handleOpenForm} skillDetails={skillDetails} />
                     </Grid>
                 </Grid>
             </Box>
@@ -66,7 +68,7 @@ const ProfileDetailsSection = () => {
                 open={isFormVisible}
                 onClose={(_, reason) => { handleHideForm(reason) }}
             >
-                {activeForm === ProfileConstants.SKILLS && <AddSkillsForm handleHideForm={handleHideForm} />}
+                {activeForm === ProfileConstants.SKILLS && <AddSkillsForm handleHideForm={handleHideForm} skillDetails={skillDetails} />}
                 {activeForm === ProfileConstants.PERSONAL_DETAILS && <AddPersonalDetailsForm handleHideForm={handleHideForm} personalDetail={personalDetail} />}
                 {activeForm === ProfileConstants.WORK_EXPERIENCE && <AddWorkExperienceForm handleHideForm={handleHideForm} />}
                 {activeForm === ProfileConstants.EDUCATION && <AddEducationDetailsForm actionType={actionType} handleHideForm={handleHideForm} id={educationId} />}

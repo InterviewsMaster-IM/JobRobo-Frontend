@@ -20,6 +20,7 @@ export const skillsApi = createApi({
                 url: ApiUrls.SKILLS,
                 method: 'GET',
             }),
+            providesTags: ['skills']
         }),
         addSkills: builder.mutation({
             query: (payload) => ({
@@ -27,17 +28,18 @@ export const skillsApi = createApi({
                 method: 'POST',
                 body: payload,
             }),
+            invalidatesTags: ['skills']
         }),
         updateSkills: builder.mutation({
             query: ({ id, payload }) => ({
-                url: `${ApiUrls.SKILLS}/${id}`,
+                url: `${ApiUrls.SKILLS}${id}/`,
                 method: 'PUT',
                 body: payload,
             }),
         }),
         deleteSkills: builder.mutation({
             query: (id) => ({
-                url: `${ApiUrls.SKILLS}/${id}`,
+                url: `${ApiUrls.SKILLS}${id}/`,
                 method: 'DELETE',
             }),
         }),
