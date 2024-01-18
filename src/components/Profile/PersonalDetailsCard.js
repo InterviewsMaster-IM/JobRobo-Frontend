@@ -67,16 +67,18 @@ const PersonalDetailsCard = ({ handleOpenForm, personalDetail }) => {
                             </PrimaryWhiteButton>
                         </Grid>
                     </Grid>
-                    <Grid container item paddingTop={'1rem'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'12px'} borderTop={'1px solid #E5E5E5'}>
-                        <Grid item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
-                            <Link variant='body2' color={'#001405'} href={personalDetail?.linkedin} target="_blank" underline="always">
-                                {personalDetail?.linkedin}
-                            </Link>
-                            <Link variant='body2' color={'#001405'} href={personalDetail?.github} target="_blank" underline="always">
-                                {personalDetail?.github}
-                            </Link>
+                    {personalDetail?.linkedin &&
+                        <Grid container item paddingTop={'1rem'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'12px'} borderTop={'1px solid #E5E5E5'}>
+                            <Grid item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
+                                <Link variant='body2' color={'#001405'} href={personalDetail?.linkedin} target="_blank" underline="always">
+                                    {personalDetail?.linkedin}
+                                </Link>
+                                <Link variant='body2' color={'#001405'} href={personalDetail?.github} target="_blank" underline="always">
+                                    {personalDetail?.github}
+                                </Link>
+                            </Grid>
                         </Grid>
-                    </Grid>
+                    }
                 </Grid>
             </Card>
         </Box>
