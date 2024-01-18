@@ -23,6 +23,7 @@ const ProfileDetailsSection = () => {
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [actionType, setActionType] = useState(ActionType.ADD);
     const [educationId, setEducationId] = useState(null);
+    const [workExperienceId, setWorkExperienceId] = useState(null);
 
     const handleOpenForm = (form, actionType, id) => {
         setIsFormVisible(true);
@@ -32,6 +33,9 @@ const ProfileDetailsSection = () => {
 
         if (form === ProfileConstants.EDUCATION) {
             setEducationId(id);
+        }
+        if (form === ProfileConstants.WORK_EXPERIENCE) {
+            setWorkExperienceId(id);
         }
     }
 
@@ -68,7 +72,7 @@ const ProfileDetailsSection = () => {
             >
                 {activeForm === ProfileConstants.SKILLS && <AddSkillsForm handleHideForm={handleHideForm} />}
                 {activeForm === ProfileConstants.PERSONAL_DETAILS && <AddPersonalDetailsForm handleHideForm={handleHideForm} personalDetail={personalDetail} />}
-                {activeForm === ProfileConstants.WORK_EXPERIENCE && <AddWorkExperienceForm handleHideForm={handleHideForm} />}
+                {activeForm === ProfileConstants.WORK_EXPERIENCE && <AddWorkExperienceForm actionType={actionType} handleHideForm={handleHideForm} id={workExperienceId} />}
                 {activeForm === ProfileConstants.EDUCATION && <AddEducationDetailsForm actionType={actionType} handleHideForm={handleHideForm} id={educationId} />}
             </Drawer>
         </>
