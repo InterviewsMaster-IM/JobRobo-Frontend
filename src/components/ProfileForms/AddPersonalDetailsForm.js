@@ -17,6 +17,14 @@ const daysOptions = getDays();
 const yearOptions = getYears();
 const monthOptions = months;
 
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: 240,
+        },
+    },
+};
+
 const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
     const [formData, setFormData] = useState({});
     const [updatePersonalInfo, updatePersonalInfoResponse] = useUpdatePersonalInfoMutation();
@@ -213,6 +221,7 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                                     displayEmpty
                                     renderValue={(selected) => renderValue(selected, daysOptions, 'Day')}
                                     sx={{ height: '40px' }}
+                                    MenuProps={MenuProps}
                                 >
                                     {
                                         daysOptions.map((option) => (
@@ -235,6 +244,7 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                                     displayEmpty
                                     renderValue={(selected) => renderValue(selected, monthOptions, 'Month')}
                                     sx={{ height: '40px' }}
+                                    MenuProps={MenuProps}
                                 >
                                     {
                                         monthOptions.map((option) => (
@@ -257,6 +267,7 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                                     displayEmpty
                                     renderValue={(selected) => renderValue(selected, yearOptions, 'Year')}
                                     sx={{ height: '40px' }}
+                                    MenuProps={MenuProps}
                                 >
                                     {
                                         yearOptions.map((option) => (
