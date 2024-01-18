@@ -12,16 +12,18 @@ import BillingHistory from './BillingHistory';
 import CreditsHistory from './CreditsHistory';
 import { useNavigate } from 'react-router-dom';
 import { useGetCreditHistoryQuery, useGetUserCreditsQuery } from '../../api/creditsApi';
+import { useGetPersonalInfoQuery } from '../../api/personalInfoApi';
 
 const AccountSettings = () => {
     const navigate = useNavigate();
     const { data: userCredits, refetch: fetchCredits } = useGetUserCreditsQuery();
     const { data: history, refetch: fetchCreditsHistory } = useGetCreditHistoryQuery();
+    const { data: personalDetail } = useGetPersonalInfoQuery();
 
     useEffect(() => {
         fetchCredits();
         fetchCreditsHistory();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleUpgradePlanButton = () => {
@@ -96,11 +98,11 @@ const AccountSettings = () => {
                             <Box display={'flex'} flexDirection={'column'} gap={'1rem'}>
                                 <Box>
                                     <Typography fontSize={'14px'} color={'#7F8781'}>Name:</Typography>
-                                    <Typography fontSize={'14px'}>Xyz Abc</Typography>
+                                    <Typography fontSize={'14px'}>{personalDetail?.first_name ? `${personalDetail?.first_name} ${personalDetail?.last_name}` : 'NA'}</Typography>
                                 </Box>
                                 <Box>
                                     <Typography fontSize={'14px'} color={'#7F8781'}>Email ID:</Typography>
-                                    <Typography fontSize={'14px'}>xyz@gmail.com</Typography>
+                                    <Typography fontSize={'14px'}>{personalDetail?.email ?? 'NA'}</Typography>
                                 </Box>
                             </Box>
                             <Box color={'#7F8781'} display={'flex'} gap={'2px'}>
