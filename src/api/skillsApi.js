@@ -30,25 +30,10 @@ export const skillsApi = createApi({
             }),
             invalidatesTags: ['skills']
         }),
-        updateSkills: builder.mutation({
-            query: ({ id, payload }) => ({
-                url: `${ApiUrls.SKILLS}${id}/`,
-                method: 'PUT',
-                body: payload,
-            }),
-        }),
-        deleteSkills: builder.mutation({
-            query: (id) => ({
-                url: `${ApiUrls.SKILLS}${id}/`,
-                method: 'DELETE',
-            }),
-        }),
     }),
 });
 
 export const {
     useGetSkillsQuery,
     useAddSkillsMutation,
-    useUpdateSkillsMutation,
-    useDeleteSkillsMutation,
 } = skillsApi;
