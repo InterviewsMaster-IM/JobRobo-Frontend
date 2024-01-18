@@ -8,6 +8,8 @@ const ResumeQuestionsTests = () => {
     const [resume, setResume] = useState(null);
     const [query, setQuery] = useState('');
     const [response, setResponse] = useState('');
+    const [query2, setQuery2] = useState('');
+    const [response2, setResponse2] = useState('');
 
     const handleFileUpload = async (event) => {
         const file = event.target.files[0];
@@ -43,6 +45,21 @@ const ResumeQuestionsTests = () => {
         }
     };
 
+
+    const handleQuerySubmit2 = async () => {
+        if (resume && query2) {
+            try {
+                const qaResponse = await apiService.post('resumes/qa2/', {
+                    resume_id: resume.id,
+                    query: query2,
+                });
+                console.log(qaResponse.data);
+                setResponse2(qaResponse.data.response);
+            } catch (error) {
+                console.error('Error submitting query:', error);
+            }
+        }
+    };
     return (
         <Box>
             <input
@@ -51,7 +68,7 @@ const ResumeQuestionsTests = () => {
                 onChange={handleFileUpload}
             />
             <TextField
-                label="Ask a question"
+                label="Enter html form"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 fullWidth
@@ -65,6 +82,24 @@ const ResumeQuestionsTests = () => {
                 Submit Query
             </Button>
             {response && <p>{JSON.stringify(response)}</p>}
+            <br></br>
+            <br></br>
+            <br></br>
+            <TextField
+                label="Enter field name"
+                value={query2}
+                onChange={(e) => setQuery2(e.target.value)}
+                fullWidth
+            />
+            <Button
+                variant="contained"
+                color="primary"
+                onClick={handleQuerySubmit2}
+                disabled={!resume}
+            >
+                Submit Query
+            </Button>
+            {response2 && <p>{JSON.stringify(response2)}</p>}
         </Box>
     );
 };
