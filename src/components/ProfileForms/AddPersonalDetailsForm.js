@@ -20,6 +20,7 @@ const monthOptions = months;
 const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
     const [formData, setFormData] = useState({});
     const [updatePersonalInfo, updatePersonalInfoResponse] = useUpdatePersonalInfoMutation();
+    const [disableStatus, setDisableStatus] = useState(true);
 
     useEffect(() => {
         const [yearPart, monthPart, dayPart] = (personalDetail?.dob || '').split('-');
@@ -67,10 +68,22 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
         return selected;
     };
 
+    const getDisableStatus = () => {
+        const ignoreKeys = ["gender", "githubUrl", "portfolioUrl"];
+        const disableStatus =  Object.entries(formData).some(([key, value]) => {
+            return !value && !ignoreKeys.includes(key);
+        });
+        setDisableStatus(disableStatus);
+    }
+
+    useEffect(()=> {
+        getDisableStatus();
+    }, [formData]);
+
     const handleSubmit = async () => {
         try {
             const { day, month, year } = formData;
-
+            
             const formattedDay = day < 10 ? `0${day}` : `${day}`;
             const dateOfBirth = `${year}-${month}-${formattedDay}`;
 
@@ -89,12 +102,16 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
             }
             try {
                 const response = await updatePersonalInfo(payload).unwrap();
-                if (response.data) {
-                    handleHideForm();
-                    toast.custom(<CustomToast type={"success"} message={NotificationMessages.PERSONAL_DETAILS_ADDED_SUCCESS} />);
-                }
+                handleHideForm();
+                toast.custom(<CustomToast type={"success"} message={NotificationMessages.PERSONAL_DETAILS_ADDED_SUCCESS} />);
             } catch (error) {
-                toast.custom(<CustomToast type={"error"} message={error.message} />);
+                if (error?.data?.error) {
+                    toast.custom(<CustomToast type={"error"} message={error?.data?.error} />);
+                } else {
+                    // const errorMsg = Object.entries(error.data || {}).map(([key, value]) => value[0]).join(" ");
+                    const errorMsg = Object.values(error.data || {})[0][0];
+                    toast.custom(<CustomToast type={"error"} message={errorMsg} />);
+                }
             }
         } catch (error) {
             toast.custom(<CustomToast type={"error"} message={error} />);
@@ -113,6 +130,7 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                             Phone number with country code for job applications
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <Grid container item columnGap={'16px'}>
                             <Grid item xs={3}>
@@ -139,11 +157,13 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                         <Grid item xs={5.7}>
                             <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                                 First name
+                                <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                             </Typography>
                         </Grid>
                         <Grid item xs={5.7}>
                             <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                                 Last name
+                                <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                             </Typography>
                         </Grid>
                         <Grid item xs={5.7}>
@@ -168,6 +188,7 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                             Email ID for job applications
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <OutlinedInput
                             fullWidth
@@ -180,6 +201,7 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                             Date of birth
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <Grid container item gap={'16px'}>
                             <Grid item xs={3.6}>
@@ -204,7 +226,7 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                                     }
                                 </Select>
                             </Grid>
-                            <Grid item xs={3.6}>
+                            <Grid item xs={3.7}>
                                 <Select
                                     fullWidth
                                     name="month"
@@ -276,6 +298,7 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                             Location
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <OutlinedInput
                             fullWidth
@@ -288,6 +311,7 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                             LinkedIn URL
+                            <Typography color="#ff0000" fontWeight={'600'} display={'inline'}> *</Typography>
                         </Typography>
                         <OutlinedInput
                             fullWidth
@@ -327,7 +351,7 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                         <PrimaryWhiteButton sx={{ width: '50%', justifyContent: 'center' }} onClick={handleHideForm}>
                             Cancel
                         </PrimaryWhiteButton>
-                        <PrimaryGreenButton sx={{ width: '50%' }} onClick={handleSubmit}>
+                        <PrimaryGreenButton sx={{ width: '50%' }} disabled={disableStatus} onClick={handleSubmit}>
                             Save
                         </PrimaryGreenButton>
                     </Box>
