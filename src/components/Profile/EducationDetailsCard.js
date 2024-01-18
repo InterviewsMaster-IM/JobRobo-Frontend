@@ -24,10 +24,15 @@ const EducationDetailsCard = ({ handleOpenForm }) => {
 
     const handleDelete = async (id) => {
         try {
-            const response = await deleteEducationDetailById(id);
+            const response = await deleteEducationDetailById(id).unwrap();
             toast.custom(<CustomToast type={"success"} message={NotificationMessages.EDUCATION_DETAIL_DELETED_SUCCESS} />);
         } catch (error) {
-            toast.custom(<CustomToast type={"error"} message={error.message} />);
+            if (error?.data?.error) {
+                toast.custom(<CustomToast type={"error"} message={error?.data?.error} />);
+            } else {
+                const errorMsg = Object.values(error?.data || {})[0][0];
+                toast.custom(<CustomToast type={"error"} message={errorMsg} />);
+            }
         }
     }
 

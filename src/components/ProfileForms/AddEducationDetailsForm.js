@@ -27,8 +27,7 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
     const [formData, setFormData] = useState({});
     const [addEducationDetails] = useAddEducationDetailsMutation();
     const [updateEducationDetails] = useUpdateEducationDetailsMutation();
-    const [showErrorMsg, setShowErrorMsg] = useState(false);
-    const [questionErrorStates, setQuestionErrorStates] = useState({});
+    const [disableStatus, setDisableStatus] = useState(true);
 
     const { data: educationDetails, isFetching: educationDetailsFetching, refetch: fetchEducationDetailById } = useGetEducationDetailByIdQuery(id, { skip: !id });
 
@@ -68,50 +67,47 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
             end_month_year: `${formData.endYear}-${formData.endMonth}-01`,
             description: formData.description,
         }
-        const errorStatus = getErrorStatus();
 
-        if (errorStatus) {
-            setShowErrorMsg(true);
-        }
-        else {
-            setShowErrorMsg(false);
-
-            if (actionType === ActionType.ADD) {
-                try {
-                    const response = await addEducationDetails(formattedData);
-                    if (response.data) {
-                        handleHideForm();
-                        toast.custom(<CustomToast type={"success"} message={NotificationMessages.EDUCATION_DETAILS_ADDED_SUCCESS} />);
-                    }
-                } catch (error) {
-                    toast.custom(<CustomToast type={"error"} message={error.message} />);
+        if (actionType === ActionType.ADD) {
+            try {
+                const response = await addEducationDetails(formattedData).unwrap();
+                handleHideForm();
+                toast.custom(<CustomToast type={"success"} message={NotificationMessages.EDUCATION_DETAILS_ADDED_SUCCESS} />);
+            } catch (error) {
+                if (error?.data?.error) {
+                    toast.custom(<CustomToast type={"error"} message={error?.data?.error} />);
+                } else {
+                    const errorMsg = Object.values(error?.data || {})[0][0];
+                    toast.custom(<CustomToast type={"error"} message={errorMsg} />);
                 }
-            } else {
-                try {
-                    const response = await updateEducationDetails({ id, payload: formattedData });
-                    if (response.data) {
-                        handleHideForm();
-                        toast.custom(<CustomToast type={"success"} message={NotificationMessages.EDUCATION_DETAILS_UPDATED_SUCCESS} />);
-                    }
-                } catch (error) {
-                    toast.custom(<CustomToast type={"error"} message={error.message} />);
+            }
+        } else {
+            try {
+                const response = await updateEducationDetails({ id, payload: formattedData }).unwrap();
+                handleHideForm();
+                toast.custom(<CustomToast type={"success"} message={NotificationMessages.EDUCATION_DETAILS_UPDATED_SUCCESS} />);
+            } catch (error) {
+                if (error?.data?.error) {
+                    toast.custom(<CustomToast type={"error"} message={error?.data?.error} />);
+                } else {
+                    const errorMsg = Object.values(error?.data || {})[0][0];
+                    toast.custom(<CustomToast type={"error"} message={errorMsg} />);
                 }
             }
         }
     };
 
-    const getErrorStatus = () => {
-        let errorStatus = false;
-        let errorStates = {};
-        Object.entries(formData).forEach(([key, value]) => {
-            if (!value && key !== 'description') {
-                errorStatus = true;
-                errorStates = { ...errorStates, [key]: true };
-            }
+    const getDisableStatus = () => {
+        const ignoreKeys = ["description"];
+        const disableStatus = Object.entries(formData).some(([key, value]) => {
+            return !value && !ignoreKeys.includes(key);
         });
-        setQuestionErrorStates(errorStates);
-        return errorStatus;
+        setDisableStatus(disableStatus);
     }
+
+    useEffect(() => {
+        getDisableStatus();
+    }, [formData]);
 
     const renderValue = ({ selected, options, placeholder }) => {
         if (!selected) {
@@ -144,9 +140,6 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                             onChange={handleFormInput}
                             placeholder='eg., Michigan State University'
                             sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
-                        <Typography variant='body2' marginLeft={'4px'} fontSize={'12px'} color="#ff0000" >
-                            {showErrorMsg && questionErrorStates?.school && 'School cannot be empty.'}
-                        </Typography>
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
@@ -160,9 +153,6 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                             onChange={handleFormInput}
                             placeholder="eg., Bachelor's"
                             sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
-                        <Typography variant='body2' marginLeft={'4px'} fontSize={'12px'} color="#ff0000" >
-                            {showErrorMsg && questionErrorStates?.degree && 'Degree cannot be empty.'}
-                        </Typography>
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
@@ -176,9 +166,6 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                             onChange={handleFormInput}
                             placeholder='eg., Mechanical Engineering'
                             sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
-                        <Typography variant='body2' marginLeft={'4px'} fontSize={'12px'} color="#ff0000" >
-                            {showErrorMsg && questionErrorStates?.major_field_of_study && 'Field of study cannot be empty.'}
-                        </Typography>
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
@@ -208,9 +195,6 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                                         ))
                                     }
                                 </Select>
-                                <Typography variant='body2' marginLeft={'4px'} fontSize={'12px'} color="#ff0000" >
-                                    {showErrorMsg && questionErrorStates?.startMonth && 'Select one'}
-                                </Typography>
                             </Grid>
                             <Grid item xs={5.7}>
                                 <Select
@@ -234,9 +218,6 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                                         ))
                                     }
                                 </Select>
-                                <Typography variant='body2' marginLeft={'4px'} fontSize={'12px'} color="#ff0000" >
-                                    {showErrorMsg && questionErrorStates?.startYear && 'Select one'}
-                                </Typography>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -268,9 +249,6 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                                         ))
                                     }
                                 </Select>
-                                <Typography variant='body2' marginLeft={'4px'} fontSize={'12px'} color="#ff0000" >
-                                    {showErrorMsg && questionErrorStates?.endMonth && 'Select one.'}
-                                </Typography>
                             </Grid>
                             <Grid item xs={5.7}>
                                 <Select
@@ -294,9 +272,6 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                                         ))
                                     }
                                 </Select>
-                                <Typography variant='body2' marginLeft={'4px'} fontSize={'12px'} color="#ff0000" >
-                                    {showErrorMsg && questionErrorStates?.endYear && 'Select one.'}
-                                </Typography>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -318,7 +293,7 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                         <PrimaryWhiteButton sx={{ width: '50%', justifyContent: 'center' }} onClick={() => handleHideForm()}>
                             Cancel
                         </PrimaryWhiteButton>
-                        <PrimaryGreenButton sx={{ width: '50%' }} onClick={() => handleFormSubmit()}>
+                        <PrimaryGreenButton sx={{ width: '50%' }} disabled={disableStatus} onClick={() => handleFormSubmit()}>
                             Save
                         </PrimaryGreenButton>
                     </Box>
