@@ -6,6 +6,8 @@ const NotificationMessages = {
 
     PERSONAL_DETAILS_ADDED_SUCCESS: 'Personal details added successfully',
 
+    SKILLS_ADDED_SUCCESS: 'Skills added successfully',
+
     EDUCATION_DETAILS_ADDED_SUCCESS: 'Education details added successfully',
     EDUCATION_DETAILS_UPDATED_SUCCESS: 'Education details updated successfully',
     EDUCATION_DETAIL_DELETED_SUCCESS: 'Education deleted successfully',
