@@ -1,15 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
 import { useUpdatePersonalInfoMutation } from '../../api/personalInfoApi';
-import { gender } from '../../utils/Constants';
+import { gender, months } from '../../utils/Constants';
 import { getDays, getYears } from '../../utils/Helpers';
 import toast from "react-hot-toast";
 import NotificationMessages from '../../utils/notificationConstants';
@@ -17,20 +15,7 @@ import CustomToast from '../common/CustomToast';
 
 const daysOptions = getDays();
 const yearOptions = getYears();
-const monthOptions = [
-    { value: '01', label: 'January' },
-    { value: '02', label: 'February' },
-    { value: '03', label: 'March' },
-    { value: '04', label: 'April' },
-    { value: '05', label: 'May' },
-    { value: '06', label: 'June' },
-    { value: '07', label: 'July' },
-    { value: '08', label: 'August' },
-    { value: '09', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' },
-];
+const monthOptions = months;
 
 const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
     const [formData, setFormData] = useState({});
@@ -102,11 +87,17 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                 github: formData.githubUrl,
                 portfolio_url: formData.portfolioUrl,
             }
-            const response = await updatePersonalInfo(payload);
-            handleHideForm();
-            toast.custom(<CustomToast type={"success"} message={NotificationMessages.PERSONAL_DETAILS_ADDED_SUCCESS} />);
+            try {
+                const response = await updatePersonalInfo(payload).unwrap();
+                if (response.data) {
+                    handleHideForm();
+                    toast.custom(<CustomToast type={"success"} message={NotificationMessages.PERSONAL_DETAILS_ADDED_SUCCESS} />);
+                }
+            } catch (error) {
+                toast.custom(<CustomToast type={"error"} message={error.message} />);
+            }
         } catch (error) {
-            toast.custom(<CustomToast type={"error"} message={error.message} />);
+            toast.custom(<CustomToast type={"error"} message={error} />);
         }
     }
 
