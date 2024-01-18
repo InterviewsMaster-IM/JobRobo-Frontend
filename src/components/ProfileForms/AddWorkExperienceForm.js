@@ -107,8 +107,7 @@ const AddWorkExperienceForm = ({ actionType, handleHideForm, id }) => {
     const getDisableStatus = () => {
         const ignoreKeys = ["description", "current_role"];
         if (formData.current_role) {
-            ignoreKeys.push('endMonth');
-            ignoreKeys.push('endYear');
+            ignoreKeys.push('endMonth', 'endYear');
         }
         const disableStatus = Object.entries(formData).some(([key, value]) => {
             return !value && !ignoreKeys.includes(key);
@@ -117,7 +116,6 @@ const AddWorkExperienceForm = ({ actionType, handleHideForm, id }) => {
     }
 
     useEffect(() => {
-        console.log(formData);
         getDisableStatus();
     }, [formData]);
 

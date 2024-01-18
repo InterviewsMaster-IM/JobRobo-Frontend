@@ -24,10 +24,15 @@ const WorkExperienceDetailsCard = ({ handleOpenForm }) => {
 
     const handleDelete = async (id) => {
         try {
-            const response = await deleteWorkExperience(id);
+            const response = await deleteWorkExperience(id).unwrap();
             toast.custom(<CustomToast type={"success"} message={NotificationMessages.WORK_EXPERIENCE_DELETED_SUCCESS} />);
         } catch (error) {
-            toast.custom(<CustomToast type={"error"} message={error.message} />);
+            if (error?.data?.error) {
+                toast.custom(<CustomToast type={"error"} message={error?.data?.error} />);
+            } else {
+                const errorMsg = Object.values(error?.data || {})[0][0];
+                toast.custom(<CustomToast type={"error"} message={errorMsg} />);
+            }
         }
     }
 
@@ -93,10 +98,10 @@ const WorkExperienceDetailsCard = ({ handleOpenForm }) => {
                                                     </Box>
                                                 </Grid>
                                                 <Grid item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
-                                                    <Typography variant='body2' fontWeight={'500'} color={'#1A1A1A'}>
+                                                    <Typography variant='body2' fontWeight={'500'} color={'#1A1A1A'} textTransform={'capitalize'}>
                                                         {position_title}
                                                     </Typography>
-                                                    <Typography variant='body2' fontWeight={'500'} color={'#808080'}>
+                                                    <Typography variant='body2' fontWeight={'500'} color={'#808080'} textTransform={'capitalize'}>
                                                         {company_name} | {employmentType}
                                                     </Typography>
                                                     <Typography variant='body2' width={'10rem'} whiteSpace={'nowrap'} fontWeight={'400'} color={'#808080'}>
