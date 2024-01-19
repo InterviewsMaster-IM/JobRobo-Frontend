@@ -34,15 +34,11 @@ const generateInitialFormData = () => {
 
 const NonResumeQuestions = ({ handleNext }) => {
 
-    const { data: onboardingDetailsData, isFetching: onboardingDetailsDataFetching, isSuccess: onboardingDetailsDataSuccess, refetch: fetchOnboardingDetails } = useGetOnboardingDetailsQuery();
+    const { data: onboardingDetailsData, isFetching: onboardingDetailsDataFetching, isSuccess: onboardingDetailsDataSuccess } = useGetOnboardingDetailsQuery();
     const [addOnboardingDetails] = useAddOnboardingDetailsMutation();
     const [formData, setFormData] = useState(() => generateInitialFormData());
     const [showErrorMsg, setShowErrorMsg] = useState(false);
     const [questionErrorStates, setQuestionErrorStates] = useState({});
-
-    useEffect(() => {
-        fetchOnboardingDetails();
-    }, [])
 
     useEffect(() => {
         if (onboardingDetailsDataSuccess) {
@@ -88,7 +84,7 @@ const NonResumeQuestions = ({ handleNext }) => {
         let errorStates = {};
         nonResumeQuestionsData.forEach((question) => {
             const value = formData[question.name];
-            if ((value === '' || value?.length === 0) && question.isRequired) {
+            if ((!value || !value?.length) && question.isRequired) {
                 errorStatus = true;
                 errorStates = { ...errorStates, [question.name]: true };
             }
@@ -113,7 +109,7 @@ const NonResumeQuestions = ({ handleNext }) => {
     }
 
     const renderValue = (selected, options, placeholder) => {
-        if (selected === '') {
+        if (!selected) {
             return <Typography color={'#7F8781'}>{placeholder}</Typography>
         }
         else {
@@ -123,7 +119,7 @@ const NonResumeQuestions = ({ handleNext }) => {
     };
 
     const renderMultipleValues = (selected, options, placeholder) => {
-        if (selected.length === 0) {
+        if (!selected.length) {
             return <Typography color={'#7F8781'}>{placeholder}</Typography>;
         }
         return selected?.map((value) => {
