@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import ExtensionInstall from './ExtensionInstall';
-import Promocode from './Promocode';
 import NonResumeQuestions from './NonResumeQuestions';
 import ResumeUpload from '../resume/UploadResume';
-import RectangleMask from '../../assets/images/Rectanglesmaskgroup.png';
+import { useGetUploadedFilesQuery } from '../../api/resumesApi';
+import { useNavigate } from 'react-router-dom';
+import { useGetOnboardingDetailsQuery } from '../../api/onboardingApi';
 
 const steps = ['Upload Resume', 'Details', 'Install Extension'];
 
@@ -25,12 +24,31 @@ const ActiveStepComponent = ({ activeStep, handleBack, handleNext }) => {
 }
 
 const OnboardingDetails = () => {
+
+    const navigate = useNavigate();
     const [activeStep, setActiveStep] = useState(0);
     const [skipped, setSkipped] = useState(new Set());
+    const extensionInstalled = document.getElementsByTagName("jobrobo-container");
+
+    const { data: onboardingDetailsData, isLoading: onboardingDetailsDataLoading } = useGetOnboardingDetailsQuery();
+    const { data: uploadedFiles, isLoading: resumeLoading } = useGetUploadedFilesQuery();
+    const resume = uploadedFiles?.resume;
 
     const isStepSkipped = (step) => {
         return skipped.has(step);
     };
+
+    useEffect(() => {
+        if (resume) {
+            setActiveStep(1);
+        }
+        if (onboardingDetailsData?.race) {
+            setActiveStep(2);
+        }
+        if (resume && onboardingDetailsData?.race && extensionInstalled.length) {
+            navigate('/home');
+        }
+    }, [resumeLoading, onboardingDetailsDataLoading])
 
     const handleNext = () => {
         let newSkipped = skipped;

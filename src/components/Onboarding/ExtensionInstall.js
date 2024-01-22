@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import CardMedia from '@mui/material/CardMedia';
 import ExtensionTwoToneIcon from '@mui/icons-material/ExtensionTwoTone';
@@ -16,7 +15,7 @@ import DoneOutlineTwoToneIcon from '@mui/icons-material/DoneOutlineTwoTone';
 export const isExtensionInstalled = () => {
     try {
         let jrContainer = document.getElementsByTagName("jobrobo-container");
-        return jrContainer[0].getAttribute("extention-id").trim();
+        return jrContainer[0]?.getAttribute("extention-id").trim();
     } catch (e) {
         console.log("Jobrobo extension required", e);
         return false;
@@ -30,7 +29,7 @@ const ExtensionInstall = ({ handleBack }) => {
 
     useEffect(() => {
         let intervalId;
-        if (extensionDetails === "") {
+        if (!extensionDetails) {
             intervalId = setInterval(() => {
                 let extId = isExtensionInstalled();
                 extId && extId !== "" && setExtensionDetails(extId);
@@ -157,7 +156,7 @@ const ExtensionInstall = ({ handleBack }) => {
                         <PrimaryWhiteButton sx={{ width: '45%', justifyContent: 'center' }} onClick={handleBack}>
                             Back
                         </PrimaryWhiteButton>
-                        <PrimaryGreenButton sx={{ width: '45%' }} onClick={handleNext}>
+                        <PrimaryGreenButton sx={{ width: '45%' }} variant='container' disabled={!extensionDetails} onClick={handleNext}>
                             Continue
                         </PrimaryGreenButton>
                     </Box>

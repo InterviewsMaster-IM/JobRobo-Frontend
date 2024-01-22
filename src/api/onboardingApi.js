@@ -20,6 +20,7 @@ export const onboardingApi = createApi({
                 url: ApiUrls.ONBOARDING_DETAILS,
                 method: 'GET',
             }),
+            providesTags: ['onboardingDetails']
         }),
         addOnboardingDetails: builder.mutation({
             query: (formData) => ({
@@ -28,6 +29,7 @@ export const onboardingApi = createApi({
                 body: formData,
                 formData: true,
             }),
+            invalidatesTags: ['onboardingDetails']
         }),
     }),
 });
