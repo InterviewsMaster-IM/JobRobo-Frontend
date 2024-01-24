@@ -13,16 +13,6 @@ import { useGetOnboardingDetailsQuery } from '../../api/onboardingApi';
 
 const steps = ['Upload Resume', 'Details', 'Install Extension'];
 
-const ActiveStepComponent = ({ activeStep, handleBack, handleNext }) => {
-    if (activeStep === 0) {
-        return <ResumeUpload handleNext={handleNext} />;
-    } else if (activeStep === 1) {
-        return <NonResumeQuestions handleNext={handleNext} />;
-    } else {
-        return <ExtensionInstall handleBack={handleBack} />;
-    }
-}
-
 const OnboardingDetails = () => {
 
     const navigate = useNavigate();
@@ -30,7 +20,14 @@ const OnboardingDetails = () => {
     const [skipped, setSkipped] = useState(new Set());
     const extensionInstalled = document.getElementsByTagName("jobrobo-container");
 
-    const { data: onboardingDetailsData, isLoading: onboardingDetailsDataLoading } = useGetOnboardingDetailsQuery();
+    const { data: onboardingDetailsData, isFetching: onboardingDetailsDataFetching, isSuccess: onboardingDetailsDataSuccess } = useGetOnboardingDetailsQuery();
+
+    const onboardingDetails = {
+        onboardingDetailsData,
+        onboardingDetailsDataFetching,
+        onboardingDetailsDataSuccess,
+    };
+
     const { data: uploadedFiles, isLoading: resumeLoading } = useGetUploadedFilesQuery();
     const resume = uploadedFiles?.resume;
 
@@ -48,7 +45,7 @@ const OnboardingDetails = () => {
         if (resume && onboardingDetailsData?.race && extensionInstalled.length) {
             navigate('/home');
         }
-    }, [resumeLoading, onboardingDetailsDataLoading])
+    }, [resumeLoading, onboardingDetailsDataFetching])
 
     const handleNext = () => {
         let newSkipped = skipped;
@@ -80,7 +77,12 @@ const OnboardingDetails = () => {
                     })}
                 </Stepper>
                 <Box>
-                    <ActiveStepComponent activeStep={activeStep} handleBack={handleBack} handleNext={handleNext} />
+                    {activeStep === 0
+                        ? <ResumeUpload handleNext={handleNext} />
+                        : activeStep === 1
+                            ? <NonResumeQuestions handleNext={handleNext} onboardingDetails={onboardingDetails} />
+                            : <ExtensionInstall handleBack={handleBack} />
+                    }
                 </Box>
             </Box>
         </Container>

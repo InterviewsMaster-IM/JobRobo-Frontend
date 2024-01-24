@@ -5,9 +5,20 @@ import Typography from '@mui/material/Typography';
 import PastJobrobosTable from './PastJobrobosTable';
 import EmptyTableView from './EmptyTableView';
 import { PrimaryGreenButton } from '../../styles/Buttons';
+import { extensionCommunication } from '../../utils/Helpers';
 
 const PastJobRobos = () => {
     const showTable = true;
+    const extensionInstalled = document.getElementsByTagName("jobrobo-container");
+
+    const handleExtensionButton = () => {
+        if (extensionInstalled.length) {
+            extensionCommunication("OPEN_JOB_BOARD");
+        } else {
+            window.open(process.env.REACT_APP_EXTENSION_PLAYSTORE_URL);
+        }
+    }
+
     return (
         <Box boxSizing={'border-box'} component={"main"} sx={{ flexGrow: 1 }} padding={'2rem'}>
             <Grid container alignItems={'center'} justifyContent={'space-between'} gap={'1rem'}>
@@ -23,7 +34,7 @@ const PastJobRobos = () => {
                     showTable
                     &&
                     <Grid item>
-                        <PrimaryGreenButton sx={{ width: '12rem' }}>
+                        <PrimaryGreenButton sx={{ width: '12rem' }} onClick={() => handleExtensionButton()}>
                             New Job Robo
                         </PrimaryGreenButton>
                     </Grid>
@@ -35,7 +46,7 @@ const PastJobRobos = () => {
                         ?
                         <PastJobrobosTable />
                         :
-                        <EmptyTableView />
+                        <EmptyTableView handleExtensionButton={handleExtensionButton}/>
                 }
             </Box>
         </Box>

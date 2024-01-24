@@ -82,8 +82,8 @@ const ExtensionInstall = ({ handleBack }) => {
                             padding: '2rem 1.5rem',
                             borderRadius: '16px',
                             border: '1px solid rgba(0, 20, 5, 0.10)',
-                            borderColor: extensionDetails !== "" ? '#55B982' : 'rgba(0, 20, 5, 0.10)',
-                            background: extensionDetails !== "" ? 'rgba(234, 247, 239, 0.30)' : '#FFF',
+                            borderColor: extensionDetails ? '#55B982' : 'rgba(0, 20, 5, 0.10)',
+                            background: extensionDetails ? 'rgba(234, 247, 239, 0.30)' : '#FFF',
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '1rem'
@@ -106,7 +106,7 @@ const ExtensionInstall = ({ handleBack }) => {
                                 </Grid>
                                 <Grid item>
                                     {
-                                        extensionDetails !== ""
+                                        extensionDetails
                                             ?
                                             <Card variant='outlined'
                                                 sx={{
