@@ -47,11 +47,11 @@ const FreeCreditsDisplay = () => {
                             Upgrade plan
                         </Typography>
                     </PrimaryWhiteButton>
-                    <PrimaryWhiteButton>
+                    {/* <PrimaryWhiteButton>
                         <Typography variant='body2' fontWeight={'500'}>
                             Earn credits
                         </Typography>
-                    </PrimaryWhiteButton>
+                    </PrimaryWhiteButton> */}
                 </Grid>
             </Grid>
         </Box>

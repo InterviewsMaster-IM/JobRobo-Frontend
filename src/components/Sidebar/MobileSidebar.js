@@ -126,30 +126,30 @@ const MobileSidebar = ({ handleSupportModalOpen }) => {
                                         </Typography>
                                     </NavLink>
                                 </ListItem>
-                                <ListItem disablePadding>
+                                {/* <ListItem disablePadding>
                                     <NavLink to={'/pastjobrobo'}>
                                         <WorkIcon />
                                         <Typography variant='body2' fontWeight={'500'}>
                                             Past Job Robos
                                         </Typography>
                                     </NavLink>
-                                </ListItem>
+                                </ListItem> */}
                                 <ListItem disablePadding>
                                     <NavLink to={'/profile'}>
                                         <DescriptionIcon />
                                         <Typography variant='body2' fontWeight={'500'} >
-                                            JobRobo Profile
+                                            Profile
                                         </Typography>
                                     </NavLink>
                                 </ListItem>
-                                <ListItem disablePadding >
+                                {/* <ListItem disablePadding >
                                     <NavButton open={isSidebarOpen} onClick={handleSupportModalOpen}>
                                         <HelpOutlineIcon />
                                         <Typography variant='body2' fontWeight={'500'}>
                                             Support
                                         </Typography>
                                     </NavButton>
-                                </ListItem>
+                                </ListItem> */}
                                 <ListItem disablePadding>
                                     <NavButton
                                         aria-describedby={id}

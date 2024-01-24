@@ -15,6 +15,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import FastForwardIcon from '@mui/icons-material/FastForward';
 import SignInLinkedinCard from '../components/common/SignInLinkedinCard';
 import Promocode from '../components/Onboarding/Promocode';
+import { useAuth } from '../utils/authContext';
 
 const CardContentNoPadding = styled(CardContent)(`
   padding: 0;
@@ -25,9 +26,16 @@ const CardContentNoPadding = styled(CardContent)(`
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const { isAuthenticated } = useAuth();
     const [referralCode, setReferralCode] = useState('');
     const urlParams = new URLSearchParams(window.location.search);
     const promocode = urlParams?.get('promocode');
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/home');
+        }
+    }, []);
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -43,8 +51,6 @@ const LoginPage = () => {
     const handleLogin = () => {
         // Redirect to Google on button click
         window.location.href = process.env.REACT_APP_LOGIN_URL;
-        // after login
-        // navigate('/dashboard');
     };
 
     return (

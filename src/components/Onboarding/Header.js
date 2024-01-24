@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import LogoImage from '../../assets/images/FinnTheHuman.svg';
 import { styled } from '@mui/system';
 import { Button } from '@mui/material';
+import { useAuth } from '../../utils/authContext';
 
 const CardContentNoPadding = styled(CardContent)(`
   padding: 0;
@@ -17,6 +18,8 @@ const CardContentNoPadding = styled(CardContent)(`
 `);
 
 const Header = () => {
+    const { logout } = useAuth();
+
     return (
         <AppBar sx={{ backgroundColor: '#FFF', boxShadow: 'none', borderBottom: '1px solid #E5E5E5' }}>
             <Grid container padding={'16px 56px'} display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
@@ -37,17 +40,17 @@ const Header = () => {
                     </Card>
                 </Grid>
                 <Grid item>
-                    <Button variant='text' sx={{ 
+                    <Button variant='text' sx={{
                         padding: '8px 14px',
-                        color: '#001405', 
-                        textTransform: 'none', 
+                        color: '#001405',
+                        textTransform: 'none',
                         fontWeight: '500',
                         border: '1px solid transparent',
                         '&:hover': {
                             borderColor: 'rgba(0, 20, 5)',
                             backgroundColor: '#FFF',
-                          }
-                        }}>
+                        }
+                    }} onClick={logout}>
                         <Typography>
                             Sign out
                         </Typography>

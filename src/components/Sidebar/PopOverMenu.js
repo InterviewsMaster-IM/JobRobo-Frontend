@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { styled } from '@mui/material/styles';
+import { useAuth } from '../../utils/authContext';
 
 const Link = styled(LinkBase)(({ theme }) => ({
     textDecoration: 'none',
@@ -20,6 +21,8 @@ const Link = styled(LinkBase)(({ theme }) => ({
 }));
 
 const PopOverMenu = ({ handlePopoverClose }) => {
+    const { logout } = useAuth();
+
     return (
         <Box width={'15rem'} padding={'8px'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}
             sx={{
@@ -37,7 +40,7 @@ const PopOverMenu = ({ handlePopoverClose }) => {
                     Account settings
                 </Typography>
             </Link>
-            <Link to="/signout">
+            <Link to="/" onClick={logout}>
                 <LogoutIcon />
                 <Typography variant='body2' color={'#001405'}>
                     Sign out

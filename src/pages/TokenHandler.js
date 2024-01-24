@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../utils/authContext';
 import Cookies from 'js-cookie';
+import Box from '@mui/material/Box';
+import Dots from "react-activity/dist/Dots";
+import Typography from '@mui/material/Typography';
 
 const TokenHandler = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -21,8 +25,9 @@ const TokenHandler = () => {
             Cookies.set('refresh_token', refresh_token, { expires: 7 }); // Expires in 7 days
             // Redirect to another page after successful token handling
             // console.log("navigating to dashboard");
+            login();
             if (promocode) {
-                navigate('/');
+                navigate('/home');
             } else {
                 navigate('/onboarding');
             }
@@ -31,8 +36,19 @@ const TokenHandler = () => {
 
     return (
         <div>
-            <h1>Processing authentication...</h1>
-            {/* You can add a loader here */}
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center',
+                textAlign: 'center',
+                height: '100vh',
+            }}>
+                <Dots color='#55B982' size={'18'} />
+                <Typography variant='body2' textAlign={'center'} fontSize={'24px'} fontWeight={'600'} color={'#55B982'} letterSpacing={'1.2px'}>
+                    Processing Authentication
+                </Typography>
+            </Box>
         </div>
     );
 };
