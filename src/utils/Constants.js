@@ -1,3 +1,9 @@
+export const gender = {
+    MALE: 'Male',
+    FEMALE: 'Female',
+    OTHER: 'Other',
+};
+
 export const raceOptionsList = [
     {
         label: 'Hispanic or Latino',
@@ -126,65 +132,53 @@ export const salaryCurrencyOptions = [
 export const months = [
     {
         label: 'January',
-        value: 'january'
+        value: '01'
     },
     {
         label: 'Feburary',
-        value: 'feburary'
+        value: '02'
     },
     {
         label: 'March',
-        value: 'march'
+        value: '03'
     },
     {
         label: 'April',
-        value: 'april'
+        value: '04'
     },
     {
         label: 'May',
-        value: 'may'
+        value: '05'
     },
     {
         label: 'June',
-        value: 'june'
+        value: '06'
     },
     {
         label: 'July',
-        value: 'july'
+        value: '07'
     },
     {
         label: 'August',
-        value: 'august'
+        value: '08'
     },
     {
         label: 'September',
-        value: 'september'
+        value: '09'
     },
     {
         label: 'October',
-        value: 'october'
+        value: '10'
     },
     {
         label: 'November',
-        value: 'november'
+        value: '11'
     },
     {
         label: 'December',
-        value: 'december'
+        value: '12'
     },
 ]
-
-export function getYears(startYear) {
-    let options = [];
-    let thisYear = new Date().getFullYear();
-    for (let i = thisYear; i >= (startYear || 1950); i--) {
-        options.push({
-            label: i,
-            value: i,
-        });
-    }
-    return options;
-}
 
 export const pricingPlans = [
     {
@@ -293,3 +287,15 @@ export const nonResumeQuestionsData = [
         options: workPreferenceOptions,
     },
 ]
+
+export const ProfileConstants = {
+    EDUCATION: 'EDUCATION',
+    WORK_EXPERIENCE: 'WORK_EXPERIENCE',
+    SKILLS: 'SKILLS',
+    PERSONAL_DETAILS: 'PERSONAL_DETAILS'
+}
+
+export const ActionType = {
+    ADD: 'ADD',
+    EDIT: 'EDIT',
+}

@@ -15,6 +15,11 @@ const ApiUrls = {
 
     ONBOARDING_DETAILS: 'resumes/onboarding-details/',
 
+    EDUCATION_DETAILS: 'profiles/education/',
+    PERSONAL_INFO: 'profiles/personal-info/',
+    SKILLS: 'profiles/skills/',
+    WORK_EXPERIENCE: 'profiles/work-experience/',
+
     CREATE_REFERRAL: 'referrals/create/',
     VALIDATE_REFERRAL: 'referrals/validate/',
 }

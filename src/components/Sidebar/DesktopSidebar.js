@@ -23,6 +23,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import PopOverMenu from './PopOverMenu';
+import { useGetPersonalInfoQuery } from '../../api/personalInfoApi';
 
 const CardContentNoPadding = styled(CardContent)(`
   padding: 0;
@@ -125,6 +126,8 @@ const DesktopSidebar = ({ handleSupportModalOpen }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [anchorEl, setAnchorEl] = useState(null);
     const location = useLocation();
+    const { data: personalDetail } = useGetPersonalInfoQuery();
+
 
     const handleOpenDrawer = () => {
         setIsSidebarOpen(true);
@@ -188,19 +191,19 @@ const DesktopSidebar = ({ handleSupportModalOpen }) => {
                                             </Typography>
                                         </NavLink>
                                     </ListItem>
-                                    <ListItem disablePadding>
+                                    {/* <ListItem disablePadding>
                                         <NavLink to={'/pastjobrobo'} open={isSidebarOpen}>
                                             <WorkIcon />
                                             <Typography variant='body2' fontWeight={'500'} sx={{ display: isSidebarOpen ? 'block' : 'none' }} >
                                                 Past Job Robos
                                             </Typography>
                                         </NavLink>
-                                    </ListItem>
+                                    </ListItem> */}
                                     <ListItem disablePadding>
                                         <NavLink to={'/profile'} open={isSidebarOpen}>
                                             <DescriptionIcon />
                                             <Typography variant='body2' fontWeight={'500'} sx={{ display: isSidebarOpen ? 'block' : 'none', transition: 'display 2.5s ease-in-out' }} >
-                                                JobRobo Profile
+                                                Profile
                                             </Typography>
                                         </NavLink>
                                     </ListItem>
@@ -208,14 +211,14 @@ const DesktopSidebar = ({ handleSupportModalOpen }) => {
                             </Grid>
                             <Grid item width={'100%'} marginTop={'auto'}>
                                 <List sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '12px' }}>
-                                    <ListItem disablePadding >
+                                    {/* <ListItem disablePadding >
                                         <NavButton open={isSidebarOpen} onClick={handleSupportModalOpen}>
                                             <HelpOutlineIcon />
                                             <Typography variant='body2' fontWeight={'500'} sx={{ display: isSidebarOpen ? 'block' : 'none' }} >
                                                 Support
                                             </Typography>
                                         </NavButton>
-                                    </ListItem>
+                                    </ListItem> */}
                                     <ListItem disablePadding>
                                         <NavButton
                                             open={isSidebarOpen}
@@ -228,7 +231,7 @@ const DesktopSidebar = ({ handleSupportModalOpen }) => {
                                             }}>
                                             <AccountCircleIcon />
                                             <Typography variant='body2' textAlign={'left'} sx={{ display: isSidebarOpen ? 'block' : 'none', whiteSpace: 'wrap' }}>
-                                                Priyanshi Maheshwari
+                                                {personalDetail?.first_name ? `${personalDetail?.first_name} ${personalDetail?.last_name}` : 'NA'}
                                             </Typography>
                                             <IconButton sx={{ marginLeft: 'auto', display: isSidebarOpen ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center' }}>
                                                 <KeyboardArrowRightIcon />

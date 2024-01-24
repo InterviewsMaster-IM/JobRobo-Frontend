@@ -6,8 +6,9 @@ import Typography from '@mui/material/Typography';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { PrimaryWhiteButton } from '../../styles/Buttons';
+import { ProfileConstants } from '../../utils/Constants';
 
-const SkillsDisplayCard = ({ handleOpenForm }) => {
+const SkillsDisplayCard = ({ handleOpenForm, skillDetails }) => {
 
     return (
         <Box width={'100%'} minWidth={'max-content'}>
@@ -26,7 +27,7 @@ const SkillsDisplayCard = ({ handleOpenForm }) => {
                             </Typography>
                         </Grid>
                         <Grid item>
-                            <PrimaryWhiteButton onClick={() => handleOpenForm('skills')}>
+                            <PrimaryWhiteButton onClick={() => handleOpenForm(ProfileConstants.SKILLS)}>
                                 <ModeEditOutlineOutlinedIcon fontSize='small' />
                                 <Typography variant='body2' fontWeight={'500'}>
                                     Edit
@@ -38,7 +39,7 @@ const SkillsDisplayCard = ({ handleOpenForm }) => {
                         <Grid item display={'flex'} alignItems={'center'} gap={'4px'}>
                             <CheckCircleIcon fontSize='14px' htmlColor='#55B982' />
                             <Typography variant='body2' fontWeight={'500'} color={'#55B982'} letterSpacing={'0.14px'}>
-                                4 skills added
+                                {skillDetails?.length} skills added
                             </Typography>
                         </Grid>
                     </Grid>

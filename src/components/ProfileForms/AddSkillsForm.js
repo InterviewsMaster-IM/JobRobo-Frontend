@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -8,11 +8,40 @@ import Typography from '@mui/material/Typography';
 import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import toast from "react-hot-toast";
+import { useAddSkillsMutation } from '../../api/skillsApi';
+import CustomToast from '../common/CustomToast';
+import NotificationMessages from '../../utils/notificationConstants';
 
-const AddSkillsForm = ({ handleHideForm }) => {
+const AddSkillsForm = ({ handleHideForm, skillDetails }) => {
 
-    const [totalExperience, setTotalExperience] = useState();
+    const [totalExperience, setTotalExperience] = useState('');
     const [skillsList, setSkillsList] = useState([]);
+    const [disableStatus, setDisableStatus] = useState(true);
+    const [addSkills, addSkillsResponse] = useAddSkillsMutation();
+
+    useEffect(() => {
+        if (skillDetails && skillDetails.length > 0) {
+            const skillsListData = skillDetails.map((skill) => {
+                return {
+                    skillTag: skill.skill,
+                    yearOfExp: skill.years_of_experience,
+                }
+            });
+            setSkillsList(skillsListData);
+        }
+    }, [skillDetails]);
+
+    const getDisableStatus = () => {
+        const disableStatus = skillsList.some((skill) => {
+            return (!skill.skillTag || !skill.yearOfExp);
+        });
+        setDisableStatus(disableStatus);
+    }
+
+    useEffect(() => {
+        getDisableStatus();
+    }, [skillsList])
 
     const handleAddSkill = () => {
         setSkillsList((skillsList) => [...skillsList, { skillTag: '', yearOfExp: totalExperience }]);
@@ -32,6 +61,28 @@ const AddSkillsForm = ({ handleHideForm }) => {
     const handleRemoveSkill = (indexToRemove) => {
         const updatedSkillsList = skillsList.filter((skill, index) => index !== indexToRemove);
         setSkillsList(updatedSkillsList);
+    }
+
+    const handleSubmit = async () => {
+        const payload = skillsList.map((data) => {
+            return {
+                skill: data.skillTag,
+                years_of_experience: data.yearOfExp,
+            }
+        });
+        try {
+            const response = await addSkills(payload).unwrap();
+            handleHideForm();
+            toast.custom(<CustomToast type={"success"} message={NotificationMessages.SKILLS_ADDED_SUCCESS} />);
+        } catch (error) {
+            if (error?.data?.error) {
+                toast.custom(<CustomToast type={"error"} message={error?.data?.error} />);
+            } else {
+                // const errorMsg = Object.entries(error.data || {}).map(([key, value]) => value[0]).join(" ");
+                const errorMsg = Object.values(error?.data || {})[0][0];
+                toast.custom(<CustomToast type={"error"} message={errorMsg} />);
+            }
+        }
     }
 
     return (
@@ -62,7 +113,7 @@ const AddSkillsForm = ({ handleHideForm }) => {
                             &&
                             <>
                                 <Grid container item gap={'16px'}>
-                                    <Grid item xs={4.5}>
+                                    <Grid item xs={4.8}>
                                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                                             Skill Name
                                         </Typography>
@@ -79,7 +130,7 @@ const AddSkillsForm = ({ handleHideForm }) => {
                                     skillsList?.map((skill, index) => {
                                         return (
                                             <Grid container item key={index} gap={'16px'}>
-                                                <Grid item xs={4.5}>
+                                                <Grid item xs={4.8}>
                                                     <OutlinedInput
                                                         fullWidth
                                                         name='skillTag'
@@ -112,7 +163,7 @@ const AddSkillsForm = ({ handleHideForm }) => {
                             </>
                         }
                         <Grid item xs={12}>
-                            <PrimaryWhiteButton sx={{ width: '100%' }} onClick={() => { handleAddSkill() }}>
+                            <PrimaryWhiteButton sx={{ width: '100%' }} onClick={handleAddSkill}>
                                 <Typography>
                                     Add skill
                                 </Typography>
@@ -126,7 +177,7 @@ const AddSkillsForm = ({ handleHideForm }) => {
                         <PrimaryWhiteButton sx={{ width: '50%', justifyContent: 'center' }} onClick={() => handleHideForm()}>
                             Cancel
                         </PrimaryWhiteButton>
-                        <PrimaryGreenButton sx={{ width: '50%' }}>
+                        <PrimaryGreenButton sx={{ width: '50%' }} disabled={disableStatus} onClick={handleSubmit}>
                             Save
                         </PrimaryGreenButton>
                     </Box>

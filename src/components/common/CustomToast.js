@@ -28,6 +28,7 @@ const CustomToast = ({ type, message }) => {
                 border: `1px solid rgba(0, 20, 5, 0.10)`,
                 backgroundColor: '#FFF',
                 borderRadius: '8px',
+                zIndex: '1000',
                 boxShadow: `0px 1px 2px 0px rgba(42, 43, 46, 0.06), 0px 0px 38px 0px rgba(42, 43, 46, 0.03), 0px 3px 70px 0px rgba(42, 43, 46, 0.02)`,
             }}>
             <Grid container display={'flex'} alignItems={'center'} justifyContent={'flex-start'} gap={'8px'}>

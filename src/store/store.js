@@ -2,14 +2,22 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { creditsApi } from '../api/creditsApi';
 import { onboardingApi } from '../api/onboardingApi';
-import { referralsApi } from '../api/referralsApi';
 import { resumesApi } from '../api/resumesApi';
+import { educationApi } from '../api/educationApi';
+import { personalInfoApi } from '../api/personalInfoApi';
+import { skillsApi } from '../api/skillsApi';
+import { workExperienceApi } from '../api/workExperienceApi';
+import { referralsApi } from '../api/referralsApi';
 
 export const store = configureStore({
 	reducer: {
 		[creditsApi.reducerPath]: creditsApi.reducer,
 		[onboardingApi.reducerPath]: onboardingApi.reducer,
 		[resumesApi.reducerPath]: resumesApi.reducer,
+		[educationApi.reducerPath]: educationApi.reducer,
+		[personalInfoApi.reducerPath]: personalInfoApi.reducer,
+		[skillsApi.reducerPath]: skillsApi.reducer,
+		[workExperienceApi.reducerPath]: workExperienceApi.reducer,
 		[referralsApi.reducerPath]: referralsApi.reducer,
 	},
 	middleware: (getDefaultMiddleware) =>
@@ -17,6 +25,10 @@ export const store = configureStore({
 			creditsApi.middleware,
 			onboardingApi.middleware,
 			resumesApi.middleware,
+			educationApi.middleware,
+			personalInfoApi.middleware,
+			skillsApi.middleware,
+			workExperienceApi.middleware,
 			referralsApi.middleware,
 		),
 });
