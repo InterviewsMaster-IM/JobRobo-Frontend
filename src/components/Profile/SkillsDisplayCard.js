@@ -35,14 +35,17 @@ const SkillsDisplayCard = ({ handleOpenForm, skillDetails }) => {
                             </PrimaryWhiteButton>
                         </Grid>
                     </Grid>
-                    <Grid container item paddingTop={'1rem'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'12px'} borderTop={'1px solid #E5E5E5'}>
-                        <Grid item display={'flex'} alignItems={'center'} gap={'4px'}>
-                            <CheckCircleIcon fontSize='14px' htmlColor='#55B982' />
-                            <Typography variant='body2' fontWeight={'500'} color={'#55B982'} letterSpacing={'0.14px'}>
-                                {skillDetails?.length} skills added
-                            </Typography>
+                    {
+                        skillDetails?.length > 0 &&
+                        <Grid container item paddingTop={'1rem'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'12px'} borderTop={'1px solid #E5E5E5'}>
+                            <Grid item display={'flex'} alignItems={'center'} gap={'4px'}>
+                                <CheckCircleIcon fontSize='14px' htmlColor='#55B982' />
+                                <Typography variant='body2' fontWeight={'500'} color={'#55B982'} letterSpacing={'0.14px'}>
+                                    {skillDetails?.length} skills added
+                                </Typography>
+                            </Grid>
                         </Grid>
-                    </Grid>
+                    }
                 </Grid>
             </Card>
         </Box>

@@ -34,10 +34,7 @@ const PersonalDetailsCard = ({ handleOpenForm, personalDetail }) => {
                     <Grid container item display={'flex'} flexDirection={'row'} alignItems={'flex-start'} justifyContent={'space-between'} columnGap={'0.5rem'} rowGap={'1rem'}>
                         <Grid item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'} >
                             <Typography variant='body2' fontSize={'18px'} fontWeight={'600'}>
-                                Personal Info
-                            </Typography>
-                            <Typography variant='body2' color={'#7F8781'}>
-                                {personalDetail?.first_name} {personalDetail?.last_name}
+                                {personalDetail?.first_name ? `${personalDetail?.first_name} ${personalDetail?.last_name}` : `Personal Info`}
                             </Typography>
                             <Typography variant='body2' color={'#7F8781'}>
                                 {personalDetail?.location}
