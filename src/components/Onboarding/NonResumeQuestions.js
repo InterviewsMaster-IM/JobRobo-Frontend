@@ -9,7 +9,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import Card from '@mui/material/Card';
 import { PrimaryGreenButton } from '../../styles/Buttons';
 import { nonResumeQuestionsData } from '../../utils/Constants';
-import { useAddOnboardingDetailsMutation, useGetOnboardingDetailsQuery } from '../../api/onboardingApi';
+import { useAddOnboardingDetailsMutation } from '../../api/onboardingApi';
 import toast from 'react-hot-toast';
 import CustomToast from '../common/CustomToast';
 
@@ -32,9 +32,9 @@ const generateInitialFormData = () => {
     }, {});
 };
 
-const NonResumeQuestions = ({ handleNext }) => {
+const NonResumeQuestions = ({ handleNext, onboardingDetails }) => {
 
-    const { data: onboardingDetailsData, isFetching: onboardingDetailsDataFetching, isSuccess: onboardingDetailsDataSuccess } = useGetOnboardingDetailsQuery();
+    const { onboardingDetailsData, onboardingDetailsDataFetching, onboardingDetailsDataSuccess } = onboardingDetails;
     const [addOnboardingDetails] = useAddOnboardingDetailsMutation();
     const [formData, setFormData] = useState(() => generateInitialFormData());
     const [showErrorMsg, setShowErrorMsg] = useState(false);
@@ -84,7 +84,7 @@ const NonResumeQuestions = ({ handleNext }) => {
         let errorStates = {};
         nonResumeQuestionsData.forEach((question) => {
             const value = formData[question.name];
-            if ((!value || !value?.length) && question.isRequired) {
+            if ((!value || value?.length === 0) && question.isRequired) {
                 errorStatus = true;
                 errorStates = { ...errorStates, [question.name]: true };
             }

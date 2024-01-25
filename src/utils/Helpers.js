@@ -45,3 +45,18 @@ export function getYears(startYear) {
     }
     return options;
 }
+
+export const extensionCommunication = (extensionMessage) => {
+    try {
+        let jrContainer = document.getElementsByTagName("jobrobo-container");
+        const extensionId = jrContainer[0].getAttribute("extention-id").trim();
+
+        if (extensionId) {
+            window.chrome.runtime.sendMessage(extensionId, {
+                message: extensionMessage,
+            });
+        }
+    } catch (e) {
+        console.log("error in extensionCommunication", e);
+    }
+};

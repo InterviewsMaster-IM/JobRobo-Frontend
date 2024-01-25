@@ -24,7 +24,7 @@ const PricingPage = () => {
     }
 
     return (
-        <Box minHeight={'100vh'} paddingTop={'4rem'} display={'flex'}
+        <Box minHeight={'100vh'} paddingY={8} display={'flex'}
             sx={{
                 boxSizing: 'border-box',
                 backgroundImage: `url(${RectangleMask})`,
@@ -33,7 +33,7 @@ const PricingPage = () => {
                 backgroundPosition: `center`,
             }}>
             <Container>
-                <Grid container display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'40px'}>
+                <Grid container display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'40px'} paddingX={4}>
                     <Grid container item>
                         <Button sx={{ textTransform: 'none', gap: '8px' }} onClick={handleNavigateBack}>
                             <KeyboardBackspaceOutlinedIcon color='black' />
@@ -46,7 +46,7 @@ const PricingPage = () => {
                         <Typography variant='h5' fontWeight={'500'}>
                             Choose the right plan for you
                         </Typography>
-                        <Box display={'flex'} alignItems={'center'} justifyContent={'flex-start'} gap={'46px'}>
+                        <Box display={'flex'} alignItems={'center'} justifyContent={'flex-start'} gap={'46px'} flexWrap={'wrap'}>
                             {
                                 plans?.map((plan, index) => {
                                     return (

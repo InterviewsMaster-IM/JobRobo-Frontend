@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -8,6 +9,8 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
+import { PrimaryWhiteButton } from '../../styles/Buttons';
+import { useNavigate } from 'react-router-dom';
 
 const columns = [
     { id: 'name', label: 'Name', minWidth: 170 },
@@ -27,7 +30,7 @@ const columns = [
     {
         id: 'density',
         label: 'Density',
-        minWidth: 170,
+        minWidth: 270,
         format: (value) => value.toFixed(2),
     },
 ];
@@ -62,6 +65,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
         fontWeight: '600'
     },
     [`&.${tableCellClasses.body}`]: {
+        height: '2.8rem',
         fontSize: 14,
         fontWeight: '500'
     },
@@ -70,6 +74,12 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 const PastJobrobosTable = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [selectedRow, setSelectedRow] = useState(null);
+    const navigate = useNavigate();
+
+    const handleViewDetails = () => {
+        navigate('/pastjobrobo/1');
+    }
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -78,6 +88,15 @@ const PastJobrobosTable = () => {
     const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(+event.target.value);
         setPage(0);
+    };
+
+    const handleRowClick = (row) => {
+        console.log(row);
+        setSelectedRow(row);
+    };
+
+    const handleMouseLeave = () => {
+        setSelectedRow(null);
     };
 
     return (
@@ -104,16 +123,33 @@ const PastJobrobosTable = () => {
                     <TableBody>
                         {rows
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                            .map((row) => {
+                            .map((row, index) => {
                                 return (
-                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.code} onMouseEnter={() => { console.log("9384398") }}>
-                                        {columns.map((column) => {
+                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.code} onMouseEnter={() => handleRowClick(index)} onMouseLeave={() => handleMouseLeave()}>
+                                        {columns.map((column, columnIndex) => {
                                             const value = row[column.id];
                                             return (
-                                                <StyledTableCell key={column.id} align={column.align}>
-                                                    {column.format && typeof value === 'number'
-                                                        ? column.format(value)
-                                                        : value}
+                                                <StyledTableCell sx={{ position: 'relative' }} key={column.id} align={column.align}>
+                                                    {
+                                                        selectedRow === index && columnIndex === columns.length - 1
+                                                            ?
+                                                            <Box position={'absolute'} top={'20%'} left={'0%'} paddingLeft={'16px'} boxSizing={'border-box'} display={'flex'} alignItems={'center'} justifyContent={'flex-start'} gap={'1rem'}>
+                                                                <PrimaryWhiteButton>
+                                                                    Run Robo
+                                                                </PrimaryWhiteButton>
+                                                                <PrimaryWhiteButton onClick={() => handleViewDetails()}>
+                                                                    View Details
+                                                                </PrimaryWhiteButton>
+                                                            </Box>
+                                                            :
+                                                            <Box>
+                                                                {
+                                                                    column.format && typeof value === 'number'
+                                                                        ? column.format(value)
+                                                                        : value
+                                                                }
+                                                            </Box>
+                                                    }
                                                 </StyledTableCell>
                                             );
                                         })}
