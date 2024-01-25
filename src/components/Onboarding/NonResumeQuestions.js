@@ -37,8 +37,7 @@ const NonResumeQuestions = ({ handleNext, onboardingDetails }) => {
     const { onboardingDetailsData, onboardingDetailsDataFetching, onboardingDetailsDataSuccess } = onboardingDetails;
     const [addOnboardingDetails] = useAddOnboardingDetailsMutation();
     const [formData, setFormData] = useState(() => generateInitialFormData());
-    const [showErrorMsg, setShowErrorMsg] = useState(false);
-    const [questionErrorStates, setQuestionErrorStates] = useState({});
+    const [disableStatus, setDisableStatus] = useState(true);
 
     useEffect(() => {
         if (onboardingDetailsDataSuccess) {
@@ -62,36 +61,26 @@ const NonResumeQuestions = ({ handleNext, onboardingDetails }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const nonResumeFormData = getFormData();
-        const errorStatus = getErrorStatus();
-        if (!errorStatus) {
-            setShowErrorMsg(false);
-            try {
-                const response = await addOnboardingDetails(nonResumeFormData);
-                if (response?.data?.message === 'successful') {
-                    handleNext();
-                }
-            } catch (error) {
-                toast.custom(<CustomToast type={"error"} message={error.message} />);
+        try {
+            const response = await addOnboardingDetails(nonResumeFormData);
+            if (response?.data?.message === 'successful') {
+                handleNext();
             }
-        }
-        else {
-            setShowErrorMsg(true);
+        } catch (error) {
+            toast.custom(<CustomToast type={"error"} message={error.message} />);
         }
     };
 
-    const getErrorStatus = () => {
-        let errorStatus = false;
-        let errorStates = {};
-        nonResumeQuestionsData.forEach((question) => {
-            const value = formData[question.name];
-            if ((!value || value?.length === 0) && question.isRequired) {
-                errorStatus = true;
-                errorStates = { ...errorStates, [question.name]: true };
-            }
+    const getDisableStatus = () => {
+        const disableStatus = nonResumeQuestionsData.some((question) => {
+            return (!formData[question.name] || formData[question.name]?.length === 0) && question.isRequired
         });
-        setQuestionErrorStates(errorStates);
-        return errorStatus;
+        setDisableStatus(disableStatus);
     }
+
+    useEffect(() => {
+        getDisableStatus();
+    }, [formData]);
 
     const getFormData = () => {
         const nonResumeFormData = new FormData();
@@ -165,9 +154,6 @@ const NonResumeQuestions = ({ handleNext, onboardingDetails }) => {
                                                     type='number'
                                                     placeholder={question.placeholder}
                                                     sx={{ height: '44px' }} />
-                                                <Typography variant='body2' marginLeft={'4px'} fontSize={'14px'} color="#ff0000" >
-                                                    {showErrorMsg && questionErrorStates[question.name] && question?.errorMessage}
-                                                </Typography>
                                             </Box>
                                         )
                                     case "DROPDOWN":
@@ -198,9 +184,6 @@ const NonResumeQuestions = ({ handleNext, onboardingDetails }) => {
                                                         </MenuItem>
                                                     ))}
                                                 </Select>
-                                                <Typography variant='body2' marginLeft={'4px'} fontSize={'14px'} color="#ff0000" >
-                                                    {showErrorMsg && questionErrorStates[question.name] && question?.errorMessage}
-                                                </Typography>
                                             </Box>
                                         )
                                     default:
@@ -210,7 +193,7 @@ const NonResumeQuestions = ({ handleNext, onboardingDetails }) => {
                         }
                     </Grid>
                     <Box width={'100%'} marginTop={'2rem'} display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                        <PrimaryGreenButton sx={{ width: '70%' }} onClick={handleSubmit}>
+                        <PrimaryGreenButton sx={{ width: '70%' }} disabled={disableStatus} onClick={handleSubmit}>
                             Continue
                         </PrimaryGreenButton>
                     </Box>
