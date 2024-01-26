@@ -51,10 +51,10 @@ const ResumeQuestionsTests = () => {
             try {
                 const qaResponse = await apiService.post('resumes/qa2/', {
                     resume_id: resume.id,
-                    query: query2,
+                    queries: query2.split(','),
                 });
                 console.log(qaResponse.data);
-                setResponse2(qaResponse.data.response);
+                setResponse2(qaResponse.data.responses);
             } catch (error) {
                 console.error('Error submitting query:', error);
             }
