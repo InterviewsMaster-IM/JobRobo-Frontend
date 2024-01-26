@@ -51,7 +51,7 @@ const ResumeQuestionsTests = () => {
             try {
                 const qaResponse = await apiService.post('resumes/qa2/', {
                     resume_id: resume.id,
-                    queries: query2.split(','),
+                    queries: JSON.parse(query2)
                 });
                 console.log(qaResponse.data);
                 setResponse2(qaResponse.data.responses);
