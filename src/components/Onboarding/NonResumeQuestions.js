@@ -34,13 +34,13 @@ const generateInitialFormData = () => {
 
 const NonResumeQuestions = ({ handleNext, onboardingDetails }) => {
 
-    const { onboardingDetailsData, onboardingDetailsDataFetching, onboardingDetailsDataSuccess } = onboardingDetails;
+    const { onboardingDetailsData, onboardingDetailsDataFetching } = onboardingDetails;
     const [addOnboardingDetails] = useAddOnboardingDetailsMutation();
     const [formData, setFormData] = useState(() => generateInitialFormData());
     const [disableStatus, setDisableStatus] = useState(true);
 
     useEffect(() => {
-        if (onboardingDetailsDataSuccess) {
+        if (!onboardingDetailsData.error) {
             const parsedData = {};
             for (const key in onboardingDetailsData) {
                 try {
