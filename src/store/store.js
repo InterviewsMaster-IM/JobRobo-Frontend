@@ -8,6 +8,7 @@ import { personalInfoApi } from '../api/personalInfoApi';
 import { skillsApi } from '../api/skillsApi';
 import { workExperienceApi } from '../api/workExperienceApi';
 import { referralsApi } from '../api/referralsApi';
+import { campaignsApi } from '../api/campaignsApi';
 
 export const store = configureStore({
 	reducer: {
@@ -19,6 +20,7 @@ export const store = configureStore({
 		[skillsApi.reducerPath]: skillsApi.reducer,
 		[workExperienceApi.reducerPath]: workExperienceApi.reducer,
 		[referralsApi.reducerPath]: referralsApi.reducer,
+		[campaignsApi.reducerPath]: campaignsApi.reducer,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware().concat(
@@ -30,6 +32,7 @@ export const store = configureStore({
 			skillsApi.middleware,
 			workExperienceApi.middleware,
 			referralsApi.middleware,
+			campaignsApi.middleware,
 		),
 });
 

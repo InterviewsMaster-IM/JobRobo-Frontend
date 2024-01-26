@@ -22,6 +22,11 @@ const ApiUrls = {
 
     CREATE_REFERRAL: 'referrals/create/',
     VALIDATE_REFERRAL: 'referrals/validate/',
+
+    USER_CAMPAIGNS: '/campaigns/user_campaigns/',
+    CAMPAIGNS_JOBS: '/campaigns/campaign_jobs/',
+    CAMPAIGN_CREATE: '/campaigns/create/',
+    CAMPAIGN_UPDATE: '/campaigns/update_campaign/',
 }
 
 export default ApiUrls;

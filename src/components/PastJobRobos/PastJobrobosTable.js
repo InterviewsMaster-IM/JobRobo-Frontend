@@ -71,7 +71,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
 }));
 
-const PastJobrobosTable = () => {
+const PastJobrobosTable = ({ userCampaignsList }) => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [selectedRow, setSelectedRow] = useState(null);
