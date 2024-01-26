@@ -20,12 +20,11 @@ const OnboardingDetails = () => {
     const [skipped, setSkipped] = useState(new Set());
     const extensionInstalled = document.getElementsByTagName("jobrobo-container");
 
-    const { data: onboardingDetailsData, isFetching: onboardingDetailsDataFetching, isSuccess: onboardingDetailsDataSuccess } = useGetOnboardingDetailsQuery();
+    const { data: onboardingDetailsData, isFetching: onboardingDetailsDataFetching } = useGetOnboardingDetailsQuery();
 
     const onboardingDetails = {
         onboardingDetailsData,
         onboardingDetailsDataFetching,
-        onboardingDetailsDataSuccess,
     };
 
     const { data: uploadedFiles, isLoading: resumeLoading } = useGetUploadedFilesQuery();
