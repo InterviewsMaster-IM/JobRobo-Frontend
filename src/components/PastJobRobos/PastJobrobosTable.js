@@ -11,51 +11,27 @@ import TableRow from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
 import { PrimaryWhiteButton } from '../../styles/Buttons';
 import { useNavigate } from 'react-router-dom';
+import { extensionCommunicationSameJob } from '../../utils/Helpers';
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 
 const columns = [
-    { id: 'name', label: 'Name', minWidth: 170 },
-    { id: 'code', label: 'ISO\u00a0Code', minWidth: 100 },
+    { id: 'job_board', label: 'Board', minWidth: 90 },
+    { id: 'campaign_keyword', label: 'Job Title', minWidth: 200 },
     {
-        id: 'population',
-        label: 'Population',
+        id: 'location',
+        label: 'Location',
         minWidth: 170,
-        format: (value) => value.toLocaleString('en-US'),
     },
     {
-        id: 'size',
-        label: 'Size\u00a0(km\u00b2)',
+        id: 'campaign_type',
+        label: 'Type',
         minWidth: 170,
-        format: (value) => value.toLocaleString('en-US'),
     },
     {
-        id: 'density',
-        label: 'Density',
-        minWidth: 270,
-        format: (value) => value.toFixed(2),
+        id: 'jobs_applied',
+        label: 'Applied',
+        minWidth: 200,
     },
-];
-
-function createData(name, code, population, size) {
-    const density = population / size;
-    return { name, code, population, size, density };
-}
-
-const rows = [
-    createData('India', 'IN', 1324171354, 3287263),
-    createData('China', 'CN', 1403500365, 9596961),
-    createData('Italy', 'IT', 60483973, 301340),
-    createData('United States', 'US', 327167434, 9833520),
-    createData('Canada', 'CA', 37602103, 9984670),
-    createData('Australia', 'AU', 25475400, 7692024),
-    createData('Germany', 'DE', 83019200, 357578),
-    createData('Ireland', 'IE', 4857000, 70273),
-    createData('Mexico', 'MX', 126577691, 1972550),
-    createData('Japan', 'JP', 126317000, 377973),
-    createData('France', 'FR', 67022000, 640679),
-    createData('United Kingdom', 'GB', 67545757, 242495),
-    createData('Russia', 'RU', 146793744, 17098246),
-    createData('Nigeria', 'NG', 200962417, 923768),
-    createData('Brazil', 'BR', 210147125, 8515767),
 ];
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -77,8 +53,8 @@ const PastJobrobosTable = ({ userCampaignsList }) => {
     const [selectedRow, setSelectedRow] = useState(null);
     const navigate = useNavigate();
 
-    const handleViewDetails = () => {
-        navigate('/pastjobrobo/1');
+    const handleViewDetails = (id) => {
+        navigate(`/pastjobrobo/${id}`);
     }
 
     const handleChangePage = (event, newPage) => {
@@ -91,12 +67,22 @@ const PastJobrobosTable = ({ userCampaignsList }) => {
     };
 
     const handleRowClick = (row) => {
-        console.log(row);
         setSelectedRow(row);
     };
 
     const handleMouseLeave = () => {
         setSelectedRow(null);
+    };
+
+    const handleRunThisJobRobo = (rowId) => {
+        const curr_data = userCampaignsList?.find((campaign) => campaign.id === rowId);
+        extensionCommunicationSameJob("OPEN_JOB_BOARD_WITH_PROPS", {
+            platform: curr_data?.job_board,
+            jobLocation: curr_data?.location,
+            jobTitle: curr_data?.campaign_keyword,
+            jobCount: curr_data?.jobs_applied || 5,
+            jobType: ["Full-Time", "Part-Time"],
+        });
     };
 
     return (
@@ -121,9 +107,10 @@ const PastJobrobosTable = ({ userCampaignsList }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows
+                        {userCampaignsList
                             .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map((row, index) => {
+                                const { id } = row;
                                 return (
                                     <TableRow hover role="checkbox" tabIndex={-1} key={row.code} onMouseEnter={() => handleRowClick(index)} onMouseLeave={() => handleMouseLeave()}>
                                         {columns.map((column, columnIndex) => {
@@ -134,19 +121,18 @@ const PastJobrobosTable = ({ userCampaignsList }) => {
                                                         selectedRow === index && columnIndex === columns.length - 1
                                                             ?
                                                             <Box position={'absolute'} top={'20%'} left={'0%'} paddingLeft={'16px'} boxSizing={'border-box'} display={'flex'} alignItems={'center'} justifyContent={'flex-start'} gap={'1rem'}>
-                                                                <PrimaryWhiteButton>
+                                                                <PrimaryWhiteButton onClick={() => handleRunThisJobRobo(id)}>
                                                                     Run Robo
+                                                                    <ArrowOutwardIcon fontSize='small' />
                                                                 </PrimaryWhiteButton>
-                                                                <PrimaryWhiteButton onClick={() => handleViewDetails()}>
+                                                                <PrimaryWhiteButton onClick={() => handleViewDetails(id)}>
                                                                     View Details
                                                                 </PrimaryWhiteButton>
                                                             </Box>
                                                             :
                                                             <Box>
                                                                 {
-                                                                    column.format && typeof value === 'number'
-                                                                        ? column.format(value)
-                                                                        : value
+                                                                    value
                                                                 }
                                                             </Box>
                                                     }
@@ -159,15 +145,19 @@ const PastJobrobosTable = ({ userCampaignsList }) => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25, 50, 100]}
-                component="div"
-                count={rows.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
+            {
+                userCampaignsList?.length > 5
+                &&
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25, 50, 100]}
+                    component="div"
+                    count={userCampaignsList?.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            }
         </Paper>
     );
 }

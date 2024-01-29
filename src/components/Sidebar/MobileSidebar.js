@@ -126,14 +126,14 @@ const MobileSidebar = ({ handleSupportModalOpen }) => {
                                         </Typography>
                                     </NavLink>
                                 </ListItem>
-                                {/* <ListItem disablePadding>
+                                <ListItem disablePadding>
                                     <NavLink to={'/pastjobrobo'}>
                                         <WorkIcon />
                                         <Typography variant='body2' fontWeight={'500'}>
                                             Past Job Robos
                                         </Typography>
                                     </NavLink>
-                                </ListItem> */}
+                                </ListItem>
                                 <ListItem disablePadding>
                                     <NavLink to={'/profile'}>
                                         <DescriptionIcon />

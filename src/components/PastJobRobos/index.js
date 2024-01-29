@@ -9,7 +9,6 @@ import { extensionCommunication } from '../../utils/Helpers';
 import { useGetUserCampaignsListQuery } from '../../api/campaignsApi';
 
 const PastJobRobos = () => {
-    const showTable = true;
     const extensionInstalled = document.getElementsByTagName("jobrobo-container");
     const { data: userCampaignsList } = useGetUserCampaignsListQuery();
 
@@ -33,7 +32,7 @@ const PastJobRobos = () => {
                     </Typography>
                 </Grid>
                 {
-                    showTable
+                    userCampaignsList?.length > 0
                     &&
                     <Grid item>
                         <PrimaryGreenButton sx={{ width: '12rem' }} onClick={() => handleExtensionButton()}>
@@ -44,11 +43,11 @@ const PastJobRobos = () => {
             </Grid>
             <Box marginTop={'1.5rem'}>
                 {
-                        userCampaignsList?.length > 0
+                    userCampaignsList?.length > 0
                         ?
                         <PastJobrobosTable userCampaignsList={userCampaignsList} />
                         :
-                        <EmptyTableView handleExtensionButton={handleExtensionButton}/>
+                        <EmptyTableView handleExtensionButton={handleExtensionButton} />
                 }
             </Box>
         </Box>
