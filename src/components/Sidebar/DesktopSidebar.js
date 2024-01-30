@@ -191,14 +191,14 @@ const DesktopSidebar = ({ handleSupportModalOpen }) => {
                                             </Typography>
                                         </NavLink>
                                     </ListItem>
-                                    {/* <ListItem disablePadding>
+                                    <ListItem disablePadding>
                                         <NavLink to={'/pastjobrobo'} open={isSidebarOpen}>
                                             <WorkIcon />
                                             <Typography variant='body2' fontWeight={'500'} sx={{ display: isSidebarOpen ? 'block' : 'none' }} >
                                                 Past Job Robos
                                             </Typography>
                                         </NavLink>
-                                    </ListItem> */}
+                                    </ListItem>
                                     <ListItem disablePadding>
                                         <NavLink to={'/profile'} open={isSidebarOpen}>
                                             <DescriptionIcon />

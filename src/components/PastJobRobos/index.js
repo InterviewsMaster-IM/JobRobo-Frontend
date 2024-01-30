@@ -6,10 +6,11 @@ import PastJobrobosTable from './PastJobrobosTable';
 import EmptyTableView from './EmptyTableView';
 import { PrimaryGreenButton } from '../../styles/Buttons';
 import { extensionCommunication } from '../../utils/Helpers';
+import { useGetUserCampaignsListQuery } from '../../api/campaignsApi';
 
 const PastJobRobos = () => {
-    const showTable = true;
     const extensionInstalled = document.getElementsByTagName("jobrobo-container");
+    const { data: userCampaignsList } = useGetUserCampaignsListQuery();
 
     const handleExtensionButton = () => {
         if (extensionInstalled.length) {
@@ -31,7 +32,7 @@ const PastJobRobos = () => {
                     </Typography>
                 </Grid>
                 {
-                    showTable
+                    userCampaignsList?.length > 0
                     &&
                     <Grid item>
                         <PrimaryGreenButton sx={{ width: '12rem' }} onClick={() => handleExtensionButton()}>
@@ -42,11 +43,11 @@ const PastJobRobos = () => {
             </Grid>
             <Box marginTop={'1.5rem'}>
                 {
-                    showTable
+                    userCampaignsList?.length > 0
                         ?
-                        <PastJobrobosTable />
+                        <PastJobrobosTable userCampaignsList={userCampaignsList} />
                         :
-                        <EmptyTableView handleExtensionButton={handleExtensionButton}/>
+                        <EmptyTableView handleExtensionButton={handleExtensionButton} />
                 }
             </Box>
         </Box>

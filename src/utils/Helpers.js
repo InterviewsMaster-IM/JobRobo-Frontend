@@ -60,3 +60,19 @@ export const extensionCommunication = (extensionMessage) => {
         console.log("error in extensionCommunication", e);
     }
 };
+
+export const extensionCommunicationSameJob = (extensionMessage, payload) => {
+    try {
+        let jrContainer = document.getElementsByTagName("jobrobo-container");
+        const extensionId = jrContainer[0].getAttribute("extention-id").trim();
+
+        if (extensionId && payload) {
+            window.chrome.runtime.sendMessage(extensionId, {
+                message: extensionMessage,
+                payload: payload,
+            });
+        }
+    } catch (e) {
+        console.log("error in extensionCommunication", e);
+    }
+};
