@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { PrimaryGreenButton, PrimaryWhiteButton } from '../../styles/Buttons';
 import { useUpdatePersonalInfoMutation } from '../../api/personalInfoApi';
 import { gender, months } from '../../utils/Constants';
-import { getDays, getYears } from '../../utils/Helpers';
+import { getDays, getYears, isValidMobileNumber, isValidEmail, isValidDate, isValidLinkedInUrl, isValidGitHubUrl, isValidUrl } from '../../utils/Helpers';
 import toast from "react-hot-toast";
 import NotificationMessages from '../../utils/notificationConstants';
 import CustomToast from '../common/CustomToast';
@@ -29,6 +29,7 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
     const [formData, setFormData] = useState({});
     const [updatePersonalInfo, updatePersonalInfoResponse] = useUpdatePersonalInfoMutation();
     const [disableStatus, setDisableStatus] = useState(true);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const [yearPart, monthPart, dayPart] = (personalDetail?.dob || '').split('-');
@@ -57,6 +58,10 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
             ...formData,
             [name]: value
         }))
+        setErrors((errors) => ({
+            ...errors,
+            [name]: ''
+        }));
     }
 
     const renderValue = (selected, options, placeholder) => {
@@ -78,20 +83,52 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
 
     const getDisableStatus = () => {
         const ignoreKeys = ["gender", "githubUrl", "portfolioUrl", "dateOfBirth"];
-        const disableStatus =  Object.entries(formData).some(([key, value]) => {
+        const disableStatus = Object.entries(formData).some(([key, value]) => {
             return (!value && !ignoreKeys.includes(key));
         });
         setDisableStatus(disableStatus);
     }
 
-    useEffect(()=> {
+    useEffect(() => {
         getDisableStatus();
     }, [formData]);
 
+
     const handleSubmit = async () => {
+
+        const validationErrors = {};
+
+        if (!isValidMobileNumber(formData.phoneNumber)) {
+            validationErrors.phoneNumber = 'Invalid mobile number';
+        }
+
+        if (!isValidEmail(formData.email)) {
+            validationErrors.email = 'Invalid email address';
+        }
+
+        const { day, month, year } = formData;
+        if (!isValidDate(day, month, year)) {
+            validationErrors.dateOfBirth = 'Invalid date of birth';
+        }
+
+        if (!isValidLinkedInUrl(formData.linkedinUrl)) {
+            validationErrors.linkedinUrl = 'Invalid LinkedIn URL';
+        }
+
+        if (formData.githubUrl && (!isValidGitHubUrl(formData.githubUrl))) {
+            validationErrors.githubUrl = 'Invalid GitHub URL';
+        }
+
+        if (formData.portfolioUrl && (!isValidUrl(formData.portfolioUrl))) {
+            validationErrors.portfolioUrl = 'Invalid URL';
+        }
+
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
         try {
-            const { day, month, year } = formData;
-            
             const formattedDay = day < 10 ? `0${day}` : `${day}`;
             const dateOfBirth = `${year}-${month}-${formattedDay}`;
 
@@ -134,7 +171,7 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                         Personal Information
                     </Typography>
                 </Grid>
-                <Grid container item padding={'16px 24px'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'32px'}>
+                <Grid container item padding={'16px 24px'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'16px'}>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                             Phone number with country code for job applications
@@ -160,6 +197,11 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                                     sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
                             </Grid>
                         </Grid>
+                        {errors.phoneNumber && (
+                            <Typography variant="caption" color="#ff0000">
+                                {errors.phoneNumber}
+                            </Typography>
+                        )}
                     </Grid>
                     <Grid container item rowGap={'8px'} columnGap={'16px'}>
                         <Grid item xs={5.7}>
@@ -205,6 +247,11 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                             onChange={handleFormInput}
                             placeholder='Enter your email ID'
                             sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
+                        {errors.email && (
+                            <Typography variant="caption" color="#ff0000">
+                                {errors.email}
+                            </Typography>
+                        )}
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
@@ -282,6 +329,11 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                                 </Select>
                             </Grid>
                         </Grid>
+                        {errors.dateOfBirth && (
+                            <Typography variant="caption" color="#ff0000">
+                                {errors.dateOfBirth}
+                            </Typography>
+                        )}
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
@@ -331,6 +383,11 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                             onChange={handleFormInput}
                             placeholder='Enter your LinkedIn URL'
                             sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
+                        {errors.linkedinUrl && (
+                            <Typography variant="caption" color="#ff0000">
+                                {errors.linkedinUrl}
+                            </Typography>
+                        )}
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
@@ -343,6 +400,11 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                             onChange={handleFormInput}
                             placeholder='Enter your GitHub URL'
                             sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
+                        {errors.githubUrl && (
+                            <Typography variant="caption" color="#ff0000">
+                                {errors.githubUrl}
+                            </Typography>
+                        )}
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
@@ -355,6 +417,11 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
                             onChange={handleFormInput}
                             placeholder='Enter your Portfolio/Other URL'
                             sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }} />
+                        {errors.portfolioUrl && (
+                            <Typography variant="caption" color="#ff0000">
+                                {errors.portfolioUrl}
+                            </Typography>
+                        )}
                     </Grid>
                 </Grid>
                 <Grid container item padding={'12px 24px'} marginTop={'auto'} borderTop={'1px solid #E5E5E5'}>

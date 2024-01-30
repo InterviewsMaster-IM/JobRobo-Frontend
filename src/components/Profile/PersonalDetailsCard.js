@@ -73,6 +73,9 @@ const PersonalDetailsCard = ({ handleOpenForm, personalDetail }) => {
                                 <Link variant='body2' color={'#001405'} href={personalDetail?.github} target="_blank" underline="always">
                                     {personalDetail?.github}
                                 </Link>
+                                <Link variant='body2' color={'#001405'} href={personalDetail?.github} target="_blank" underline="always">
+                                    {personalDetail?.portfolio_url}
+                                </Link>
                             </Grid>
                         </Grid>
                     }

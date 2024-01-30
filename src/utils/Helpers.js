@@ -46,6 +46,21 @@ export function getYears(startYear) {
     return options;
 }
 
+export const isValidMobileNumber = (value) => /^\d{10}$/.test(value);
+
+export const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+export const isValidDate = (day, month, year) => {
+    const maxDaysInMonth = new Date(year, parseInt(month), 0).getDate();
+    return day >= 1 && day <= maxDaysInMonth;
+}
+
+export const isValidLinkedInUrl = (value) => /^https:\/\/www\.linkedin\.com\/.*$/.test(value);
+
+export const isValidGitHubUrl = (value) => /^https:\/\/github\.com\/.*$/.test(value);
+
+export const isValidUrl = (value) => /^(https?|http):\/\/.*$/.test(value);
+
 export const extensionCommunication = (extensionMessage) => {
     try {
         let jrContainer = document.getElementsByTagName("jobrobo-container");
