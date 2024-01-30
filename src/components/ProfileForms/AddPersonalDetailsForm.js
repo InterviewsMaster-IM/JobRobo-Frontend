@@ -99,28 +99,28 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
         const validationErrors = {};
 
         if (!isValidMobileNumber(formData.phoneNumber)) {
-            validationErrors.phoneNumber = 'Invalid mobile number';
+            validationErrors.phoneNumber = 'Mobile number must be 10 digits';
         }
 
         if (!isValidEmail(formData.email)) {
-            validationErrors.email = 'Invalid email address';
+            validationErrors.email = 'Please enter a valid email address';
         }
 
         const { day, month, year } = formData;
         if (!isValidDate(day, month, year)) {
-            validationErrors.dateOfBirth = 'Invalid date of birth';
+            validationErrors.dateOfBirth = 'Please select valid date of birth';
         }
 
         if (!isValidLinkedInUrl(formData.linkedinUrl)) {
-            validationErrors.linkedinUrl = 'Invalid LinkedIn URL';
+            validationErrors.linkedinUrl = 'Please enter a valid LinkedIn URL';
         }
 
         if (formData.githubUrl && (!isValidGitHubUrl(formData.githubUrl))) {
-            validationErrors.githubUrl = 'Invalid GitHub URL';
+            validationErrors.githubUrl = 'Please enter a valid GitHub URL';
         }
 
         if (formData.portfolioUrl && (!isValidUrl(formData.portfolioUrl))) {
-            validationErrors.portfolioUrl = 'Invalid URL';
+            validationErrors.portfolioUrl = 'Please enter a valid URL format';
         }
 
         if (Object.keys(validationErrors).length > 0) {
