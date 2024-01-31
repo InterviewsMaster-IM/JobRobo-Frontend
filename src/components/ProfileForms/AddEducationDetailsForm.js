@@ -28,6 +28,7 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
     const [addEducationDetails] = useAddEducationDetailsMutation();
     const [updateEducationDetails] = useUpdateEducationDetailsMutation();
     const [disableStatus, setDisableStatus] = useState(true);
+    const [errors, setErrors] = useState({});
 
     const { data: educationDetails, isFetching: educationDetailsFetching, refetch: fetchEducationDetailById } = useGetEducationDetailByIdQuery(id, { skip: !id });
 
@@ -56,9 +57,27 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
             ...formData,
             [name]: value
         }))
+        setErrors((errors) => ({
+            ...errors,
+            [name]: ''
+        }));
     }
 
     const handleFormSubmit = async () => {
+        const validationErrors = {};
+
+        const endDate = new Date(formData?.endYear, parseInt(formData?.endMonth), 0);
+        const startDate = new Date(formData?.startYear, parseInt(formData?.startMonth), 0);
+
+        if (endDate < startDate) {
+            validationErrors.dateMismatch = 'End date must be after the start date.'
+        }
+
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
         const formattedData = {
             school: formData.school,
             degree: formData.degree,
@@ -127,7 +146,7 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                         Add education
                     </Typography>
                 </Grid>
-                <Grid container item padding={'16px 24px'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'32px'}>
+                <Grid container item padding={'16px 24px'} display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'24px'}>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                             School/College
@@ -274,6 +293,11 @@ const AddEducationDetailsForm = ({ actionType, handleHideForm, id }) => {
                                 </Select>
                             </Grid>
                         </Grid>
+                        {errors.dateMismatch && (
+                            <Typography variant="caption" color="#ff0000">
+                                {errors.dateMismatch}
+                            </Typography>
+                        )}
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                         <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
