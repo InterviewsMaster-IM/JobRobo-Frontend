@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './components/common/ProtectRoute';
@@ -35,6 +35,7 @@ function App() {
                     </Route>
                     <Route path="/pricing" element={<ProtectedRoute component={PricingPage}></ProtectedRoute>} />
                     <Route path="/test" element={<ProtectedRoute component={ResumeQuestionsTests}></ProtectedRoute>} />
+                    <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
             </Router>
         </AuthProvider>
