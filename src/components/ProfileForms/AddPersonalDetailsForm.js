@@ -93,7 +93,6 @@ const AddPersonalDetailsForm = ({ handleHideForm, personalDetail }) => {
         getDisableStatus();
     }, [formData]);
 
-
     const handleSubmit = async () => {
 
         const validationErrors = {};

@@ -15,6 +15,7 @@ import AccountSettingsPage from './pages/AccountSettingsPage';
 import ResumeQuestionsTests from './pages/resumeQuestionsTest';
 import PricingPage from './pages/PricingPage';
 import MainLayout from './components/Layouts/MainLayout';
+import JobSearchPage from './pages/JobSearchPage';
 
 function App() {
     return (
@@ -28,6 +29,7 @@ function App() {
                     <Route path="/onboarding" element={<ProtectedRoute component={OnboardingPage}></ProtectedRoute>} />
                     <Route element={<MainLayout />}>
                         <Route path="/home" element={<ProtectedRoute component={HomePage}></ProtectedRoute>} />
+                        <Route path="/jobsearch" element={<ProtectedRoute component={JobSearchPage}></ProtectedRoute>} />
                         <Route path="/pastjobrobo" element={<ProtectedRoute component={PastJobRoboPage}></ProtectedRoute>} />
                         <Route path="/pastjobrobo/:id" element={<ProtectedRoute component={AppliedJobDetails}></ProtectedRoute>} />
                         <Route path="/profile" element={<ProtectedRoute component={ProfilePage}></ProtectedRoute>} />
