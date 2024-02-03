@@ -50,7 +50,9 @@ const ResumeUpload = ({ handleNext }) => {
     const handleResumeUpload = async (file) => {
         try {
             const response = await uploadResume(file);
-            toast.custom(<CustomToast type={"success"} message={NotificationMessages.RESUME_UPLOAD_SUCCESS} />);
+            if (response?.data) {
+                toast.custom(<CustomToast type={"success"} message={NotificationMessages.RESUME_UPLOAD_SUCCESS} />);
+            }
         } catch (error) {
             toast.custom(<CustomToast type={"error"} message={error.message} />);
         }
@@ -59,7 +61,9 @@ const ResumeUpload = ({ handleNext }) => {
     const handleCoverLetterUpload = async (file) => {
         try {
             const response = await uploadCoverLetter(file);
-            toast.custom(<CustomToast type={"success"} message={NotificationMessages.COVER_LETTER_UPLOAD_SUCCESS} />);
+            if (response?.data) {
+                toast.custom(<CustomToast type={"success"} message={NotificationMessages.COVER_LETTER_UPLOAD_SUCCESS} />);
+            }
         } catch (error) {
             toast.custom(<CustomToast type={"error"} message={error.message} />);
         }
@@ -168,7 +172,7 @@ const ResumeUpload = ({ handleNext }) => {
                                     <Grid item display={'flex'} alignItems={'center'} gap={'4px'}>
                                         <CancelIcon fontSize='14px' htmlColor='#ff0000' />
                                         <Typography variant='body2' fontWeight={'500'} color={'#ff0000'} letterSpacing={'0.14px'}>
-                                            {uploadResumeErrorMessage?.status}
+                                            {uploadResumeErrorMessage?.data?.error || 'Please try again'}
                                         </Typography>
                                     </Grid>
                                 }
@@ -264,7 +268,7 @@ const ResumeUpload = ({ handleNext }) => {
                                     <Grid item display={'flex'} alignItems={'center'} gap={'4px'}>
                                         <CancelIcon fontSize='14px' htmlColor='#ff0000' />
                                         <Typography variant='body2' fontWeight={'500'} color={'#ff0000'} letterSpacing={'0.14px'}>
-                                            {uploadCoverLetterErrorMessage?.status}
+                                            {uploadCoverLetterErrorMessage?.data?.error || 'Please try again'}
                                         </Typography>
                                     </Grid>
                                 }
