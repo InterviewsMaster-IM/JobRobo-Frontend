@@ -211,14 +211,14 @@ const DesktopSidebar = ({ handleSupportModalOpen }) => {
                             </Grid>
                             <Grid item width={'100%'} marginTop={'auto'}>
                                 <List sx={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '12px' }}>
-                                    {/* <ListItem disablePadding >
+                                    <ListItem disablePadding >
                                         <NavButton open={isSidebarOpen} onClick={handleSupportModalOpen}>
                                             <HelpOutlineIcon />
                                             <Typography variant='body2' fontWeight={'500'} sx={{ display: isSidebarOpen ? 'block' : 'none' }} >
                                                 Support
                                             </Typography>
                                         </NavButton>
-                                    </ListItem> */}
+                                    </ListItem>
                                     <ListItem disablePadding>
                                         <NavButton
                                             open={isSidebarOpen}

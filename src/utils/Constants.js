@@ -71,8 +71,8 @@ export const disabilityStatusOptions = [
 
 export const workPreferenceOptions = [
     {
-        label: 'Onsite',
-        value: 'onsite'
+        label: 'On-site',
+        value: 'on-site'
     },
     {
         label: 'Hybrid',
@@ -84,10 +84,37 @@ export const workPreferenceOptions = [
     },
 ]
 
+export const experienceLevelOptions = [
+    {
+        label: 'Internship',
+        value: 'internship'
+    },
+    {
+        label: 'Entry level',
+        value: 'entry level'
+    },
+    {
+        label: 'Associate',
+        value: 'associate'
+    },
+    {
+        label: 'Mid-Senior level',
+        value: 'mid-senior level'
+    },
+    {
+        label: 'Director',
+        value: 'director'
+    },
+    {
+        label: 'Executive',
+        value: 'executive'
+    },
+]
+
 export const employmentTypeOptions = [
     {
-        label: 'Full Time',
-        value: 'full_time'
+        label: 'Full-Time',
+        value: 'full-time'
     },
     {
         label: 'Contract',
@@ -96,6 +123,44 @@ export const employmentTypeOptions = [
     {
         label: 'Internsip',
         value: 'internship'
+    },
+    {
+        label: 'Part-Time',
+        value: 'part-time'
+    },
+    {
+        label: 'Temporary',
+        value: 'temporary'
+    },
+    {
+        label: 'Other',
+        value: 'other'
+    },
+]
+
+export const datePostedOptions = [
+    {
+        label: 'Past 24 hours',
+        value: 'Past 24 hours'
+    },
+    {
+        label: 'Past week',
+        value: 'Past week'
+    },
+    {
+        label: 'Past month',
+        value: 'Past month'
+    },
+]
+
+export const sortByOptions = [
+    {
+        label: 'Most recent',
+        value: 'Most recent'
+    },
+    {
+        label: 'Most relevant',
+        value: 'Most relevant'
     },
 ]
 

@@ -76,6 +76,23 @@ export const extensionCommunication = (extensionMessage) => {
     }
 };
 
+export const postExtensionCommunication = (extensionMessage, userId) => {
+    try {
+        let jrContainer = document.getElementById("post-scrapper-container");
+        const extensionId = jrContainer.getAttribute("extention-id").trim();
+
+        if (extensionId) {
+            console.log(extensionId);
+            window.chrome.runtime.sendMessage(extensionId, {
+                message: extensionMessage,
+                userId: userId,
+            });
+        }
+    } catch (e) {
+        console.log("error in extensionCommunication", e);
+    }
+};
+
 export const extensionCommunicationSameJob = (extensionMessage, payload) => {
     try {
         let jrContainer = document.getElementsByTagName("jobrobo-container");
@@ -90,4 +107,19 @@ export const extensionCommunicationSameJob = (extensionMessage, payload) => {
     } catch (e) {
         console.log("error in extensionCommunication", e);
     }
+};
+
+export const generateUuidForUserEmail = async (email) => {
+    // Convert the postUrl to ArrayBuffer
+    const encoder = new TextEncoder();
+    const dataBuffer = encoder.encode(email);
+
+    // Generate SHA-256 hash
+    const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
+
+    // Convert the hash buffer to a hexadecimal string
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const uniqueId = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+
+    return uniqueId;
 };
