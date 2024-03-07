@@ -9,18 +9,19 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
+import { Link } from 'react-router-dom';
 
 const columns = [
     {
         id: 'post_url',
-        label: 'Post Url',
-        minWidth: 200,
-        format: (value) => value.toLocaleString('en-US')
+        label: 'Post Link',
+        minWidth: 100,
+        format: (value) => <Link to={value} target="_blank">Click here</Link>
     },
     {
         id: 'company_name',
         label: 'Company',
-        minWidth: 170,
+        minWidth: 200,
     },
     {
         id: 'job_title',
@@ -92,9 +93,9 @@ const JobPostsTable = ({ postsList }) => {
                                             return (
                                                 <StyledTableCell sx={{ position: 'relative' }} key={column.id} align={column.align}>
                                                     <Box>
-                                                        {
-                                                            value
-                                                        }
+                                                        {column.format
+                                                            ? column.format(value)
+                                                            : value}
                                                     </Box>
                                                 </StyledTableCell>
                                             );
