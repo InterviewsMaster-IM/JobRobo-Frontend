@@ -13,6 +13,7 @@ import { useAddJobSearchFiltersMutation } from '../../api/filtersApi';
 import { generateUuidForUserEmail, postExtensionCommunication } from '../../utils/Helpers';
 import { datePostedOptions, employmentTypeOptions, sortByOptions, workPreferenceOptions } from '../../utils/Constants';
 import { useGetPersonalInfoQuery } from '../../api/personalInfoApi';
+import { useNavigate } from 'react-router-dom';
 
 const MenuProps = {
     PaperProps: {
@@ -23,6 +24,7 @@ const MenuProps = {
 };
 
 const JobSearchFilter = () => {
+    const navigate = useNavigate()
     const [addJobSearchFilters] = useAddJobSearchFiltersMutation();
     const [formData, setFormData] = useState({
         noOfJobs: '',
@@ -57,24 +59,41 @@ const JobSearchFilter = () => {
         }));
     };
 
-    useEffect(() => {
-        console.log(formData);
-    }, [formData])
-
     const handleGetJobs = async () => {
-        console.log(formData);
+        // Assuming generateUuidForUserEmail and postExtensionCommunication functions are defined
         const uniqueUserId = await generateUuidForUserEmail(personalDetail?.email);
-        const finalData = { ...formData, userId: uniqueUserId };
 
+        // Mapping the formData to match the JobSearch class structure
+        const finalData = {
+            userId: uniqueUserId,
+            numberOfJobs: formData.noOfJobs ? parseInt(formData.noOfJobs, 10) : null,
+            jobTitle: formData.jobTitle || 'Software Engineer',
+            experienceYears: formData.experienceInYears ? parseInt(formData.experienceInYears, 10) : null,
+            jobType: formData.jobType || null,
+            workType: formData.workType || null,
+            sortBy: formData.sortBy || null,
+            datePosted: formData.datePosted || null,
+            countryLocation: formData.location || null,
+        };
+        console.log(finalData)
         try {
             const response = await addJobSearchFilters(finalData);
             if (response?.data) {
                 console.log(response);
-                handleExtensionButton(uniqueUserId);
+                const jobTitles = finalData.jobTitle.split(',').map(title => title.trim());
+                navigate('/jobs', {
+                    state: {
+                        job_titles: jobTitles,
+                        start_date: '2024-06-13T19:37:44.323+00:00',
+                        end_date: null,
+                        no_of_jobs: finalData.numberOfJobs,
+                    }
+                });
+                // handleExtensionButton(uniqueUserId);
             }
         } catch (error) {
             console.log(error);
-            // toast.custom(<CustomToast type={"error"} message={error.message} />);
+            // Handle error, e.g., display an error message
         }
     };
 
