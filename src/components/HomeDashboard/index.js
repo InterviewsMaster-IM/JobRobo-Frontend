@@ -15,7 +15,7 @@ const HomeDashboard = () => {
                     Hey there, Rishikesh! Your dream job is just a click away
                 </Typography>
                 <Grid container marginTop={'2rem'} gap={4}>
-                    <HomePageCard />
+                    {/* <HomePageCard /> */}
                     <JobSearchCard />
                 </Grid>
             </Box>

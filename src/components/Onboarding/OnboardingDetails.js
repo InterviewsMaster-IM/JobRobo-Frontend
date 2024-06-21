@@ -11,7 +11,7 @@ import { useGetUploadedFilesQuery } from '../../api/resumesApi';
 import { useNavigate } from 'react-router-dom';
 import { useGetOnboardingDetailsQuery } from '../../api/onboardingApi';
 
-const steps = ['Upload Resume', 'Details', 'Install Extension'];
+const steps = ['Upload Resume', 'Details'];
 
 const OnboardingDetails = () => {
 
@@ -41,7 +41,7 @@ const OnboardingDetails = () => {
         if (onboardingDetailsData?.race) {
             setActiveStep(2);
         }
-        if (resume && onboardingDetailsData?.race && extensionInstalled.length) {
+        if (resume && onboardingDetailsData?.race) {
             navigate('/home');
         }
     }, [resumeLoading, onboardingDetailsDataFetching])
@@ -80,7 +80,8 @@ const OnboardingDetails = () => {
                         ? <ResumeUpload handleNext={handleNext} />
                         : activeStep === 1
                             ? <NonResumeQuestions handleNext={handleNext} onboardingDetails={onboardingDetails} />
-                            : <ExtensionInstall handleBack={handleBack} />
+                            // : <ExtensionInstall handleBack={handleBack} />
+                            : null
                     }
                 </Box>
             </Box>

@@ -15,7 +15,8 @@ const ProtectedRoute = ({ component: Component, ...rest }) => {
 
     useEffect(() => {
         if (isAuthenticated && resumeSuccess && onboardingDetailsDataSuccess) {
-            if (!resume || !onboardingDetailsData?.race || !extensionInstalled.length) {
+            if (!resume || !onboardingDetailsData?.race) {
+                // if (!resume || !onboardingDetailsData?.race || !extensionInstalled.length) {
                 navigate('/onboarding');
             }
         }
