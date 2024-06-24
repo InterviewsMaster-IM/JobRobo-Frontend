@@ -21,9 +21,16 @@ export const filtersApi = createApi({
                 formData: true,
             })
         }),
+        getJobSearchFilters: builder.query({
+            query: (userId) => ({
+                url: `filters/?userId=${userId}`,
+                method: 'GET',
+            })
+        }),
     }),
 });
 
 export const {
-    useAddJobSearchFiltersMutation
+    useAddJobSearchFiltersMutation,
+    useGetJobSearchFiltersQuery
 } = filtersApi;
