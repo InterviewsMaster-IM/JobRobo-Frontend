@@ -75,20 +75,11 @@ const JobSearchFilter = () => {
             datePosted: formData.datePosted || null,
             countryLocation: formData.location || null,
         };
-        console.log(finalData)
         try {
             const response = await addJobSearchFilters(finalData);
             if (response?.data) {
                 console.log(response);
-                const jobTitles = finalData.jobTitle.split(',').map(title => title.trim());
-                navigate('/jobs', {
-                    state: {
-                        job_titles: jobTitles,
-                        start_date: '2024-06-13T19:37:44.323+00:00',
-                        end_date: null,
-                        no_of_jobs: finalData.numberOfJobs,
-                    }
-                });
+                navigate('/jobs',);
                 // handleExtensionButton(uniqueUserId);
             }
         } catch (error) {
