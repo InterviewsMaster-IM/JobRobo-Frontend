@@ -142,6 +142,14 @@ const MobileSidebar = ({ handleSupportModalOpen }) => {
                                         </Typography>
                                     </NavLink>
                                 </ListItem>
+                                <ListItem disablePadding>
+                                    <NavLink to={'/jobs'}>
+                                        <DescriptionIcon />
+                                        <Typography variant='body2' fontWeight={'500'} >
+                                            Jobs List
+                                        </Typography>
+                                    </NavLink>
+                                </ListItem>
                                 {/* <ListItem disablePadding >
                                     <NavButton open={isSidebarOpen} onClick={handleSupportModalOpen}>
                                         <HelpOutlineIcon />
