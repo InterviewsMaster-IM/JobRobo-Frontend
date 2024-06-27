@@ -215,6 +215,14 @@ const DesktopSidebar = ({ handleSupportModalOpen }) => {
                                             </Typography>
                                         </NavLink>
                                     </ListItem>
+                                    <ListItem disablePadding>
+                                        <NavLink to={'/jobpost'} open={isSidebarOpen}>
+                                            <DescriptionIcon />
+                                            <Typography variant='body2' fontWeight={'500'} sx={{ display: isSidebarOpen ? 'block' : 'none', transition: 'display 2.5s ease-in-out' }} >
+                                                Posts List
+                                            </Typography>
+                                        </NavLink>
+                                    </ListItem>
                                 </List>
                             </Grid>
                             <Grid item width={'100%'} marginTop={'auto'}>
