@@ -6,8 +6,8 @@ import Dots from "react-activity/dist/Dots";
 import JobsTable from './JobsTable';
 import { useGetJobsQuery } from '../../api/jobPostsApi';
 
-const Jobs = ({ jobTitle, numberOfJobs }) => {
-    const { data: jobsList, error: jobsError, isLoading: jobsLoading } = useGetJobsQuery({ job_titles: jobTitle?.split(',').map(title => title.trim()), start_date: '2024-06-13T19:37:44.323+00:00', no_of_jobs: numberOfJobs });
+const Jobs = ({ jobTitle, numberOfJobs, countryLocation }) => {
+    const { data: jobsList, error: jobsError, isLoading: jobsLoading } = useGetJobsQuery({ job_titles: jobTitle?.split(',').map(title => title.trim()), start_date: '2024-06-13T19:37:44.323+00:00', no_of_jobs: numberOfJobs, location: countryLocation });
 
     if (jobsLoading) {
         return (

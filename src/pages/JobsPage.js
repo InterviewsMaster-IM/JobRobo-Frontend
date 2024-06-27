@@ -29,7 +29,7 @@ const JobsPage = () => {
     }
   }, [filters]);
 
-  return <Jobs jobTitle={filtersData?.jobTitle} numberOfJobs={filtersData?.numberOfJobs} />;
+  return <Jobs jobTitle={filtersData?.jobTitle} numberOfJobs={filtersData?.numberOfJobs} countryLocation={filtersData?.countryLocation} />;
 }
 
 export default JobsPage;
