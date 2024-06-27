@@ -87,7 +87,7 @@ const JobPostsTable = ({ postsList }) => {
                             ?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             ?.map((row, index) => {
                                 return (
-                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                                    <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                                         {columns.map((column, columnIndex) => {
                                             const value = row[column.id];
                                             return (
