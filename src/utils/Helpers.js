@@ -123,3 +123,18 @@ export const generateUuidForUserEmail = async (email) => {
 
     return uniqueId;
 };
+
+export const calculateStartDateFromString = (datePosted) => {
+    const now = new Date();
+    const startDate = new Date();
+
+    if (datePosted === 'Past 24 hours') {
+        startDate.setDate(now.getDate() - 1);
+    } else if (datePosted === 'Past week') {
+        startDate.setDate(now.getDate() - 7);
+    } else if (datePosted === 'Past month') {
+        startDate.setDate(now.getDate() - 30);
+    }
+
+    return startDate.toISOString();
+};
