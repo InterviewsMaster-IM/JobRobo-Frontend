@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-const baseApiUrl = 'http://jobrobo.ai:81/';
+const baseApiUrl = 'http://3.145.41.95:81/';
 
 export const filtersApi = createApi({
     reducerPath: 'filtersApi',
