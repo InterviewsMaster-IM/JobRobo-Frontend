@@ -19,7 +19,8 @@ export const filtersApi = createApi({
                 method: 'POST',
                 body: formData,
                 formData: true,
-            })
+            }),
+            invalidatesTags: [{ type: 'Jobs' }],
         }),
         getJobSearchFilters: builder.query({
             query: (userId) => ({
