@@ -13,7 +13,7 @@ import { useAddJobSearchFiltersMutation } from '../../api/filtersApi';
 import { generateUuidForUserEmail, postExtensionCommunication } from '../../utils/Helpers';
 import { datePostedOptions, employmentTypeOptions, sortByOptions, workPreferenceOptions } from '../../utils/Constants';
 import { useGetPersonalInfoQuery } from '../../api/personalInfoApi';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const MenuProps = {
     PaperProps: {
@@ -24,8 +24,7 @@ const MenuProps = {
 };
 
 const JobSearchFilter = () => {
-    const navigate = useNavigate()
-    const [addJobSearchFilters] = useAddJobSearchFiltersMutation();
+    const [addJobSearchFilters, { isSuccess }] = useAddJobSearchFiltersMutation();
     const [formData, setFormData] = useState({
         noOfJobs: '',
         jobTitle: '',
@@ -38,6 +37,7 @@ const JobSearchFilter = () => {
     });
     const [disableStatus, setDisableStatus] = useState(true);
     const { data: personalDetail } = useGetPersonalInfoQuery();
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false); // State for success message
 
     const getDisableStatus = () => {
         const ignoreKeys = ["companiesToInclude", "companiesToExclude"];
@@ -50,6 +50,24 @@ const JobSearchFilter = () => {
     useEffect(() => {
         getDisableStatus();
     }, [formData]);
+
+    // Effect to handle showing success message and resetting form on success
+    useEffect(() => {
+        if (isSuccess) {
+            setShowSuccessMessage(true);
+            // Optionally reset form or do other actions
+            setFormData({
+                noOfJobs: '',
+                jobTitle: '',
+                jobType: [],
+                workType: [],
+                datePosted: '',
+                sortBy: '',
+                experienceInYears: '',
+                location: '',
+            });
+        }
+    }, [isSuccess]);
 
     const handleFormInput = (e) => {
         const { name, value } = e.target;
@@ -76,12 +94,7 @@ const JobSearchFilter = () => {
             countryLocation: formData.location || null,
         };
         try {
-            const response = await addJobSearchFilters(finalData);
-            if (response?.data) {
-                console.log(response);
-                navigate('/jobs',);
-                // handleExtensionButton(uniqueUserId);
-            }
+            await addJobSearchFilters(finalData);
         } catch (error) {
             console.log(error);
             // Handle error, e.g., display an error message
@@ -198,33 +211,6 @@ const JobSearchFilter = () => {
                                 ))}
                             </Select>
                         </Grid>
-                        {/* <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
-                            <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
-                                Experience Level
-                            </Typography>
-                            <Select
-                                fullWidth
-                                name='experienceLevel'
-                                multiple={true}
-                                displayEmpty
-                                value={formData.experienceLevel}
-                                onChange={handleFormInput}
-                                input={<OutlinedInput />}
-                                renderValue={(selected) => renderMultipleValues(selected, experienceLevelOptions, 'Select')}
-                                MenuProps={MenuProps}
-                                sx={{ height: '40px' }}
-                                inputProps={{ 'aria-label': 'Without label' }}
-                            >
-                                {experienceLevelOptions.map((type) => (
-                                    <MenuItem key={type.value} value={type.value}>
-                                        <Checkbox checked={formData.experienceLevel?.some(
-                                            (item) => item === type.value
-                                        )} />
-                                        <ListItemText primary={type.label} />
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </Grid> */}
                         <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
                             <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
                                 Sort By
@@ -321,45 +307,26 @@ const JobSearchFilter = () => {
                                 sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }}
                             />
                         </Grid>
-                        {/* <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
-                            <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
-                                Companies to Include (Separate by commas)
-                            </Typography>
-                            <OutlinedInput
-                                fullWidth
-                                name='companiesToInclude'
-                                value={formData.companiesToInclude}
-                                onChange={handleFormInput}
-                                placeholder='Enter companies to include seperated by commas'
-                                sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }}
-                            />
-                        </Grid>
-                        <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'}>
-                            <Typography variant='body2' fontSize={'12px'} fontWeight={'600'}>
-                                Companies to Exclude (Separate by commas)
-                            </Typography>
-                            <OutlinedInput
-                                fullWidth
-                                name='companiesToExclude'
-                                value={formData.companiesToExclude}
-                                onChange={handleFormInput}
-                                placeholder='Enter companies to exclude seperated by commas'
-                                sx={{ height: '40px', fontSize: '14px', fontWeight: '500' }}
-                            />
-                        </Grid> */}
                     </Grid>
                     <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'} marginTop={'2rem'}>
                         <ResumesDisplayCard />
                     </Grid>
                 </Grid>
                 <Grid container item display={'flex'} flexDirection={'column'} alignItems={'flex-start'} gap={'8px'} width={'28rem'}>
+                    {showSuccessMessage && (
+                        <Typography variant="body1" color="primary">
+                            Job search filters added successfully!{' '}
+                            <Link to="/jobs" style={{ textDecoration: 'underline', color: '#55B982' }}>
+                                Go to Jobs Page
+                            </Link>
+                        </Typography>
+                    )}
                     <Box width={'100%'} display={'flex'} alignItems={'center'} justifyContent={'center'} gap={'16px'}>
-                        <PrimaryGreenButton sx={{ marginTop: '1rem', width: '20rem' }} onClick={handleGetJobs}>
+                        <PrimaryGreenButton sx={{ marginTop: '1rem', width: '20rem' }} onClick={handleGetJobs} disabled={disableStatus} >
                             Get Jobs
                         </PrimaryGreenButton>
                     </Box>
                 </Grid>
-
             </Grid>
         </Box>
     );
