@@ -1,19 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../utils/authContext';
 import Cookies from 'js-cookie';
 import Box from '@mui/material/Box';
-import Dots from "react-activity/dist/Dots";
+import Dots from 'react-activity/dist/Dots';
 import Typography from '@mui/material/Typography';
+import { useGetOnboardingDetailsQuery } from '../api/onboardingApi';
+import { useGetUploadedFilesQuery } from '../api/resumesApi';
 
 const TokenHandler = () => {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, isAuthenticated } = useAuth();
+    const [tokensSet, setTokensSet] = useState(false);
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
-        const access_token = urlParams.get('access'); // Assuming the token is passed as a query param
-        const refresh_token = urlParams.get('refresh')
+        const access_token = urlParams.get('access');
+        const refresh_token = urlParams.get('refresh');
         const promocode = urlParams.get('promocode');
 
         if (access_token && refresh_token) {
@@ -21,21 +24,31 @@ const TokenHandler = () => {
             localStorage.setItem('access_token', access_token);
             localStorage.setItem('refresh_token', refresh_token);
             // Store the tokens in cookies as well
-            Cookies.set('access_token', access_token, { expires: 7 }); // Expires in 7 days
-            Cookies.set('refresh_token', refresh_token, { expires: 7 }); // Expires in 7 days
+            Cookies.set('access_token', access_token, { expires: 7 });
+            Cookies.set('refresh_token', refresh_token, { expires: 7 });
             // Redirect to another page after successful token handling
             // console.log("navigating to dashboard");
             login();
-            if (promocode) {
-                navigate('/home');
-            } else {
+            setTokensSet(true);
+        }
+    }, [login]);
+
+    const { data: onboardingDetailsData, isLoading: onboardingDetailsLoading, isSuccess: onboardingDetailsSuccess } = useGetOnboardingDetailsQuery(undefined, { skip: !tokensSet });
+    const { data: uploadedFiles, isLoading: resumeLoading, isSuccess: resumeSuccess } = useGetUploadedFilesQuery(undefined, { skip: !tokensSet });
+    const resume = uploadedFiles?.resume;
+
+    useEffect(() => {
+        if (isAuthenticated && tokensSet && resumeSuccess && onboardingDetailsSuccess) {
+            if (!resume || !onboardingDetailsData?.race) {
                 navigate('/onboarding');
+            } else {
+                navigate('/home');
             }
         }
-    }, []);
+    }, [isAuthenticated, tokensSet, resume, onboardingDetailsData, resumeSuccess, onboardingDetailsSuccess, navigate]);
 
-    return (
-        <div>
+    if (onboardingDetailsLoading || resumeLoading) {
+        return (
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -49,8 +62,10 @@ const TokenHandler = () => {
                     Processing Authentication
                 </Typography>
             </Box>
-        </div>
-    );
+        );
+    }
+
+    return null;
 };
 
 export default TokenHandler;
