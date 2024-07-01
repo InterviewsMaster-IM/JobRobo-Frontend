@@ -38,7 +38,7 @@ export const jobPostsApi = createApi({
                 if (location) params.append('location', location);
 
                 return {
-                    url: `jobs/?${params.toString()}`,
+                    url: `getJobs/?${params.toString()}`,
                     method: 'GET',
                 };
             },
